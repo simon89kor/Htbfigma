@@ -166,13 +166,8 @@ export function Layout() {
 
               {/* Mobile menu button */}
               <div className="md:hidden flex items-center gap-3">
-                <Link to="/cart" className="relative p-2 text-gray-600 no-underline">
-                  <ShoppingCart className="w-5 h-5" />
-                  {cartCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-violet-600 text-white rounded-full flex items-center justify-center text-[11px]">
-                      {cartCount}
-                    </span>
-                  )}
+                <Link to="/my-lists" className="relative p-2 text-gray-600 no-underline">
+                  <ClipboardList className="w-5 h-5" />
                 </Link>
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

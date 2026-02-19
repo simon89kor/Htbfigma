@@ -1,7 +1,7 @@
 
-  # Test
+  # HTB Project
 
-  This is a code bundle for Test. The original project is available at https://www.figma.com/design/wI6skfna57kZkNVQm1dWx1/Test.
+  This is a code bundle for HTB Project. The original project is available at https://www.figma.com/design/wI6skfna57kZkNVQm1dWx1/HTB-Project.
 
   ## Running the code
 
