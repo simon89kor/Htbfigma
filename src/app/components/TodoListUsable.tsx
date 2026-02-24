@@ -192,7 +192,7 @@ export function TodoListUsable({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden" style={{boxShadow: 'var(--shadow-card)'}}>
       {/* Colored Header */}
       <div
         className="px-4 py-3 flex items-center justify-between cursor-pointer"

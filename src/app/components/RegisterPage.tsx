@@ -34,22 +34,10 @@ export function RegisterPage() {
     e.preventDefault();
     setError("");
 
-    if (!name.trim()) {
-      setError("이름을 입력해주세요.");
-      return;
-    }
-    if (!email.trim()) {
-      setError("이메일을 입력해주세요.");
-      return;
-    }
-    if (!isPasswordValid) {
-      setError("비밀번호 조건을 모두 충족해주세요.");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError("비밀번호가 일치하지 않습니다.");
-      return;
-    }
+    if (!name.trim()) { setError("이름을 입력해주세요."); return; }
+    if (!email.trim()) { setError("이메일을 입력해주세요."); return; }
+    if (!isPasswordValid) { setError("비밀번호 조건을 모두 충족해주세요."); return; }
+    if (password !== confirmPassword) { setError("비밀번호가 일치하지 않습니다."); return; }
 
     setIsLoading(true);
     await new Promise((r) => setTimeout(r, 800));
@@ -71,21 +59,20 @@ export function RegisterPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2.5 no-underline mb-6">
-            <div className="w-11 h-11 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
-              <CheckSquare className="w-6 h-6 text-white" />
+            <div className="w-11 h-11 bg-[#1a1a2e] rounded-xl flex items-center justify-center">
+              <CheckSquare className="w-6 h-6 text-[#65D9AC]" />
             </div>
-            <span className="text-[#1a1a2e] text-[22px] tracking-tight">TodoMarket</span>
+            <span className="text-[#1a1a2e] text-[22px] font-semibold tracking-tight">TodoMarket</span>
           </Link>
-          <h1 className="text-[#1a1a2e] text-[26px] mt-4">회원가입</h1>
-          <p className="text-gray-400 text-[14px] mt-2">
+          <h1 className="text-[#1a1a2e] text-[26px] mt-4 font-bold">회원가입</h1>
+          <p className="text-[#6b6b80] text-[14px] mt-2">
             TodoMarket에 가입하고 다양한 To-Do 리스트를 만나보세요
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+        <div className="bg-white rounded-2xl border border-black/[0.06] p-8" style={{boxShadow: 'var(--shadow-card)'}}>
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Error */}
             {error && (
               <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-[14px]">
                 <AlertCircle className="w-4 h-4 shrink-0" />
@@ -93,73 +80,56 @@ export function RegisterPage() {
               </div>
             )}
 
-            {/* Name */}
             <div>
-              <label className="block text-[14px] text-gray-700 mb-2">이름</label>
+              <label className="block text-[14px] text-[#1a1a2e] mb-2">이름</label>
               <input
                 type="text"
                 value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  setError("");
-                }}
+                onChange={(e) => { setName(e.target.value); setError(""); }}
                 placeholder="홍길동"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400 transition-all"
+                className="w-full px-4 py-3 bg-[#f5f5f7] border border-black/[0.06] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C5CE7]/20 focus:border-[#6C5CE7]/40 transition-all text-[14px]"
                 autoComplete="name"
               />
             </div>
 
-            {/* Email */}
             <div>
-              <label className="block text-[14px] text-gray-700 mb-2">이메일</label>
+              <label className="block text-[14px] text-[#1a1a2e] mb-2">이메일</label>
               <input
                 type="email"
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setError("");
-                }}
+                onChange={(e) => { setEmail(e.target.value); setError(""); }}
                 placeholder="name@example.com"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400 transition-all"
+                className="w-full px-4 py-3 bg-[#f5f5f7] border border-black/[0.06] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C5CE7]/20 focus:border-[#6C5CE7]/40 transition-all text-[14px]"
                 autoComplete="email"
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label className="block text-[14px] text-gray-700 mb-2">비밀번호</label>
+              <label className="block text-[14px] text-[#1a1a2e] mb-2">비밀번호</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    setError("");
-                  }}
+                  onChange={(e) => { setPassword(e.target.value); setError(""); }}
                   placeholder="비밀번호 입력"
-                  className="w-full px-4 py-3 pr-12 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400 transition-all"
+                  className="w-full px-4 py-3 pr-12 bg-[#f5f5f7] border border-black/[0.06] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C5CE7]/20 focus:border-[#6C5CE7]/40 transition-all text-[14px]"
                   autoComplete="new-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#6b6b80] hover:text-[#1a1a2e] bg-transparent border-none cursor-pointer"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
-              {/* Password strength */}
               {password && (
                 <div className="flex gap-3 mt-2">
                   {passwordChecks.map((check) => (
                     <span
                       key={check.label}
                       className={`flex items-center gap-1 text-[12px] ${
-                        check.valid ? "text-green-600" : "text-gray-400"
+                        check.valid ? "text-[#65D9AC]" : "text-[#6b6b80]"
                       }`}
                     >
                       <Check className="w-3 h-3" />
@@ -170,21 +140,17 @@ export function RegisterPage() {
               )}
             </div>
 
-            {/* Confirm Password */}
             <div>
-              <label className="block text-[14px] text-gray-700 mb-2">비밀번호 확인</label>
+              <label className="block text-[14px] text-[#1a1a2e] mb-2">비밀번호 확인</label>
               <input
                 type={showPassword ? "text" : "password"}
                 value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                  setError("");
-                }}
+                onChange={(e) => { setConfirmPassword(e.target.value); setError(""); }}
                 placeholder="비밀번호 다시 입력"
-                className={`w-full px-4 py-3 bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400 transition-all ${
+                className={`w-full px-4 py-3 bg-[#f5f5f7] border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C5CE7]/20 focus:border-[#6C5CE7]/40 transition-all text-[14px] ${
                   confirmPassword && confirmPassword !== password
                     ? "border-red-300"
-                    : "border-gray-200"
+                    : "border-black/[0.06]"
                 }`}
                 autoComplete="new-password"
               />
@@ -193,11 +159,10 @@ export function RegisterPage() {
               )}
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-3.5 bg-violet-600 text-white rounded-xl hover:bg-violet-700 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 py-3.5 bg-[#1a1a2e] text-white rounded-xl hover:bg-[#2a2a3e] transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed border-none text-[15px] font-medium"
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -210,12 +175,11 @@ export function RegisterPage() {
             </button>
           </form>
 
-          {/* Login Link */}
           <div className="text-center mt-6">
-            <span className="text-gray-400 text-[14px]">이미 계정이 있으신가요? </span>
+            <span className="text-[#6b6b80] text-[14px]">이미 계정이 있으신가요? </span>
             <Link
               to={`/login${redirectTo !== "/" ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`}
-              className="text-violet-600 hover:text-violet-700 no-underline text-[14px]"
+              className="text-[#6C5CE7] hover:text-[#5A4BD6] no-underline text-[14px] font-medium"
             >
               로그인
             </Link>

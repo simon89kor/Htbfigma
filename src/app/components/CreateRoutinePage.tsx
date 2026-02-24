@@ -227,10 +227,10 @@ export function CreateRoutinePage() {
   if (!isLoggedIn) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <p className="text-gray-400 mb-4">로그인이 필요합니다</p>
+        <p className="text-[#6b6b80] mb-4">로그인이 필요합니다</p>
         <button
           onClick={() => navigate("/login?redirect=/create-routine")}
-          className="px-6 py-3 bg-[#212422] text-[#B1F1B8] rounded-xl cursor-pointer border-none"
+          className="px-6 py-3 bg-[#1a1a2e] text-[#65D9AC] rounded-xl cursor-pointer border-none font-medium"
         >
           로그인하기
         </button>
@@ -247,11 +247,11 @@ export function CreateRoutinePage() {
             if (step > 1) setStep(step - 1);
             else navigate(-1);
           }}
-          className="p-2 -ml-2 text-[#212422] hover:bg-gray-100 rounded-lg transition-colors cursor-pointer bg-transparent border-none"
+          className="p-2 -ml-2 text-[#1a1a2e] hover:bg-black/[0.03] rounded-lg transition-colors cursor-pointer bg-transparent border-none"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-[17px] text-[#212422] font-bold">
+        <h1 className="text-[17px] text-[#1a1a2e] font-bold">
           {step === 1 ? "루틴 추가하기" : step === 2 ? "일정 선택" : "작성하기"}
         </h1>
         <button
@@ -267,7 +267,7 @@ export function CreateRoutinePage() {
             (step === 1 && !canProceedStep1) ||
             (step === 2 && !canProceedStep2)
           }
-          className="text-[14px] text-[#212422] font-medium bg-transparent border-none cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+          className="text-[14px] text-[#6C5CE7] font-semibold bg-transparent border-none cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
         >
           {step === 3 ? "완료" : "다음"}
         </button>
@@ -279,7 +279,7 @@ export function CreateRoutinePage() {
           <div
             key={s}
             className={`h-1 flex-1 rounded-full transition-all ${
-              s <= step ? "bg-[#212422]" : "bg-gray-200"
+              s <= step ? "bg-[#1a1a2e]" : "bg-[#f0f0f4]"
             }`}
           />
         ))}

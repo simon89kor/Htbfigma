@@ -157,21 +157,21 @@ export function CalendarView({ purchasedLists, customLists }: CalendarViewProps)
   return (
     <div className="space-y-4">
       {/* Calendar */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden" style={{boxShadow: 'var(--shadow-card)'}}>
         {/* Month Nav */}
         <div className="flex items-center justify-between px-5 py-4">
           <button
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-            className="p-2 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer bg-transparent border-none text-gray-600"
+            className="p-2 hover:bg-black/[0.03] rounded-xl transition-colors cursor-pointer bg-transparent border-none text-[#6b6b80]"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <h3 className="text-[17px] font-semibold text-[#212422]">
+          <h3 className="text-[17px] font-semibold text-[#1a1a2e]">
             {format(currentMonth, "yyyy년 M월", { locale: ko })}
           </h3>
           <button
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-            className="p-2 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer bg-transparent border-none text-gray-600"
+            className="p-2 hover:bg-black/[0.03] rounded-xl transition-colors cursor-pointer bg-transparent border-none text-[#6b6b80]"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -183,7 +183,7 @@ export function CalendarView({ purchasedLists, customLists }: CalendarViewProps)
             <div
               key={d}
               className={`text-center text-[12px] font-medium py-2 ${
-                i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-gray-400"
+                i === 0 ? "text-red-400" : i === 6 ? "text-blue-400" : "text-[#6b6b80]"
               }`}
             >
               {d}
@@ -203,8 +203,6 @@ export function CalendarView({ purchasedLists, customLists }: CalendarViewProps)
             const completedCount = dayTodos.filter((t) => t.item.completed).length;
             const allCompleted = hasTodos && completedCount === dayTodos.length;
             const dayOfWeek = day.getDay();
-
-            // Collect unique colors from that day
             const colors = [...new Set(dayTodos.map((t) => t.headerColor))].slice(0, 3);
 
             return (
@@ -213,10 +211,10 @@ export function CalendarView({ purchasedLists, customLists }: CalendarViewProps)
                 onClick={() => setSelectedDate(day)}
                 className={`relative flex flex-col items-center justify-start py-1.5 min-h-[52px] rounded-xl transition-all cursor-pointer border-none ${
                   isSelected
-                    ? "bg-[#212422] text-white"
+                    ? "bg-[#1a1a2e] text-white"
                     : today
-                    ? "bg-violet-50"
-                    : "bg-transparent hover:bg-gray-50"
+                    ? "bg-[#f4f3ff]"
+                    : "bg-transparent hover:bg-black/[0.02]"
                 } ${!isCurrentMonth ? "opacity-30" : ""}`}
               >
                 <span
@@ -224,18 +222,17 @@ export function CalendarView({ purchasedLists, customLists }: CalendarViewProps)
                     isSelected
                       ? "text-white"
                       : today
-                      ? "text-violet-600 font-bold"
+                      ? "text-[#6C5CE7] font-bold"
                       : dayOfWeek === 0
                       ? "text-red-400"
                       : dayOfWeek === 6
                       ? "text-blue-400"
-                      : "text-[#212422]"
+                      : "text-[#1a1a2e]"
                   }`}
                 >
                   {format(day, "d")}
                 </span>
 
-                {/* Todo indicators */}
                 {hasTodos && (
                   <div className="flex items-center gap-[2px] mt-1">
                     {colors.map((color, ci) => (
@@ -250,9 +247,8 @@ export function CalendarView({ purchasedLists, customLists }: CalendarViewProps)
                   </div>
                 )}
 
-                {/* Completion badge */}
                 {hasTodos && allCompleted && !isSelected && (
-                  <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full flex items-center justify-center">
+                  <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-[#65D9AC] rounded-full flex items-center justify-center">
                     <Check className="w-2 h-2 text-white" />
                   </div>
                 )}
@@ -264,12 +260,12 @@ export function CalendarView({ purchasedLists, customLists }: CalendarViewProps)
 
       {/* Selected Date Details */}
       {selectedDate && (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-gray-100">
+        <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden" style={{boxShadow: 'var(--shadow-card)'}}>
+          <div className="px-5 py-4 border-b border-black/[0.04]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <CalendarDays className="w-4.5 h-4.5 text-violet-500" />
-                <h3 className="text-[15px] font-semibold text-[#212422]">
+                <CalendarDays className="w-4.5 h-4.5 text-[#6C5CE7]" />
+                <h3 className="text-[15px] font-semibold text-[#1a1a2e]">
                   {format(selectedDate, "M월 d일 (EEEE)", { locale: ko })}
                 </h3>
               </div>
@@ -282,7 +278,7 @@ export function CalendarView({ purchasedLists, customLists }: CalendarViewProps)
             {selectedTodos.length > 0 && (
               <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden mt-2">
                 <div
-                  className="h-full bg-violet-500 rounded-full transition-all duration-300"
+                  className="h-full bg-[#6C5CE7] rounded-full transition-all duration-300"
                   style={{
                     width: `${
                       (selectedTodos.filter((t) => t.item.completed).length /

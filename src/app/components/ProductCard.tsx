@@ -19,7 +19,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const purchased = isPurchased(product.id);
 
   return (
-    <div className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col">
+    <div className="group bg-white rounded-2xl overflow-hidden border border-black/[0.06] hover:shadow-[var(--shadow-card-hover)] transition-all duration-300 hover:-translate-y-1 flex flex-col" style={{boxShadow: 'var(--shadow-card)'}}>
       {/* Image */}
       <Link to={`/product/${product.id}`} className="no-underline">
         <div className="relative h-48 overflow-hidden">
@@ -29,7 +29,7 @@ export function ProductCard({ product }: ProductCardProps) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           {product.originalPrice && (
-            <div className="absolute top-3 left-3 bg-red-500 text-white px-2.5 py-1 rounded-lg text-[13px]">
+            <div className="absolute top-3 left-3 bg-red-500 text-white px-2.5 py-1 rounded-lg text-[12px] font-medium">
               {Math.round(
                 ((product.originalPrice - product.price) / product.originalPrice) * 100
               )}
@@ -38,13 +38,12 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
           <div className="absolute top-3 right-3 flex gap-1.5">
             <div
-              className="px-2.5 py-1 rounded-lg text-[13px] text-white backdrop-blur-sm"
+              className="px-2.5 py-1 rounded-lg text-[12px] text-white backdrop-blur-sm font-medium"
               style={{ backgroundColor: product.color }}
             >
               {product.category}
             </div>
           </div>
-          {/* Duration badge */}
           <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white px-2.5 py-1 rounded-lg text-[12px]">
             <Calendar className="w-3 h-3" />
             {formatDuration(product.durationDays)}
@@ -55,10 +54,10 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Content */}
       <div className="p-5 flex flex-col flex-1">
         <Link to={`/product/${product.id}`} className="no-underline text-inherit">
-          <h3 className="text-[#1a1a2e] mb-1 group-hover:text-violet-600 transition-colors text-[16px]">
+          <h3 className="text-[#1a1a2e] mb-1 group-hover:text-[#6C5CE7] transition-colors text-[15px] font-semibold">
             {product.name}
           </h3>
-          <p className="text-gray-500 text-[14px] mb-3 line-clamp-2">
+          <p className="text-[#6b6b80] text-[13px] mb-3 line-clamp-2 leading-relaxed">
             {product.description}
           </p>
         </Link>
@@ -68,7 +67,7 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="text-[11px] px-2 py-0.5 rounded bg-gray-100 text-gray-500"
+              className="text-[11px] px-2 py-0.5 rounded-md bg-[#f0f0f4] text-[#6b6b80]"
             >
               {tag}
             </span>
@@ -78,18 +77,18 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Rating */}
         <div className="flex items-center gap-1.5 mb-4">
           <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-          <span className="text-[14px] text-gray-700">{product.rating}</span>
-          <span className="text-[13px] text-gray-400">({product.reviews})</span>
+          <span className="text-[13px] text-[#1a1a2e] font-medium">{product.rating}</span>
+          <span className="text-[12px] text-[#6b6b80]">({product.reviews})</span>
         </div>
 
         {/* Price & Action */}
         <div className="mt-auto flex items-center justify-between">
           <div className="flex items-baseline gap-2">
-            <span className="text-[20px] text-[#1a1a2e]">
+            <span className="text-[18px] text-[#1a1a2e] font-bold">
               ₩{product.price.toLocaleString()}
             </span>
             {product.originalPrice && (
-              <span className="text-[14px] text-gray-400 line-through">
+              <span className="text-[13px] text-[#6b6b80] line-through">
                 ₩{product.originalPrice.toLocaleString()}
               </span>
             )}
@@ -98,7 +97,7 @@ export function ProductCard({ product }: ProductCardProps) {
           {purchased ? (
             <Link
               to="/my-lists"
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-green-50 text-green-600 rounded-xl text-[14px] no-underline hover:bg-green-100 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 bg-[#65D9AC]/10 text-[#3dba8a] rounded-xl text-[13px] no-underline hover:bg-[#65D9AC]/20 transition-colors font-medium"
             >
               <Check className="w-4 h-4" />
               사용하기
@@ -106,7 +105,7 @@ export function ProductCard({ product }: ProductCardProps) {
           ) : inCart ? (
             <Link
               to="/cart"
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-violet-50 text-violet-600 rounded-xl text-[14px] no-underline hover:bg-violet-100 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 bg-[#f4f3ff] text-[#6C5CE7] rounded-xl text-[13px] no-underline hover:bg-[#ece9ff] transition-colors font-medium"
             >
               <Check className="w-4 h-4" />
               담김
@@ -114,7 +113,7 @@ export function ProductCard({ product }: ProductCardProps) {
           ) : (
             <button
               onClick={() => addToCart(product)}
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-violet-600 text-white rounded-xl text-[14px] hover:bg-violet-700 transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 bg-[#1a1a2e] text-white rounded-xl text-[13px] hover:bg-[#2a2a3e] transition-colors cursor-pointer border-none font-medium"
             >
               <ShoppingCart className="w-4 h-4" />
               담기
