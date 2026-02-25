@@ -19,10 +19,12 @@
   - Edge Functions 4개 (process-payment, send-notification, aggregate-stats, qr-generate)
   - Seed Data (supabase/seed.sql)
 - [x] Phase 0 통합 — 완료 (2026-02-25)
-- [x] R0: 리뷰 — 조건부 통과 (2026-02-25)
+- [x] R0: 리뷰 — PASS (2026-02-25)
   - B1: 92/100, B2: 88/100, B3: 90/100
   - Critical 7건 발견 → 수정 완료 → 재리뷰 PASS
-  - Non-critical 2건 (soft delete-트리거 불일치) 향후 개선
+  - Non-critical 2건 (soft delete-트리거 불일치) → 수정 완료
+    - on_comment_change: UPDATE OF status 이벤트 추가 (status='deleted' 감지)
+    - on_challenge_participant_change: UPDATE OF status 이벤트 추가 (status='withdrawn' 감지)
 
 ## Phase 1: Frontend P0 (Critical)
 - [ ] F1: Onboarding — 대기 (Phase 0 완료 후)

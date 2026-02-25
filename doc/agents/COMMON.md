@@ -291,7 +291,42 @@ const fetchData = async () => {
 
 ---
 
-## 8. 품질 기준
+## 8. Backend Feedback (FE → BE 피드백)
+
+FE 에이전트(F1~F9)가 작업 중 백엔드 변경이 필요한 상황을 발견하면,
+`doc/BACKEND_FEEDBACK.md`에 구조화된 피드백을 작성합니다.
+
+### 피드백을 작성해야 하는 경우
+- API 함수가 누락되었거나 시그니처가 맞지 않을 때
+- `database.types.ts` 타입이 실제 필요한 구조와 다를 때
+- RLS 정책이 정상적인 데이터 접근을 차단할 때
+- 새로운 RPC 함수나 Edge Function이 필요할 때
+- DB 스키마에 컬럼/테이블 추가가 필요할 때
+
+### 작성 규칙
+1. **BLOCKER**: `// TODO: [FB-N] {설명}` 주석을 남기고, 가능한 우회 방법으로 나머지 작업 계속
+2. **IMPORTANT**: 우회 코드로 작업 계속 + 피드백 작성
+3. **SUGGESTION**: 피드백만 작성 (작업 중단 불필요)
+4. 피드백 번호는 기존 항목 뒤에 순서대로 부여 (FB-001, FB-002, ...)
+5. 같은 문제를 중복 작성하지 않기 (기존 피드백에 Reporter 추가)
+
+### 예시
+```markdown
+### FB-001: profiles 테이블에 onboarding_completed 컬럼 필요
+- **Reporter:** F1
+- **Target:** B1
+- **Severity:** BLOCKER
+- **Category:** DB_SCHEMA
+- **Description:** 온보딩 완료 여부를 저장할 boolean 컬럼이 profiles 테이블에 없음.
+  Walkthrough → Login → Terms → Preference 완료 후 true로 설정해야 함.
+- **Affected Files:** supabase/migrations/00001_create_profiles.sql, src/lib/database.types.ts
+- **Workaround:** localStorage에 임시 저장 (`htb_onboarding_done`)
+- **Status:** OPEN
+```
+
+---
+
+## 9. 품질 기준
 
 ### 필수 체크리스트 (모든 에이전트)
 - [ ] TypeScript strict mode 에러 없음
@@ -317,7 +352,7 @@ const fetchData = async () => {
 
 ---
 
-## 9. 기존 참조 파일
+## 10. 기존 참조 파일
 
 작업 전 반드시 읽어야 할 기존 코드:
 
@@ -330,4 +365,5 @@ const fetchData = async () => {
 | `src/app/store-context.tsx` | 현재 상태관리 로직 이해 |
 | `src/app/data.ts` | 기존 데이터 구조 이해 |
 | `src/app/components/ui/button.tsx` | UI 컴포넌트 스타일 참고 |
+| `doc/BACKEND_FEEDBACK.md` | FE→BE 피드백 작성 (FE 에이전트) / 처리할 피드백 확인 (BE 에이전트) |
 | `package.json` | 설치된 패키지 확인 |

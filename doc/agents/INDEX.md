@@ -5,10 +5,11 @@
 ## 공통 규약
 - [COMMON.md](./COMMON.md) — 모든 에이전트 공통 (디자인 토큰, 코딩 컨벤션, 디렉토리 구조, UI 패턴)
 
-## 리뷰어
+## 기획 & 리뷰
 | Agent | 문서 | 역할 | 핵심 키워드 |
 |-------|------|------|-----------|
-| R0 | [R0_REVIEWER.md](./R0_REVIEWER.md) | Quality Assurance & Code Reviewer | 품질 게이트, PASS/FAIL, 수정 지시 |
+| P0 | [P0_PLANNER.md](./P0_PLANNER.md) | Planner & Configuration Manager | 기획-구현 동기화, 형상관리, CHANGELOG |
+| R0 | [R0_REVIEWER.md](./R0_REVIEWER.md) | QA & System Integration Reviewer | 품질 게이트, 통합 검증, PASS/FAIL |
 
 ## Phase 0: Backend Foundation
 | Agent | 문서 | 역할 | 핵심 키워드 |
