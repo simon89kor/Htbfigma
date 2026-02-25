@@ -1,4 +1,19 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
+import { supabase } from "@/lib/supabase";
+import {
+  signInWithEmail,
+  signUpWithEmail,
+  signInWithSocial,
+  signOut as authSignOut,
+  onAuthStateChange,
+  type SocialProvider,
+} from "@/lib/auth";
+import { getProfile, updateProfile as apiUpdateProfile } from "@/lib/api/profiles";
+import type { Profile } from "@/lib/database.types";
+
+// ============================================================================
+// Types (기존 인터페이스 호환 유지)
+// ============================================================================
 
 export interface User {
   id: string;
@@ -6,152 +21,262 @@ export interface User {
   name: string;
   avatar: string;
   joinedAt: string;
-}
-
-interface RegisteredUser extends User {
-  password: string;
+  /** Supabase profile 전체 데이터 (확장용) */
+  profile?: Profile;
 }
 
 interface AuthContextType {
+  /** 현재 유저 */
   user: User | null;
+  /** 로그인 여부 */
   isLoggedIn: boolean;
-  login: (email: string, password: string) => { success: boolean; error?: string };
-  register: (name: string, email: string, password: string) => { success: boolean; error?: string };
-  logout: () => void;
-  updateProfile: (name: string) => void;
+  /** 로딩 중 여부 (비동기 인증 상태 확인) */
+  loading: boolean;
+  /** 이메일 로그인 */
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  /** 이메일 회원가입 */
+  register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  /** 로그아웃 */
+  logout: () => Promise<void>;
+  /** 프로필 이름 수정 (기존 API 호환) */
+  updateProfile: (name: string) => Promise<void>;
+  /** 소셜 로그인 (카카오/애플/구글) */
+  socialLogin: (provider: SocialProvider) => Promise<{ success: boolean; error?: string }>;
+  /** Supabase 프로필 전체 업데이트 */
+  updateProfileFull: (updates: Partial<Profile>) => Promise<void>;
+  /** 프로필 새로고침 */
+  refreshProfile: () => Promise<void>;
 }
 
-// HMR-safe: keep context reference stable across hot reloads
+// ============================================================================
+// Context (HMR-safe)
+// ============================================================================
+
 const AUTH_CTX_KEY = Symbol.for('TodoMarketAuthContext');
-const globalAuthObj = globalThis as any;
+const globalAuthObj = globalThis as Record<symbol, unknown>;
 if (!globalAuthObj[AUTH_CTX_KEY]) {
   globalAuthObj[AUTH_CTX_KEY] = createContext<AuthContextType | undefined>(undefined);
 }
 const AuthContext = globalAuthObj[AUTH_CTX_KEY] as React.Context<AuthContextType | undefined>;
 
-const STORAGE_KEY_USERS = "todomarket_users";
-const STORAGE_KEY_SESSION = "todomarket_session";
+// ============================================================================
+// Helper: Supabase User → App User 변환
+// ============================================================================
 
-// 기본 데모 계정
-const DEFAULT_USERS: RegisteredUser[] = [
-  {
-    id: "demo-user-1",
-    email: "demo@todomarket.kr",
-    password: "demo1234",
-    name: "김투두",
-    avatar: "",
-    joinedAt: "2025-12-01T00:00:00.000Z",
-  },
-];
-
-const AVATARS = [
-  "🧑‍💻", "👩‍🎨", "👨‍🔬", "👩‍🚀", "🧑‍🍳", "👩‍🏫", "👨‍💼", "👩‍⚕️",
-];
-
-function getRandomAvatar() {
-  return AVATARS[Math.floor(Math.random() * AVATARS.length)];
+function toAppUser(profile: Profile): User {
+  return {
+    id: profile.id,
+    email: profile.email,
+    name: profile.nickname,
+    avatar: profile.avatar_url,
+    joinedAt: profile.created_at,
+    profile,
+  };
 }
 
-function loadUsers(): RegisteredUser[] {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY_USERS);
-    if (stored) return JSON.parse(stored);
-  } catch {}
-  return [...DEFAULT_USERS];
-}
-
-function saveUsers(users: RegisteredUser[]) {
-  localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
-}
-
-function loadSession(): User | null {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY_SESSION);
-    if (stored) return JSON.parse(stored);
-  } catch {}
-  return null;
-}
-
-function saveSession(user: User | null) {
-  if (user) {
-    localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify(user));
-  } else {
-    localStorage.removeItem(STORAGE_KEY_SESSION);
-  }
-}
+// ============================================================================
+// Provider
+// ============================================================================
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [users, setUsers] = useState<RegisteredUser[]>(loadUsers);
-  const [user, setUser] = useState<User | null>(loadSession);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const mountedRef = useRef(true);
 
+  // 초기 세션 확인 + Auth 상태 리스너
   useEffect(() => {
-    saveUsers(users);
-  }, [users]);
+    mountedRef.current = true;
 
-  useEffect(() => {
-    saveSession(user);
-  }, [user]);
-
-  const login = useCallback(
-    (email: string, password: string): { success: boolean; error?: string } => {
-      const found = users.find(
-        (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-      );
-      if (!found) {
-        return { success: false, error: "이메일 또는 비밀번호가 올바르지 않습니다." };
+    // 1. 현재 세션 확인
+    const initSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user && mountedRef.current) {
+          try {
+            const profile = await getProfile(session.user.id);
+            if (mountedRef.current) {
+              setUser(toAppUser(profile));
+            }
+          } catch {
+            // 프로필이 아직 없을 수 있음 (회원가입 직후)
+            if (mountedRef.current) {
+              setUser({
+                id: session.user.id,
+                email: session.user.email ?? '',
+                name: session.user.user_metadata?.nickname ?? '',
+                avatar: '',
+                joinedAt: session.user.created_at,
+              });
+            }
+          }
+        }
+      } catch {
+        // 세션 조회 실패 시 무시
+      } finally {
+        if (mountedRef.current) {
+          setLoading(false);
+        }
       }
-      const { password: _, ...userData } = found;
-      setUser(userData);
-      return { success: true };
-    },
-    [users]
-  );
+    };
 
-  const register = useCallback(
-    (name: string, email: string, password: string): { success: boolean; error?: string } => {
-      const exists = users.some((u) => u.email.toLowerCase() === email.toLowerCase());
-      if (exists) {
-        return { success: false, error: "이미 등록된 이메일입니다." };
+    initSession();
+
+    // 2. Auth 상태 변경 리스너
+    const subscription = onAuthStateChange(async (event, session) => {
+      if (!mountedRef.current) return;
+
+      if (event === 'SIGNED_IN' && session?.user) {
+        try {
+          const profile = await getProfile(session.user.id);
+          if (mountedRef.current) {
+            setUser(toAppUser(profile));
+          }
+        } catch {
+          if (mountedRef.current) {
+            setUser({
+              id: session.user.id,
+              email: session.user.email ?? '',
+              name: session.user.user_metadata?.nickname ?? '',
+              avatar: '',
+              joinedAt: session.user.created_at,
+            });
+          }
+        }
+      } else if (event === 'SIGNED_OUT') {
+        if (mountedRef.current) {
+          setUser(null);
+        }
+      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        // 토큰 갱신 시 별도 처리 불필요 (세션 유지)
       }
-      const newUser: RegisteredUser = {
-        id: `user-${Date.now()}`,
-        email,
-        password,
-        name,
-        avatar: getRandomAvatar(),
-        joinedAt: new Date().toISOString(),
-      };
-      setUsers((prev) => [...prev, newUser]);
-      const { password: _, ...userData } = newUser;
-      setUser(userData);
-      return { success: true };
-    },
-    [users]
-  );
+    });
 
-  const logout = useCallback(() => {
-    setUser(null);
+    return () => {
+      mountedRef.current = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
-  const updateProfile = useCallback((name: string) => {
-    setUser((prev) => {
-      if (!prev) return prev;
-      return { ...prev, name };
-    });
-    setUsers((prev) =>
-      prev.map((u) => (u.id === user?.id ? { ...u, name } : u))
-    );
-  }, [user?.id]);
+  // 이메일 로그인
+  const login = useCallback(
+    async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const { user: authUser } = await signInWithEmail(email, password);
+        if (!authUser) {
+          return { success: false, error: '로그인에 실패했습니다.' };
+        }
+        // onAuthStateChange가 user 상태 업데이트를 처리
+        return { success: true };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : '로그인에 실패했습니다.';
+        // Supabase 에러 메시지 한글 변환
+        if (message.includes('Invalid login credentials')) {
+          return { success: false, error: '이메일 또는 비밀번호가 올바르지 않습니다.' };
+        }
+        return { success: false, error: message };
+      }
+    },
+    []
+  );
+
+  // 이메일 회원가입
+  const register = useCallback(
+    async (name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+      try {
+        const { user: authUser } = await signUpWithEmail({
+          email,
+          password,
+          nickname: name,
+        });
+        if (!authUser) {
+          return { success: false, error: '회원가입에 실패했습니다.' };
+        }
+        // onAuthStateChange가 user 상태 업데이트를 처리
+        return { success: true };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : '회원가입에 실패했습니다.';
+        if (message.includes('already registered') || message.includes('already been registered')) {
+          return { success: false, error: '이미 등록된 이메일입니다.' };
+        }
+        return { success: false, error: message };
+      }
+    },
+    []
+  );
+
+  // 로그아웃
+  const logout = useCallback(async () => {
+    try {
+      await authSignOut();
+      // onAuthStateChange가 user 상태를 null로 설정
+    } catch {
+      // 에러 발생해도 로컬 상태 초기화
+      setUser(null);
+    }
+  }, []);
+
+  // 프로필 이름 수정 (기존 API 호환: 이름만 업데이트)
+  const updateProfileHandler = useCallback(async (name: string) => {
+    if (!user) return;
+    try {
+      const updatedProfile = await apiUpdateProfile(user.id, { nickname: name });
+      setUser(toAppUser(updatedProfile));
+    } catch {
+      // 에러 시 로컬 상태만 업데이트 (오프라인 대응)
+      setUser((prev) => (prev ? { ...prev, name } : prev));
+    }
+  }, [user]);
+
+  // 소셜 로그인
+  const socialLogin = useCallback(
+    async (provider: SocialProvider): Promise<{ success: boolean; error?: string }> => {
+      try {
+        await signInWithSocial(provider);
+        // OAuth 리다이렉트 되므로 여기서 반환값은 의미 없음
+        return { success: true };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : '소셜 로그인에 실패했습니다.';
+        return { success: false, error: message };
+      }
+    },
+    []
+  );
+
+  // 프로필 전체 업데이트
+  const updateProfileFull = useCallback(async (updates: Partial<Profile>) => {
+    if (!user) return;
+    try {
+      const updatedProfile = await apiUpdateProfile(user.id, updates);
+      setUser(toAppUser(updatedProfile));
+    } catch {
+      // 에러 무시
+    }
+  }, [user]);
+
+  // 프로필 새로고침
+  const refreshProfile = useCallback(async () => {
+    if (!user) return;
+    try {
+      const profile = await getProfile(user.id);
+      setUser(toAppUser(profile));
+    } catch {
+      // 에러 무시
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider
       value={{
         user,
         isLoggedIn: !!user,
+        loading,
         login,
         register,
         logout,
-        updateProfile,
+        updateProfile: updateProfileHandler,
+        socialLogin,
+        updateProfileFull,
+        refreshProfile,
       }}
     >
       {children}

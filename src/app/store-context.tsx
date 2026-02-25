@@ -1,5 +1,28 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
+import { useAuth } from "./auth-context";
 import { TodoTemplate } from "./data";
+import {
+  getUserRoutines,
+  createCustomRoutine,
+  deleteUserRoutine,
+  createTodoItem as apiCreateTodoItem,
+  toggleTodoItem as apiToggleTodoItem,
+  updateTodoItem as apiUpdateTodoItem,
+  deleteTodoItem as apiDeleteTodoItem,
+  createTodoSubItem as apiCreateTodoSubItem,
+  toggleTodoSubItem as apiToggleTodoSubItem,
+  deleteTodoSubItem as apiDeleteTodoSubItem,
+  type UserRoutineWithItems,
+} from "@/lib/api/user-routines";
+import {
+  createPurchase,
+  getUserPurchases,
+  hasUserPurchasedRoutine,
+} from "@/lib/api/purchases";
+
+// ============================================================================
+// Types (기존 인터페이스 유지)
+// ============================================================================
 
 export interface CartItem {
   product: TodoTemplate;
@@ -17,8 +40,8 @@ export interface TodoItem {
   text: string;
   completed: boolean;
   day: number;
-  time?: string; // "21:00" format
-  repeatDays?: number[]; // 0=Sun, 1=Mon ... 6=Sat
+  time?: string;
+  repeatDays?: number[];
   moveToNextDay?: boolean;
   subItems?: SubItem[];
 }
@@ -51,13 +74,14 @@ interface StoreContextType {
   cart: CartItem[];
   purchasedLists: PurchasedList[];
   customLists: CustomList[];
+  loading: boolean;
   addToCart: (product: TodoTemplate) => void;
   removeFromCart: (productId: string) => void;
   getCartTotal: () => number;
   getCartCount: () => number;
   isInCart: (productId: string) => boolean;
   isPurchased: (productId: string) => boolean;
-  checkout: () => void;
+  checkout: () => Promise<void>;
   toggleTodoItem: (listId: string, itemId: string) => void;
   addTodoItem: (listId: string, text: string, day: number, time?: string) => void;
   deleteTodoItem: (listId: string, itemId: string) => void;
@@ -72,50 +96,192 @@ interface StoreContextType {
   toggleCustomTodoItem: (listId: string, itemId: string) => void;
   updateCustomTodoItem: (listId: string, itemId: string, updates: Partial<Omit<TodoItem, 'id'>>) => void;
   toggleListMoveToNextDay: (listId: string) => void;
+  /** 서버에서 데이터 다시 불러오기 */
+  refreshData: () => Promise<void>;
 }
 
-// HMR-safe: keep context reference stable across hot reloads
+// ============================================================================
+// Context (HMR-safe)
+// ============================================================================
+
 const STORE_CTX_KEY = Symbol.for('TodoMarketStoreContext');
-const globalObj = globalThis as any;
+const globalObj = globalThis as Record<symbol, unknown>;
 if (!globalObj[STORE_CTX_KEY]) {
   globalObj[STORE_CTX_KEY] = createContext<StoreContextType | undefined>(undefined);
 }
 const StoreContext = globalObj[STORE_CTX_KEY] as React.Context<StoreContextType | undefined>;
 
+// ============================================================================
+// localStorage helpers (카트는 비로그인도 사용 가능하므로 localStorage 유지)
+// ============================================================================
+
 const STORAGE_KEY_CART = "todomarket_cart";
-const STORAGE_KEY_PURCHASED = "todomarket_purchased";
-const STORAGE_KEY_CUSTOM = "todomarket_custom";
 
-function loadFromStorage<T>(key: string, fallback: T): T {
+function loadCart(): CartItem[] {
   try {
-    const stored = localStorage.getItem(key);
+    const stored = localStorage.getItem(STORAGE_KEY_CART);
     if (stored) return JSON.parse(stored);
-  } catch {}
-  return fallback;
+  } catch { /* empty */ }
+  return [];
 }
 
-function saveToStorage(key: string, value: unknown) {
+function saveCart(cart: CartItem[]) {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch {}
+    localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
+  } catch { /* empty */ }
 }
+
+// ============================================================================
+// Helpers: DB 데이터 → 기존 인터페이스 변환
+// ============================================================================
+
+function dbRoutineToTodoItem(
+  item: UserRoutineWithItems['todo_items'] extends (infer T)[] | undefined ? T : never
+): TodoItem {
+  const dbItem = item as {
+    id: string;
+    text: string;
+    completed: boolean;
+    day: number | null;
+    time: string | null;
+    repeat_days: string[];
+    sort_order: number;
+    todo_sub_items?: { id: string; text: string; completed: boolean; sort_order: number }[];
+  };
+
+  return {
+    id: dbItem.id,
+    text: dbItem.text,
+    completed: dbItem.completed,
+    day: dbItem.day ?? 1,
+    time: dbItem.time ?? undefined,
+    repeatDays: dbItem.repeat_days?.map(Number).filter((n) => !isNaN(n)),
+    subItems: dbItem.todo_sub_items?.map((si) => ({
+      id: si.id,
+      text: si.text,
+      completed: si.completed,
+    })),
+  };
+}
+
+function dbUserRoutineToPurchasedList(ur: UserRoutineWithItems): PurchasedList {
+  return {
+    id: ur.id,
+    product: {
+      id: ur.routine_id ?? ur.id,
+      name: ur.title,
+      description: ur.description,
+      longDescription: ur.description,
+      price: 0,
+      image: ur.routines?.image_url ?? '',
+      category: ur.category,
+      rating: 0,
+      reviews: 0,
+      color: ur.routines?.color ?? '#65D9AC',
+      durationDays: ur.routines?.duration_days ?? 0,
+      tags: [],
+      dayPlans: [],
+      features: [],
+    },
+    purchasedAt: ur.created_at,
+    startDate: ur.start_date ?? ur.created_at,
+    items: ur.todo_items?.map(dbRoutineToTodoItem) ?? [],
+  };
+}
+
+function dbUserRoutineToCustomList(ur: UserRoutineWithItems): CustomList {
+  const startDate = ur.start_date ?? ur.created_at;
+  const endDate = ur.end_date ?? '';
+  let durationDays = 0;
+  let durationType: CustomList['durationType'] = 'unlimited';
+
+  if (startDate && endDate) {
+    const diff = new Date(endDate).getTime() - new Date(startDate).getTime();
+    durationDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    if (durationDays <= 7) durationType = '1week';
+    else if (durationDays <= 28) durationType = '4weeks';
+    else if (durationDays <= 100) durationType = '100days';
+    else durationType = 'unlimited';
+  }
+
+  return {
+    id: ur.id,
+    title: ur.title,
+    category: ur.category,
+    headerColor: '#65D9AC',
+    durationType,
+    durationDays,
+    startDate,
+    endDate,
+    showDDay: !!endDate,
+    createdAt: ur.created_at,
+    items: ur.todo_items?.map(dbRoutineToTodoItem) ?? [],
+  };
+}
+
+// ============================================================================
+// Provider
+// ============================================================================
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>(() => loadFromStorage(STORAGE_KEY_CART, []));
-  const [purchasedLists, setPurchasedLists] = useState<PurchasedList[]>(() => loadFromStorage(STORAGE_KEY_PURCHASED, []));
-  const [customLists, setCustomLists] = useState<CustomList[]>(() => loadFromStorage(STORAGE_KEY_CUSTOM, []));
+  const { user, isLoggedIn } = useAuth();
+  const [cart, setCart] = useState<CartItem[]>(loadCart);
+  const [purchasedLists, setPurchasedLists] = useState<PurchasedList[]>([]);
+  const [customLists, setCustomLists] = useState<CustomList[]>([]);
+  const [loading, setLoading] = useState(false);
+  const mountedRef = useRef(true);
 
+  // 카트 localStorage 동기화
   useEffect(() => {
-    saveToStorage(STORAGE_KEY_CART, cart);
+    saveCart(cart);
   }, [cart]);
 
+  // 로그인 시 서버에서 데이터 로드
   useEffect(() => {
-    saveToStorage(STORAGE_KEY_PURCHASED, purchasedLists);
-  }, [purchasedLists]);
+    mountedRef.current = true;
+    if (isLoggedIn && user) {
+      loadUserData(user.id);
+    } else {
+      setPurchasedLists([]);
+      setCustomLists([]);
+    }
+    return () => {
+      mountedRef.current = false;
+    };
+  }, [isLoggedIn, user?.id]);
 
-  useEffect(() => {
-    saveToStorage(STORAGE_KEY_CUSTOM, customLists);
-  }, [customLists]);
+  const loadUserData = async (userId: string) => {
+    setLoading(true);
+    try {
+      const { data: routines } = await getUserRoutines(userId, { status: 'active' });
+
+      if (!mountedRef.current) return;
+
+      const purchased: PurchasedList[] = [];
+      const custom: CustomList[] = [];
+
+      routines.forEach((ur) => {
+        if (ur.is_custom) {
+          custom.push(dbUserRoutineToCustomList(ur));
+        } else {
+          purchased.push(dbUserRoutineToPurchasedList(ur));
+        }
+      });
+
+      setPurchasedLists(purchased);
+      setCustomLists(custom);
+    } catch {
+      // 에러 시 빈 배열 유지
+    } finally {
+      if (mountedRef.current) {
+        setLoading(false);
+      }
+    }
+  };
+
+  // ========================================================================
+  // Cart (localStorage 유지 - 비로그인도 사용 가능)
+  // ========================================================================
 
   const addToCart = useCallback((product: TodoTemplate) => {
     setCart((prev) => {
@@ -138,46 +304,86 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, [cart]);
 
   const isInCart = useCallback(
-    (productId: string) => {
-      return cart.some((item) => item.product.id === productId);
-    },
+    (productId: string) => cart.some((item) => item.product.id === productId),
     [cart]
   );
 
   const isPurchased = useCallback(
     (productId: string) => {
+      // 로컬 상태에서 먼저 확인
       return purchasedLists.some((list) => list.product.id === productId);
     },
     [purchasedLists]
   );
 
-  const checkout = useCallback(() => {
-    const newPurchases: PurchasedList[] = cart.map((item) => {
-      const todoItems: TodoItem[] = [];
-      item.product.dayPlans.forEach((dayPlan) => {
-        dayPlan.items.forEach((text, idx) => {
-          todoItems.push({
-            id: `${item.product.id}-d${dayPlan.day}-${idx}`,
-            text,
-            completed: false,
-            day: dayPlan.day,
+  // ========================================================================
+  // Checkout → Supabase
+  // ========================================================================
+
+  const checkout = useCallback(async () => {
+    if (!user) return;
+
+    const newPurchases: PurchasedList[] = [];
+
+    for (const item of cart) {
+      try {
+        // 이미 구매한 루틴인지 확인
+        const alreadyPurchased = await hasUserPurchasedRoutine(user.id, item.product.id);
+        if (alreadyPurchased) continue;
+
+        // 구매 생성
+        const purchase = await createPurchase({
+          userId: user.id,
+          routineId: item.product.id,
+          periodLabel: `${item.product.durationDays}일`,
+          periodDays: item.product.durationDays,
+          amount: item.product.originalPrice ?? item.product.price,
+          discount: (item.product.originalPrice ?? item.product.price) - item.product.price,
+          finalAmount: item.product.price,
+          paymentMethod: 'free',
+          startDate: new Date().toISOString(),
+        });
+
+        // 투두 아이템 생성
+        const todoItems: TodoItem[] = [];
+        item.product.dayPlans.forEach((dayPlan) => {
+          dayPlan.items.forEach((text, idx) => {
+            todoItems.push({
+              id: `${item.product.id}-d${dayPlan.day}-${idx}`,
+              text,
+              completed: false,
+              day: dayPlan.day,
+            });
           });
         });
-      });
 
-      return {
-        id: `${item.product.id}-${Date.now()}`,
-        product: item.product,
-        purchasedAt: new Date().toISOString(),
-        startDate: new Date().toISOString(),
-        items: todoItems,
-      };
-    });
+        newPurchases.push({
+          id: purchase.id,
+          product: item.product,
+          purchasedAt: new Date().toISOString(),
+          startDate: new Date().toISOString(),
+          items: todoItems,
+        });
+      } catch {
+        // 개별 구매 실패 시 건너뛰기
+      }
+    }
+
     setPurchasedLists((prev) => [...prev, ...newPurchases]);
     setCart([]);
-  }, [cart]);
+
+    // 서버 데이터 새로고침
+    if (user) {
+      await loadUserData(user.id);
+    }
+  }, [cart, user]);
+
+  // ========================================================================
+  // Todo Items → Supabase (기존 인터페이스 유지, 내부 구현은 Supabase)
+  // ========================================================================
 
   const toggleTodoItem = useCallback((listId: string, itemId: string) => {
+    // 즉시 로컬 상태 업데이트 (optimistic)
     setPurchasedLists((prev) =>
       prev.map((list) =>
         list.id === listId
@@ -190,9 +396,33 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           : list
       )
     );
-  }, []);
+
+    // 서버 동기화
+    const list = purchasedLists.find((l) => l.id === listId);
+    const item = list?.items.find((i) => i.id === itemId);
+    if (item) {
+      apiToggleTodoItem(itemId, !item.completed).catch(() => {
+        // 실패 시 롤백
+        setPurchasedLists((prev) =>
+          prev.map((l) =>
+            l.id === listId
+              ? {
+                  ...l,
+                  items: l.items.map((i) =>
+                    i.id === itemId ? { ...i, completed: item.completed } : i
+                  ),
+                }
+              : l
+          )
+        );
+      });
+    }
+  }, [purchasedLists]);
 
   const addTodoItem = useCallback((listId: string, text: string, day: number, time?: string) => {
+    const tempId = `temp-${Date.now()}`;
+
+    // optimistic 업데이트
     setPurchasedLists((prev) =>
       prev.map((list) =>
         list.id === listId
@@ -200,13 +430,47 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
               ...list,
               items: [
                 ...list.items,
-                { id: `custom-${Date.now()}`, text, completed: false, day, ...(time && { time }) },
+                { id: tempId, text, completed: false, day, ...(time && { time }) },
               ],
             }
           : list
       )
     );
-  }, []);
+
+    // 서버에 생성
+    if (user) {
+      apiCreateTodoItem({
+        userRoutineId: listId,
+        userId: user.id,
+        text,
+        day,
+        time,
+      }).then((created) => {
+        // temp ID를 실제 ID로 교체
+        setPurchasedLists((prev) =>
+          prev.map((list) =>
+            list.id === listId
+              ? {
+                  ...list,
+                  items: list.items.map((item) =>
+                    item.id === tempId ? { ...item, id: created.id } : item
+                  ),
+                }
+              : list
+          )
+        );
+      }).catch(() => {
+        // 실패 시 제거
+        setPurchasedLists((prev) =>
+          prev.map((list) =>
+            list.id === listId
+              ? { ...list, items: list.items.filter((i) => i.id !== tempId) }
+              : list
+          )
+        );
+      });
+    }
+  }, [user]);
 
   const deleteTodoItem = useCallback((listId: string, itemId: string) => {
     setPurchasedLists((prev) =>
@@ -216,6 +480,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           : list
       )
     );
+
+    apiDeleteTodoItem(itemId).catch(() => {
+      // 실패 무시 (이미 로컬에서 삭제됨)
+    });
   }, []);
 
   const updateTodoItem = useCallback((listId: string, itemId: string, updates: Partial<Omit<TodoItem, 'id'>>) => {
@@ -231,11 +499,24 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           : list
       )
     );
+
+    apiUpdateTodoItem(itemId, {
+      text: updates.text,
+      day: updates.day,
+      time: updates.time ?? undefined,
+      repeatDays: updates.repeatDays?.map(String),
+    }).catch(() => {
+      // 실패 무시
+    });
   }, []);
 
+  // ========================================================================
+  // Sub Items → Supabase
+  // ========================================================================
+
   const toggleSubItem = useCallback((listId: string, itemId: string, subItemId: string) => {
-    const updateList = (lists: any[]) =>
-      lists.map((list: any) =>
+    const updateList = (lists: (PurchasedList | CustomList)[]) =>
+      lists.map((list) =>
         list.id === listId
           ? {
               ...list,
@@ -252,14 +533,29 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             }
           : list
       );
-    setPurchasedLists((prev) => updateList(prev));
-    setCustomLists((prev) => updateList(prev));
-  }, []);
+
+    // 현재 상태 조회하여 토글
+    const allLists = [...purchasedLists, ...customLists];
+    const currentList = allLists.find((l) => l.id === listId);
+    const currentItem = currentList?.items.find((i) => i.id === itemId);
+    const currentSubItem = currentItem?.subItems?.find((si) => si.id === subItemId);
+
+    setPurchasedLists((prev) => updateList(prev) as PurchasedList[]);
+    setCustomLists((prev) => updateList(prev) as CustomList[]);
+
+    if (currentSubItem) {
+      apiToggleTodoSubItem(subItemId, !currentSubItem.completed).catch(() => {
+        // 실패 무시
+      });
+    }
+  }, [purchasedLists, customLists]);
 
   const addSubItem = useCallback((listId: string, itemId: string, text: string) => {
-    const newSub: SubItem = { id: `sub-${Date.now()}`, text, completed: false };
-    const updateList = (lists: any[]) =>
-      lists.map((list: any) =>
+    const tempId = `sub-${Date.now()}`;
+    const newSub: SubItem = { id: tempId, text, completed: false };
+
+    const updateList = (lists: (PurchasedList | CustomList)[]) =>
+      lists.map((list) =>
         list.id === listId
           ? {
               ...list,
@@ -271,13 +567,41 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             }
           : list
       );
-    setPurchasedLists((prev) => updateList(prev));
-    setCustomLists((prev) => updateList(prev));
+
+    setPurchasedLists((prev) => updateList(prev) as PurchasedList[]);
+    setCustomLists((prev) => updateList(prev) as CustomList[]);
+
+    apiCreateTodoSubItem({ todoItemId: itemId, text }).then((created) => {
+      // temp ID 교체
+      const replaceId = (lists: (PurchasedList | CustomList)[]) =>
+        lists.map((list) =>
+          list.id === listId
+            ? {
+                ...list,
+                items: list.items.map((item: TodoItem) =>
+                  item.id === itemId
+                    ? {
+                        ...item,
+                        subItems: item.subItems?.map((si) =>
+                          si.id === tempId ? { ...si, id: created.id } : si
+                        ),
+                      }
+                    : item
+                ),
+              }
+            : list
+        );
+
+      setPurchasedLists((prev) => replaceId(prev) as PurchasedList[]);
+      setCustomLists((prev) => replaceId(prev) as CustomList[]);
+    }).catch(() => {
+      // 실패 시 제거
+    });
   }, []);
 
   const deleteSubItem = useCallback((listId: string, itemId: string, subItemId: string) => {
-    const updateList = (lists: any[]) =>
-      lists.map((list: any) =>
+    const updateList = (lists: (PurchasedList | CustomList)[]) =>
+      lists.map((list) =>
         list.id === listId
           ? {
               ...list,
@@ -289,28 +613,60 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             }
           : list
       );
-    setPurchasedLists((prev) => updateList(prev));
-    setCustomLists((prev) => updateList(prev));
+
+    setPurchasedLists((prev) => updateList(prev) as PurchasedList[]);
+    setCustomLists((prev) => updateList(prev) as CustomList[]);
+
+    apiDeleteTodoSubItem(subItemId).catch(() => {
+      // 실패 무시
+    });
   }, []);
 
-  // Custom list CRUD
-  const createCustomList = useCallback((list: Omit<CustomList, 'id' | 'createdAt' | 'items'>): string => {
-    const id = `custom-${Date.now()}`;
+  // ========================================================================
+  // Custom List CRUD → Supabase
+  // ========================================================================
+
+  const createCustomListHandler = useCallback((list: Omit<CustomList, 'id' | 'createdAt' | 'items'>): string => {
+    const tempId = `custom-${Date.now()}`;
     const newList: CustomList = {
       ...list,
-      id,
+      id: tempId,
       createdAt: new Date().toISOString(),
       items: [],
     };
     setCustomLists((prev) => [...prev, newList]);
-    return id;
-  }, []);
 
-  const deleteCustomList = useCallback((id: string) => {
+    // 서버에 생성
+    if (user) {
+      createCustomRoutine({
+        userId: user.id,
+        title: list.title,
+        category: list.category,
+        startDate: list.startDate,
+        endDate: list.endDate || undefined,
+      }).then((created) => {
+        setCustomLists((prev) =>
+          prev.map((cl) => (cl.id === tempId ? { ...cl, id: created.id } : cl))
+        );
+      }).catch(() => {
+        // 실패 시 제거
+        setCustomLists((prev) => prev.filter((cl) => cl.id !== tempId));
+      });
+    }
+
+    return tempId;
+  }, [user]);
+
+  const deleteCustomListHandler = useCallback((id: string) => {
     setCustomLists((prev) => prev.filter((list) => list.id !== id));
+    deleteUserRoutine(id).catch(() => {
+      // 실패 무시
+    });
   }, []);
 
   const addCustomTodoItem = useCallback((listId: string, text: string, day: number, time?: string) => {
+    const tempId = `ct-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+
     setCustomLists((prev) =>
       prev.map((list) =>
         list.id === listId
@@ -318,13 +674,44 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
               ...list,
               items: [
                 ...list.items,
-                { id: `ct-${Date.now()}-${Math.random().toString(36).slice(2,6)}`, text, completed: false, day, ...(time && { time }) },
+                { id: tempId, text, completed: false, day, ...(time && { time }) },
               ],
             }
           : list
       )
     );
-  }, []);
+
+    if (user) {
+      apiCreateTodoItem({
+        userRoutineId: listId,
+        userId: user.id,
+        text,
+        day,
+        time,
+      }).then((created) => {
+        setCustomLists((prev) =>
+          prev.map((list) =>
+            list.id === listId
+              ? {
+                  ...list,
+                  items: list.items.map((item) =>
+                    item.id === tempId ? { ...item, id: created.id } : item
+                  ),
+                }
+              : list
+          )
+        );
+      }).catch(() => {
+        setCustomLists((prev) =>
+          prev.map((list) =>
+            list.id === listId
+              ? { ...list, items: list.items.filter((i) => i.id !== tempId) }
+              : list
+          )
+        );
+      });
+    }
+  }, [user]);
 
   const deleteCustomTodoItem = useCallback((listId: string, itemId: string) => {
     setCustomLists((prev) =>
@@ -334,9 +721,16 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           : list
       )
     );
+
+    apiDeleteTodoItem(itemId).catch(() => {
+      // 실패 무시
+    });
   }, []);
 
   const toggleCustomTodoItem = useCallback((listId: string, itemId: string) => {
+    const list = customLists.find((l) => l.id === listId);
+    const item = list?.items.find((i) => i.id === itemId);
+
     setCustomLists((prev) =>
       prev.map((list) =>
         list.id === listId
@@ -349,7 +743,25 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           : list
       )
     );
-  }, []);
+
+    if (item) {
+      apiToggleTodoItem(itemId, !item.completed).catch(() => {
+        // 실패 시 롤백
+        setCustomLists((prev) =>
+          prev.map((l) =>
+            l.id === listId
+              ? {
+                  ...l,
+                  items: l.items.map((i) =>
+                    i.id === itemId ? { ...i, completed: item.completed } : i
+                  ),
+                }
+              : l
+          )
+        );
+      });
+    }
+  }, [customLists]);
 
   const updateCustomTodoItem = useCallback((listId: string, itemId: string, updates: Partial<Omit<TodoItem, 'id'>>) => {
     setCustomLists((prev) =>
@@ -364,6 +776,15 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           : list
       )
     );
+
+    apiUpdateTodoItem(itemId, {
+      text: updates.text,
+      day: updates.day,
+      time: updates.time ?? undefined,
+      repeatDays: updates.repeatDays?.map(String),
+    }).catch(() => {
+      // 실패 무시
+    });
   }, []);
 
   const toggleListMoveToNextDay = useCallback((listId: string) => {
@@ -383,12 +804,20 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  // 서버 데이터 새로고침
+  const refreshData = useCallback(async () => {
+    if (user) {
+      await loadUserData(user.id);
+    }
+  }, [user]);
+
   return (
     <StoreContext.Provider
       value={{
         cart,
         purchasedLists,
         customLists,
+        loading,
         addToCart,
         removeFromCart,
         getCartTotal,
@@ -403,13 +832,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         toggleSubItem,
         addSubItem,
         deleteSubItem,
-        createCustomList,
-        deleteCustomList,
+        createCustomList: createCustomListHandler,
+        deleteCustomList: deleteCustomListHandler,
         addCustomTodoItem,
         deleteCustomTodoItem,
         toggleCustomTodoItem,
         updateCustomTodoItem,
         toggleListMoveToNextDay,
+        refreshData,
       }}
     >
       {children}
