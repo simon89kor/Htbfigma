@@ -1,20 +1,35 @@
 import { Outlet, Link, useLocation } from "react-router";
 import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  NavbarMenuToggle,
+  NavbarMenu,
+  NavbarMenuItem,
+  Button,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  DropdownSection,
+  Avatar,
+  Badge,
+  Divider,
+} from "@heroui/react";
+import {
   ShoppingCart,
   Store,
   ClipboardList,
   CheckSquare,
-  Menu,
-  X,
   LogIn,
   User,
   LogOut,
-  ChevronDown,
   PlusCircle,
 } from "lucide-react";
 import { useStore } from "../store-context";
 import { useAuth } from "../auth-context";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export function Layout() {
@@ -22,28 +37,10 @@ export function Layout() {
   const { user, isLoggedIn, logout } = useAuth();
   const location = useLocation();
   const cartCount = getCartCount();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const userMenuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
-        setUserMenuOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
-
-  useEffect(() => {
-    setMobileMenuOpen(false);
-    setUserMenuOpen(false);
-  }, [location.pathname]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
-    setUserMenuOpen(false);
     toast.success("로그아웃 되었습니다.");
   };
 
@@ -55,216 +52,215 @@ export function Layout() {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--color-page-bg)]">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-black/[0.04]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-2.5 no-underline shrink-0">
-              <div className="w-9 h-9 bg-[#1a1a2e] rounded-xl flex items-center justify-center">
-                <CheckSquare className="w-5 h-5 text-[#65D9AC]" />
-              </div>
-              <span className="text-[#1a1a2e] font-semibold tracking-tight hidden sm:block">
-                TodoMarket
-              </span>
-            </Link>
-
-            {/* Right Side */}
-            <div className="flex items-center gap-2">
-              {/* Desktop Nav */}
-              <nav className="hidden md:flex items-center gap-0.5">
-                {navLinks.map((link) => {
-                  const Icon = link.icon;
-                  const isActive = location.pathname === link.path;
-                  return (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      className={`relative flex items-center gap-2 px-4 py-2 rounded-xl no-underline transition-all duration-200 text-[14px] ${
-                        isActive
-                          ? "bg-[#1a1a2e] text-white font-medium"
-                          : "text-[#6b6b80] hover:text-[#1a1a2e] hover:bg-black/[0.03]"
-                      }`}
-                    >
-                      <Icon className="w-[18px] h-[18px]" />
-                      <span>{link.label}</span>
-                      {link.badge ? (
-                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#6C5CE7] text-white rounded-full flex items-center justify-center text-[11px] font-medium">
-                          {link.badge}
-                        </span>
-                      ) : null}
-                    </Link>
-                  );
-                })}
-              </nav>
-
-              {/* Desktop Auth */}
-              <div className="hidden md:block ml-2">
-                {isLoggedIn && user ? (
-                  <div className="relative" ref={userMenuRef}>
-                    <button
-                      onClick={() => setUserMenuOpen(!userMenuOpen)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-black/[0.03] transition-colors cursor-pointer bg-transparent border-none"
-                    >
-                      <div className="w-8 h-8 bg-[#f4f3ff] rounded-full flex items-center justify-center text-[16px]">
-                        {user.avatar || "🧑‍💻"}
-                      </div>
-                      <span className="text-[14px] text-[#1a1a2e] max-w-[100px] truncate">
-                        {user.name}
-                      </span>
-                      <ChevronDown className={`w-4 h-4 text-[#6b6b80] transition-transform ${userMenuOpen ? "rotate-180" : ""}`} />
-                    </button>
-
-                    {userMenuOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl border border-black/[0.06] shadow-lg overflow-hidden z-50">
-                        <div className="px-4 py-3 border-b border-black/[0.04]">
-                          <p className="text-[14px] text-[#1a1a2e] font-medium truncate">{user.name}</p>
-                          <p className="text-[12px] text-[#6b6b80] truncate">{user.email}</p>
-                        </div>
-                        <div className="py-1">
-                          <Link
-                            to="/profile"
-                            className="flex items-center gap-3 px-4 py-2.5 text-[#6b6b80] hover:bg-black/[0.02] transition-colors no-underline text-[14px]"
-                          >
-                            <User className="w-4 h-4" />
-                            내 프로필
-                          </Link>
-                          <Link
-                            to="/my-lists"
-                            className="flex items-center gap-3 px-4 py-2.5 text-[#6b6b80] hover:bg-black/[0.02] transition-colors no-underline text-[14px]"
-                          >
-                            <ClipboardList className="w-4 h-4" />
-                            내 리스트
-                          </Link>
-                        </div>
-                        <div className="border-t border-black/[0.04] py-1">
-                          <button
-                            onClick={handleLogout}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-red-500 hover:bg-red-50 transition-colors cursor-pointer bg-transparent border-none text-[14px] text-left"
-                          >
-                            <LogOut className="w-4 h-4" />
-                            로그아웃
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Link
-                    to="/login"
-                    className="flex items-center gap-2 px-4 py-2 bg-[#1a1a2e] text-white rounded-xl no-underline hover:bg-[#2a2a3e] transition-colors text-[14px]"
-                  >
-                    <LogIn className="w-4 h-4" />
-                    로그인
-                  </Link>
-                )}
-              </div>
-
-              {/* Mobile */}
-              <div className="md:hidden flex items-center gap-3">
-                <Link to="/my-lists" className="relative p-2 text-[#6b6b80] no-underline">
-                  <ClipboardList className="w-5 h-5" />
-                </Link>
-                <button
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="p-2 text-[#6b6b80] hover:text-[#1a1a2e]"
-                >
-                  {mobileMenuOpen ? (
-                    <X className="w-5 h-5" />
-                  ) : (
-                    <Menu className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
+    <div className="min-h-screen bg-default-50">
+      <Navbar
+        isMenuOpen={isMenuOpen}
+        onMenuOpenChange={setIsMenuOpen}
+        maxWidth="xl"
+        isBordered
+        classNames={{
+          base: "bg-white/80 backdrop-blur-xl",
+          wrapper: "px-4 sm:px-6",
+        }}
+      >
+        <NavbarBrand>
+          <Link to="/" className="flex items-center gap-2.5 no-underline">
+            <div className="w-9 h-9 bg-[#1a1a2e] rounded-xl flex items-center justify-center">
+              <CheckSquare className="w-5 h-5 text-[#65D9AC]" />
             </div>
-          </div>
-        </div>
+            <span className="text-[#1a1a2e] font-semibold tracking-tight hidden sm:block text-lg">
+              TodoMarket
+            </span>
+          </Link>
+        </NavbarBrand>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-black/[0.04] bg-white pb-4">
-            {isLoggedIn && user && (
-              <div className="px-4 pt-4 pb-3 border-b border-black/[0.04] mb-2">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#f4f3ff] rounded-full flex items-center justify-center text-[20px]">
-                    {user.avatar || "🧑‍💻"}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[15px] text-[#1a1a2e] font-medium truncate">{user.name}</p>
-                    <p className="text-[12px] text-[#6b6b80] truncate">{user.email}</p>
-                  </div>
+        <NavbarContent className="hidden md:flex gap-1" justify="center">
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            const isActive = location.pathname === link.path;
+            return (
+              <NavbarItem key={link.path} isActive={isActive}>
+                <Link to={link.path} className="no-underline">
+                  {link.badge ? (
+                    <Badge content={link.badge} color="secondary" size="sm" isInvisible={!link.badge}>
+                      <Button
+                        variant={isActive ? "flat" : "light"}
+                        color={isActive ? "primary" : "default"}
+                        startContent={<Icon className="w-[18px] h-[18px]" />}
+                        size="sm"
+                        className="font-medium"
+                      >
+                        {link.label}
+                      </Button>
+                    </Badge>
+                  ) : (
+                    <Button
+                      variant={isActive ? "flat" : "light"}
+                      color={isActive ? "primary" : "default"}
+                      startContent={<Icon className="w-[18px] h-[18px]" />}
+                      size="sm"
+                      className="font-medium"
+                    >
+                      {link.label}
+                    </Button>
+                  )}
+                </Link>
+              </NavbarItem>
+            );
+          })}
+        </NavbarContent>
+
+        <NavbarContent justify="end">
+          <NavbarItem className="hidden md:flex">
+            {isLoggedIn && user ? (
+              <Dropdown placement="bottom-end">
+                <DropdownTrigger>
+                  <Button variant="light" className="gap-2" size="sm">
+                    <Avatar
+                      size="sm"
+                      name={user.avatar || user.name[0]}
+                      className="w-7 h-7 text-base"
+                      showFallback
+                      fallback={<span className="text-base">{user.avatar || "🧑‍💻"}</span>}
+                    />
+                    <span className="text-sm text-default-700 max-w-[100px] truncate">
+                      {user.name}
+                    </span>
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu aria-label="User menu">
+                  <DropdownSection showDivider>
+                    <DropdownItem key="info" isReadOnly className="cursor-default">
+                      <p className="font-medium text-sm">{user.name}</p>
+                      <p className="text-xs text-default-400">{user.email}</p>
+                    </DropdownItem>
+                  </DropdownSection>
+                  <DropdownSection showDivider>
+                    <DropdownItem
+                      key="profile"
+                      startContent={<User className="w-4 h-4" />}
+                      href="/profile"
+                    >
+                      내 프로필
+                    </DropdownItem>
+                    <DropdownItem
+                      key="lists"
+                      startContent={<ClipboardList className="w-4 h-4" />}
+                      href="/my-lists"
+                    >
+                      내 리스트
+                    </DropdownItem>
+                  </DropdownSection>
+                  <DropdownSection>
+                    <DropdownItem
+                      key="logout"
+                      color="danger"
+                      startContent={<LogOut className="w-4 h-4" />}
+                      onPress={handleLogout}
+                    >
+                      로그아웃
+                    </DropdownItem>
+                  </DropdownSection>
+                </DropdownMenu>
+              </Dropdown>
+            ) : (
+              <Link to="/login" className="no-underline">
+                <Button
+                  color="primary"
+                  variant="solid"
+                  startContent={<LogIn className="w-4 h-4" />}
+                  size="sm"
+                >
+                  로그인
+                </Button>
+              </Link>
+            )}
+          </NavbarItem>
+          <NavbarMenuToggle className="md:hidden" />
+        </NavbarContent>
+
+        <NavbarMenu>
+          {isLoggedIn && user && (
+            <>
+              <div className="flex items-center gap-3 px-2 py-3">
+                <Avatar
+                  size="md"
+                  showFallback
+                  fallback={<span className="text-xl">{user.avatar || "🧑‍💻"}</span>}
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-default-900 truncate">{user.name}</p>
+                  <p className="text-xs text-default-400 truncate">{user.email}</p>
                 </div>
               </div>
-            )}
-
-            <nav className="flex flex-col px-4 pt-2 gap-1">
-              {navLinks.map((link) => {
-                const Icon = link.icon;
-                const isActive = location.pathname === link.path;
-                return (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl no-underline transition-all text-[14px] ${
-                      isActive
-                        ? "bg-[#1a1a2e] text-white font-medium"
-                        : "text-[#6b6b80] hover:bg-black/[0.02]"
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{link.label}</span>
-                    {link.badge ? (
-                      <span className="ml-auto w-6 h-6 bg-[#6C5CE7] text-white rounded-full flex items-center justify-center text-[12px]">
-                        {link.badge}
-                      </span>
-                    ) : null}
-                  </Link>
-                );
-              })}
-
-              {isLoggedIn ? (
-                <>
-                  <Link
-                    to="/profile"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl no-underline transition-all text-[14px] ${
-                      location.pathname === "/profile"
-                        ? "bg-[#1a1a2e] text-white font-medium"
-                        : "text-[#6b6b80] hover:bg-black/[0.02]"
-                    }`}
-                  >
-                    <User className="w-5 h-5" />
-                    <span>내 프로필</span>
-                  </Link>
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setMobileMenuOpen(false);
-                    }}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all cursor-pointer bg-transparent border-none text-left text-[14px]"
-                  >
-                    <LogOut className="w-5 h-5" />
-                    <span>로그아웃</span>
-                  </button>
-                </>
-              ) : (
+              <Divider className="my-2" />
+            </>
+          )}
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            const isActive = location.pathname === link.path;
+            return (
+              <NavbarMenuItem key={link.path} isActive={isActive}>
                 <Link
-                  to="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl no-underline bg-[#1a1a2e] text-white hover:bg-[#2a2a3e] transition-all mt-2 text-[14px]"
+                  to={link.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl no-underline transition-all text-sm ${
+                    isActive
+                      ? "bg-primary text-primary-foreground font-medium"
+                      : "text-default-500 hover:bg-default-100"
+                  }`}
                 >
-                  <LogIn className="w-5 h-5" />
-                  <span>로그인</span>
+                  <Icon className="w-5 h-5" />
+                  <span>{link.label}</span>
+                  {link.badge ? (
+                    <Badge content={link.badge} color="secondary" size="sm">
+                      <span />
+                    </Badge>
+                  ) : null}
                 </Link>
-              )}
-            </nav>
-          </div>
-        )}
-      </header>
+              </NavbarMenuItem>
+            );
+          })}
+          {isLoggedIn ? (
+            <>
+              <NavbarMenuItem>
+                <Link
+                  to="/profile"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl no-underline text-default-500 hover:bg-default-100 text-sm"
+                >
+                  <User className="w-5 h-5" />
+                  <span>내 프로필</span>
+                </Link>
+              </NavbarMenuItem>
+              <NavbarMenuItem>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-danger hover:bg-danger-50 transition-all cursor-pointer bg-transparent border-none text-left text-sm"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span>로그아웃</span>
+                </button>
+              </NavbarMenuItem>
+            </>
+          ) : (
+            <NavbarMenuItem>
+              <Link
+                to="/login"
+                onClick={() => setIsMenuOpen(false)}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl no-underline bg-primary text-primary-foreground hover:opacity-90 transition-all mt-2 text-sm font-medium"
+              >
+                <LogIn className="w-5 h-5" />
+                <span>로그인</span>
+              </Link>
+            </NavbarMenuItem>
+          )}
+        </NavbarMenu>
+      </Navbar>
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Outlet />
       </main>

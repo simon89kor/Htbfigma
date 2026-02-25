@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { TodoTemplate } from "./data";
 
 export interface CartItem {
@@ -82,10 +82,40 @@ if (!globalObj[STORE_CTX_KEY]) {
 }
 const StoreContext = globalObj[STORE_CTX_KEY] as React.Context<StoreContextType | undefined>;
 
+const STORAGE_KEY_CART = "todomarket_cart";
+const STORAGE_KEY_PURCHASED = "todomarket_purchased";
+const STORAGE_KEY_CUSTOM = "todomarket_custom";
+
+function loadFromStorage<T>(key: string, fallback: T): T {
+  try {
+    const stored = localStorage.getItem(key);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return fallback;
+}
+
+function saveToStorage(key: string, value: unknown) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {}
+}
+
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [purchasedLists, setPurchasedLists] = useState<PurchasedList[]>([]);
-  const [customLists, setCustomLists] = useState<CustomList[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => loadFromStorage(STORAGE_KEY_CART, []));
+  const [purchasedLists, setPurchasedLists] = useState<PurchasedList[]>(() => loadFromStorage(STORAGE_KEY_PURCHASED, []));
+  const [customLists, setCustomLists] = useState<CustomList[]>(() => loadFromStorage(STORAGE_KEY_CUSTOM, []));
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEY_CART, cart);
+  }, [cart]);
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEY_PURCHASED, purchasedLists);
+  }, [purchasedLists]);
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEY_CUSTOM, customLists);
+  }, [customLists]);
 
   const addToCart = useCallback((product: TodoTemplate) => {
     setCart((prev) => {
