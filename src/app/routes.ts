@@ -13,15 +13,8 @@ import { NotFoundPage } from "./components/NotFoundPage";
 // [F2] Purchase Flow 라우트 import
 import { PaymentMethodPage } from "./components/PaymentMethodPage";
 import { PurchaseCompletePage } from "./components/PurchaseCompletePage";
-
-// ============================================================================
-// [F1 Onboarding] 신규 라우트 5개 추가
-// - /splash          → SplashScreen (Layout 밖, 풀스크린)
-// - /walkthrough     → WalkthroughPage (Layout 밖, 풀스크린)
-// - /auth/callback   → AuthCallbackPage (Layout 밖, OAuth 리다이렉트)
-// - /terms           → TermsAgreementPage (Layout 밖, 온보딩 플로우)
-// - /preference      → PreferenceSetupPage (Layout 밖, 온보딩 플로우)
-// ============================================================================
+// [F3] Settings 라우트 import
+import { SettingsPage } from "./components/SettingsPage";
 
 export const router = createBrowserRouter([
   {
@@ -80,9 +73,11 @@ export const router = createBrowserRouter([
           { path: "login", Component: LoginPage },
           { path: "register", Component: RegisterPage },
           { path: "profile", Component: ProfilePage },
-          // [F2] Purchase Flow 라우트 (통합 머지 시 주의)
+          // [F2] Purchase Flow 라우트
           { path: "payment", Component: PaymentMethodPage },
           { path: "purchase-complete", Component: PurchaseCompletePage },
+          // [F3] Settings 라우트
+          { path: "settings", Component: SettingsPage },
           { path: "*", Component: NotFoundPage },
         ],
       },

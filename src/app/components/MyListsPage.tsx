@@ -11,6 +11,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Calendar,
+  CheckCircle2,
+  Play,
 } from "lucide-react";
 import { Button, Chip, Card, CardBody, Tabs, Tab } from "@heroui/react";
 import { useStore } from "../store-context";
@@ -104,6 +106,41 @@ export function MyListsPage() {
   const filteredPurchased = showPurchased ? purchasedLists : [];
   const filteredCustom = showCustom ? customLists : [];
 
+  // ========================================================================
+  // Progress computation for all routines
+  // ========================================================================
+
+  const allItems = useMemo(() => {
+    const items = [
+      ...purchasedLists.flatMap((l) => l.items),
+      ...customLists.flatMap((l) => l.items),
+    ];
+    return items;
+  }, [purchasedLists, customLists]);
+
+  const totalTodoCount = allItems.length;
+  const completedTodoCount = allItems.filter((i) => i.completed).length;
+  const overallProgress = totalTodoCount > 0 ? Math.round((completedTodoCount / totalTodoCount) * 100) : 0;
+
+  // Routine-level completion breakdown
+  const activeRoutineCount = useMemo(() => {
+    return [...purchasedLists, ...customLists].filter((list) => {
+      const total = list.items.length;
+      if (total === 0) return true; // no items yet = active
+      const done = list.items.filter((i) => i.completed).length;
+      return done < total;
+    }).length;
+  }, [purchasedLists, customLists]);
+
+  const completedRoutineCount = useMemo(() => {
+    return [...purchasedLists, ...customLists].filter((list) => {
+      const total = list.items.length;
+      if (total === 0) return false;
+      const done = list.items.filter((i) => i.completed).length;
+      return done >= total;
+    }).length;
+  }, [purchasedLists, customLists]);
+
   return (
     <div>
       {/* Header */}
@@ -167,6 +204,37 @@ export function MyListsPage() {
             })}
           </div>
         </div>
+      )}
+
+      {/* Progress Summary */}
+      {totalLists > 0 && (
+        <Card shadow="sm" className="mb-5">
+          <CardBody className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-semibold text-default-900">전체 진행률</span>
+              <span className="text-sm font-bold text-[#65D9AC]">{overallProgress}%</span>
+            </div>
+            <div className="w-full h-2.5 bg-default-100 rounded-full overflow-hidden mb-3">
+              <div
+                className="h-full bg-[#65D9AC] rounded-full transition-all duration-500"
+                style={{ width: `${overallProgress}%` }}
+              />
+            </div>
+            <div className="flex items-center gap-4 text-xs text-default-500">
+              <span className="flex items-center gap-1">
+                <Play className="w-3 h-3 text-[#65D9AC]" />
+                진행중 {activeRoutineCount}
+              </span>
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-[#6C5CE7]" />
+                완료 {completedRoutineCount}
+              </span>
+              <span className="text-default-400">
+                {completedTodoCount}/{totalTodoCount} 할 일 완료
+              </span>
+            </div>
+          </CardBody>
+        </Card>
       )}
 
       {/* Tabs + View Toggle */}
@@ -248,7 +316,10 @@ export function MyListsPage() {
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {purchasedLists.map((plist) => (
-                  <TodoListUsable key={plist.id} list={plist} isExpanded={expandedCards.has(plist.id)} onToggleExpand={() => handleToggleCard(plist.id)} selectedDate={selectedDate} />
+                  <div key={plist.id}>
+                    <RoutineProgressBar items={plist.items} />
+                    <TodoListUsable list={plist} isExpanded={expandedCards.has(plist.id)} onToggleExpand={() => handleToggleCard(plist.id)} selectedDate={selectedDate} />
+                  </div>
                 ))}
               </div>
             </div>
@@ -268,6 +339,7 @@ export function MyListsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {customLists.map((clist) => (
                   <div key={clist.id} className="relative group/card">
+                    <RoutineProgressBar items={clist.items} />
                     <TodoListUsable customList={clist} isExpanded={expandedCards.has(clist.id)} onToggleExpand={() => handleToggleCard(clist.id)} selectedDate={selectedDate} />
                     <Button
                       isIconOnly
@@ -300,6 +372,36 @@ export function MyListsPage() {
           </CardBody>
         </Card>
       )}
+    </div>
+  );
+}
+
+// ============================================================================
+// Routine Progress Bar (per-routine inline progress)
+// ============================================================================
+
+interface RoutineProgressBarProps {
+  items: { completed: boolean }[];
+}
+
+function RoutineProgressBar({ items }: RoutineProgressBarProps) {
+  if (items.length === 0) return null;
+
+  const total = items.length;
+  const completed = items.filter((i) => i.completed).length;
+  const percent = Math.round((completed / total) * 100);
+
+  return (
+    <div className="flex items-center gap-2 mb-1.5 px-1">
+      <div className="flex-1 h-1.5 bg-default-100 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-[#65D9AC] rounded-full transition-all duration-300"
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+      <span className="text-[10px] font-medium text-default-400 shrink-0">
+        {completed}/{total}
+      </span>
     </div>
   );
 }
