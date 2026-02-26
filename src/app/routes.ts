@@ -10,6 +10,9 @@ import { RegisterPage } from "./components/RegisterPage";
 import { ProfilePage } from "./components/ProfilePage";
 import { CreateRoutinePage } from "./components/CreateRoutinePage";
 import { NotFoundPage } from "./components/NotFoundPage";
+// [F2] Purchase Flow 라우트 import
+import { PaymentMethodPage } from "./components/PaymentMethodPage";
+import { PurchaseCompletePage } from "./components/PurchaseCompletePage";
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +30,9 @@ export const router = createBrowserRouter([
           { path: "login", Component: LoginPage },
           { path: "register", Component: RegisterPage },
           { path: "profile", Component: ProfilePage },
+          // [F2] Purchase Flow 라우트 (통합 머지 시 주의)
+          { path: "payment", Component: PaymentMethodPage },
+          { path: "purchase-complete", Component: PurchaseCompletePage },
           { path: "*", Component: NotFoundPage },
         ],
       },

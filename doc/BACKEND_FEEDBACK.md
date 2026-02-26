@@ -40,7 +40,15 @@
 
 ## Pending Feedbacks
 
-_(아직 피드백 없음)_
+### FB-001: process-payment Edge Function 필요 (Phase 2)
+- **Reporter:** F2
+- **Target:** B3
+- **Severity:** SUGGESTION
+- **Category:** EDGE_FUNCTION
+- **Description:** 현재 MVP에서는 클라이언트가 `createPurchase` API를 직접 호출하여 구매를 처리하고 있음. Phase 2에서는 결제 검증과 금액 검증을 서버에서 수행하는 `process-payment` Edge Function이 필요함. 클라이언트는 Edge Function만 호출하고, Edge Function이 금액 검증 후 purchase 레코드를 생성하는 구조로 변경 필요.
+- **Affected Files:** `src/app/components/PaymentMethodPage.tsx`, `src/lib/api/purchases.ts`, `supabase/functions/process-payment/`
+- **Workaround:** 클라이언트에서 `createPurchase` API 직접 호출 (금액 검증 없이 MVP 처리)
+- **Status:** OPEN
 
 ---
 
