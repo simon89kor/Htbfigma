@@ -1,25 +1,21 @@
 # 07. MY Page 확장 기획서
 
 **우선순위:** P0~P1
-**상태:** PARTIAL (ProfilePage만 존재, 나머지 미구현)
-**관련 기존 파일:** `ProfilePage.tsx`, `MyListsPage.tsx`
+**상태:** PARTIAL (P0 범위 구현 완료 — Phase 1, P1 범위 미구현)
+**관련 기존 파일:** `ProfilePage.tsx`, `MyListsPage.tsx`, `SettingsPage.tsx`
 
 ---
 
 ## 1. 현재 상태 분석
 
-### 구현 완료
-- `ProfilePage.tsx` - 기본 프로필 (닉네임, 이메일, 프로필 편집)
-- `MyListsPage.tsx` - 구매/커스텀 리스트 관리
+### 구현 완료 (Phase 1 완료)
+- `ProfilePage.tsx` - 커버이미지, 아바타 업로드, 팔로워/팔로잉 카운트, 게시물/루틴/구매내역 탭, 인라인 편집
+- `MyListsPage.tsx` - 전체 프로그레스 요약 + 루틴별 프로그레스 바 + 3탭(전체/구매한 루틴/나만의 루틴)
+- `SettingsPage.tsx` - 알림 토글(3개), 계정관리, 앱정보, 고객센터, 로그아웃(확인모달), 탈퇴(이중확인)
 
-### 부분 구현
-- My Profile - 기본 정보만 (팔로워/게시물 없음)
-- My Routines - MyListsPage에 일부 기능 포함
-
-### 미구현
-- QR Code Center
-- Following/Followers
-- Settings
+### 미구현 (P1 범위 → Phase 2 이후)
+- QR Code Center (`QRCodeCenterPage.tsx`)
+- Following/Followers (`FollowingPage.tsx`)
 
 ---
 
@@ -117,78 +113,91 @@
 
 ### MY-02: My Routines (탭 구조)
 
-**위치:** Profile 페이지 내 탭 또는 별도 페이지 `/my-routines`
-**수정 대상:** `MyListsPage.tsx` 확장
+**위치:** `/my-lists` (기존 MyListsPage 확장)
+**수정 대상:** `MyListsPage.tsx`
 **우선순위:** P0
 
+#### 탭 분류 기준
+
+DB `user_routines` 테이블의 분류 축:
+- **소유 형태**: `is_custom` (true=직접 생성, false=구매) / `purchase_id` (null=직접, not null=구매)
+- **진행 상태**: `status` (active/completed/expired/paused)
+
+**소유 형태 기준 3탭** 채택:
+- 진행 상태 × 소유 형태가 2차원이라 4탭(진행중/완료/구매/직접)으로 넣으면 겹침 발생
+- 소유 형태로 1차 분류 후, 각 카드에 프로그레스 바로 진행 상태 표시
+- 전체 프로그레스 요약 카드에서 진행중/완료 카운트 표시로 보완
+
 #### UI 구성
+
 ```
 ┌─────────────────────────┐
-│  ← 내 루틴                │
+│  TODAY                   │
 │                         │
-│ [진행중] [완료] [구매] [직접]│  ← 탭 바
+│  ┌─────────────────────┐│
+│  │ 전체 진행률    75%    ││ ← 프로그레스 요약 카드
+│  │ ▶ 진행중 3 ✅ 완료 2  ││
+│  │ 완료 12/16 할일       ││
+│  └─────────────────────┘│
+│                         │
+│ [전체] [구매한 루틴] [나만의 루틴]│
 │  ─────────────────────  │
 │                         │
-│  진행중 탭:               │
 │  ┌─────────────────────┐│
 │  │ 🟢 아침 운동 루틴      ││
-│  │ 운동루틴 · 4주         ││
-│  │ ████████░░ 80%      ││
-│  │ 남은 기간: 6일         ││
+│  │ ████████░░ 80%      ││ ← 루틴별 프로그레스 바
+│  │ ┌─ 투두 리스트 ──────┐││
+│  │ │ ☑ 스트레칭 10분    │││
+│  │ │ ☐ 러닝 30분       │││
+│  │ └──────────────────┘││
 │  └─────────────────────┘│
+│                         │
 │  ┌─────────────────────┐│
-│  │ 🟢 식단 관리          ││
-│  │ 식단관리 · 100일       ││
-│  │ ███░░░░░░░ 30%      ││
-│  │ 남은 기간: 70일        ││
+│  │ ✅ 독서 습관 30일      ││ ← 완료 루틴도 같은 탭에
+│  │ ██████████ 100%     ││
 │  └─────────────────────┘│
-│                         │
-│  완료 탭:                │
-│  ┌─────────────────────┐│
-│  │ ✅ 독서 습관 30일      ││
-│  │ 자기개발 · 완료        ││
-│  │ 2026.01.15~02.14    ││
-│  └─────────────────────┘│
-│                         │
-│  구매 탭:                │
-│  (구매 내역 리스트)        │
-│                         │
-│  직접 만든 탭:            │
-│  (커스텀 루틴 리스트)      │
 └─────────────────────────┘
 ```
 
+#### 탭 필터 매핑
+| 탭 | DB 쿼리 조건 |
+|-----|-------------|
+| 전체 | `user_routines WHERE user_id = ?` |
+| 구매한 루틴 | `user_routines WHERE user_id = ? AND is_custom = false` |
+| 나만의 루틴 | `user_routines WHERE user_id = ? AND is_custom = true` |
+
 #### 루틴 카드 데이터
 ```typescript
+// DB user_routines 테이블과 1:1 매핑
 interface MyRoutine {
   id: string;
   title: string;
   category: string;
-  period: string;
-  startDate: string;
-  endDate: string;
-  completionRate: number;
-  remainingDays: number;
-  status: 'active' | 'completed' | 'purchased' | 'custom';
-  isCustom: boolean;
+  start_date: string | null;
+  end_date: string | null;
+  completion_rate: number;     // 0~100, DB 트리거 자동 계산
+  status: 'active' | 'completed' | 'expired' | 'paused';
+  is_custom: boolean;
+  purchase_id: string | null;
 }
 ```
 
 #### 인터랙션
 | 동작 | 결과 |
 |------|------|
-| 루틴 카드 탭 | → BOARD 해당 루틴 상세 |
-| 구매 내역 탭 | 구매 상세 Bottom Sheet (결제일/금액/기간) |
+| 루틴 카드 탭 | 카드 확장 → 해당 루틴 투두 리스트 표시 |
+| 투두 체크 | `todo_items.completed` 토글 → `user_routines.completion_rate` 트리거 재계산 |
 
 #### API
-- `GET /api/users/me/routines?tab={active|completed|purchased|custom}`
+- `GET user_routines WHERE user_id = ? (+ is_custom 필터)`
+- Supabase: `getUserRoutines()` from `src/lib/api/user-routines.ts`
 
 #### 디자인 스펙
 | 요소 | 스펙 |
 |------|------|
-| 카드 좌측 | 카테고리 컬러 바 (4px width) |
-| 프로그레스 바 | `--accent-color` |
-| 완료 카드 | ✅ 체크마크 아이콘 |
+| 프로그레스 요약 카드 | 전체 진행률 + 진행중/완료 카운트 |
+| 루틴별 프로그레스 바 | `--accent-color` (#65D9AC), 높이 4px |
+| 완료 카드 | 프로그레스 바 100% 채움 |
 | Empty State | 일러스트 + "루틴을 시작해보세요" |
 
 ---
@@ -343,7 +352,7 @@ interface FollowUser {
 
 **경로:** `/settings`
 **컴포넌트:** `SettingsPage.tsx`
-**우선순위:** P1
+**우선순위:** P0 (원본 P1에서 앞당김 — Phase 1에서 구현 완료)
 
 #### UI 구성
 ```
@@ -417,10 +426,12 @@ interface FollowUser {
 { path: '/settings', element: <SettingsPage /> },
 ```
 
-## 4. 신규 파일 목록
+## 4. 파일 목록 (Phase 1 완료 상태)
 
-| 파일 | 설명 |
-|------|------|
-| `src/app/components/QRCodeCenterPage.tsx` | QR 코드 센터 |
-| `src/app/components/FollowingPage.tsx` | 팔로잉/팔로워 |
-| `src/app/components/SettingsPage.tsx` | 설정 |
+| 파일 | 설명 | 상태 |
+|------|------|------|
+| `src/app/components/ProfilePage.tsx` | 프로필 확장 (커버, 탭, 인라인편집) | MODIFIED |
+| `src/app/components/MyListsPage.tsx` | 프로그레스 요약 + 루틴별 프로그레스 바 | MODIFIED |
+| `src/app/components/SettingsPage.tsx` | 설정 | EXISTS |
+| `src/app/components/QRCodeCenterPage.tsx` | QR 코드 센터 | MISSING (P1) |
+| `src/app/components/FollowingPage.tsx` | 팔로잉/팔로워 | MISSING (P1) |
