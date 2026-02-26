@@ -52,13 +52,40 @@ const PeriodSelectionSheet = ({
   const { isLoggedIn } = useAuth();
 
   // 기본 선택: 가운데 옵션 (4 WEEK)
-  const defaultIndex = Math.floor(options.length / 2);
+  const defaultIndex = options.length > 0 ? Math.floor(options.length / 2) : 0;
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
 
   const selectedOption = useMemo(
-    () => options[selectedIndex] ?? options[0],
+    () => options[selectedIndex] ?? options[0] ?? null,
     [options, selectedIndex]
   );
+
+  // 옵션이 없으면 빈 상태 표시
+  if (!selectedOption) {
+    return (
+      <Drawer.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <Drawer.Portal>
+          <Drawer.Overlay className="fixed inset-0 bg-black/50 z-50" />
+          <Drawer.Content
+            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-50 outline-none"
+            aria-label="기간 선택"
+          >
+            <div className="mx-auto w-12 h-1.5 bg-gray-300 rounded-full my-3" />
+            <div className="px-6 pb-8 text-center">
+              <p className="text-[#6B7280] py-8">이용 가능한 기간 옵션이 없습니다.</p>
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full h-[52px] bg-[#F5F5F5] text-[#6B7280] rounded-xl text-lg font-semibold cursor-pointer border-none"
+              >
+                닫기
+              </button>
+            </div>
+          </Drawer.Content>
+        </Drawer.Portal>
+      </Drawer.Root>
+    );
+  }
 
   const handlePurchase = () => {
     if (!isLoggedIn) {

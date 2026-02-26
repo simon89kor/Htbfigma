@@ -124,7 +124,7 @@ export function PaymentMethodPage() {
     setIsProcessing(true);
 
     try {
-      // TODO: [FB-F2] Phase 2에서 process-payment Edge Function으로 교체 예정
+      // TODO: [FB-001] Phase 2에서 process-payment Edge Function으로 교체 예정
       // 현재는 Supabase 클라이언트 API를 직접 호출 (MVP)
       const startDate = new Date().toISOString();
 

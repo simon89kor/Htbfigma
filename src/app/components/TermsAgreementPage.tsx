@@ -170,15 +170,18 @@ const TermsAgreementPage = () => {
 
     setIsSubmitting(true);
     try {
-      const now = new Date().toISOString();
-
-      if (user) {
-        await updateProfile(user.id, {
-          terms_agreed_at: now,
-          privacy_agreed_at: now,
-          marketing_agreed: terms.marketing,
-        });
+      if (!user) {
+        toast.error('로그인 정보를 확인할 수 없습니다. 다시 로그인해주세요.');
+        navigate('/login', { replace: true });
+        return;
       }
+
+      const now = new Date().toISOString();
+      await updateProfile(user.id, {
+        terms_agreed_at: now,
+        privacy_agreed_at: now,
+        marketing_agreed: terms.marketing,
+      });
 
       navigate('/preference', { replace: true });
     } catch {

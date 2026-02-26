@@ -10,11 +10,7 @@ import { RegisterPage } from "./components/RegisterPage";
 import { ProfilePage } from "./components/ProfilePage";
 import { CreateRoutinePage } from "./components/CreateRoutinePage";
 import { NotFoundPage } from "./components/NotFoundPage";
-// [F2] Purchase Flow 라우트 import
-import { PaymentMethodPage } from "./components/PaymentMethodPage";
-import { PurchaseCompletePage } from "./components/PurchaseCompletePage";
-// [F3] Settings 라우트 import
-import { SettingsPage } from "./components/SettingsPage";
+// [F2], [F3] 신규 페이지는 lazy loading (F1과 동일 패턴)
 
 export const router = createBrowserRouter([
   {
@@ -74,10 +70,28 @@ export const router = createBrowserRouter([
           { path: "register", Component: RegisterPage },
           { path: "profile", Component: ProfilePage },
           // [F2] Purchase Flow 라우트
-          { path: "payment", Component: PaymentMethodPage },
-          { path: "purchase-complete", Component: PurchaseCompletePage },
+          {
+            path: "payment",
+            lazy: () =>
+              import("./components/PaymentMethodPage").then((m) => ({
+                Component: m.PaymentMethodPage,
+              })),
+          },
+          {
+            path: "purchase-complete",
+            lazy: () =>
+              import("./components/PurchaseCompletePage").then((m) => ({
+                Component: m.PurchaseCompletePage,
+              })),
+          },
           // [F3] Settings 라우트
-          { path: "settings", Component: SettingsPage },
+          {
+            path: "settings",
+            lazy: () =>
+              import("./components/SettingsPage").then((m) => ({
+                Component: m.SettingsPage,
+              })),
+          },
           { path: "*", Component: NotFoundPage },
         ],
       },

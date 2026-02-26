@@ -63,7 +63,7 @@ const SplashScreen = () => {
   }, [navigate]);
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-[#65D9AC] to-[#4DB896]">
       <AnimatePresence>
         {showLogo && (
           <motion.div
@@ -77,17 +77,17 @@ const SplashScreen = () => {
             }}
           >
             {/* Logo */}
-            <div className="w-20 h-20 bg-[#1a1a2e] rounded-2xl flex items-center justify-center">
-              <CheckSquare className="w-12 h-12 text-[#65D9AC]" />
+            <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+              <CheckSquare className="w-12 h-12 text-[#1a1a2e]" />
             </div>
 
             {/* Brand Name */}
-            <h1 className="text-[#1a1a2e] text-2xl font-bold tracking-tight">
+            <h1 className="text-white text-2xl font-bold tracking-tight">
               HOW TO BE
             </h1>
 
             {/* Tagline */}
-            <p className="text-[#6B7280] text-sm">
+            <p className="text-white/80 text-sm">
               나를 바꾸는 루틴 습관
             </p>
           </motion.div>
@@ -104,7 +104,7 @@ const SplashScreen = () => {
         {[0, 1, 2].map((i) => (
           <motion.div
             key={i}
-            className="w-2 h-2 rounded-full bg-[#65D9AC]"
+            className="w-2 h-2 rounded-full bg-white"
             animate={{
               scale: [1, 1.3, 1],
               opacity: [0.4, 1, 0.4],
