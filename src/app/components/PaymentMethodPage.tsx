@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router';
+import { useNavigate, useLocation, Navigate } from 'react-router';
 import { ArrowLeft, CreditCard, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../auth-context';
@@ -112,8 +112,7 @@ export function PaymentMethodPage() {
 
   // 비로그인 시 로그인으로 리다이렉트
   if (!isLoggedIn || !user) {
-    navigate('/login');
-    return null;
+    return <Navigate to="/login" replace />;
   }
 
   const handlePayment = async () => {
