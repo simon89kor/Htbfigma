@@ -1,24 +1,31 @@
 # 05. BOARD 확장 기획서
 
 **우선순위:** P1 (Important)
-**상태:** PARTIAL - CalendarView, TodoListUsable, CreateRoutinePage 존재
+**상태:** EXISTS - Phase 2(F6)에서 구현 완료 (2026-02-26)
 **관련 기존 파일:** `CalendarView.tsx`, `TodoListUsable.tsx`, `CreateRoutinePage.tsx`, `MyListsPage.tsx`
+**신규 파일:** `TodoDetailSheet.tsx`, `ProgressStatsPage.tsx`
 
 ---
 
 ## 1. 현재 상태 분석
 
-### 구현 완료
-- `CalendarView.tsx` - 캘린더 뷰 (날짜별 할일 표시)
-- `TodoListUsable.tsx` - 투두리스트 (체크, 서브아이템)
-- `CreateRoutinePage.tsx` - 직접 루틴 만들기
-- `MyListsPage.tsx` - 구매/커스텀 리스트 관리
+### 구현 완료 (Phase 2 — F6 에이전트)
+- `CalendarView.tsx` - 캘린더 뷰 (날짜별 할일 + 달성 마커 + 통계 링크 추가)
+- `TodoListUsable.tsx` - 투두리스트 (체크, 서브아이템 + 상세설정 진입점 추가)
+- `TodoDetailSheet.tsx` - 투두 상세 설정 Bottom Sheet (시간/반복/메모/알림)
+- `ProgressStatsPage.tsx` - 통계 페이지 (차트 5종: RadialBar, Streak, Line, Pie, 프로그레스바)
+- `CreateRoutinePage.tsx` - 직접 루틴 만들기 (기존 유지)
+- `MyListsPage.tsx` - 구매/커스텀 리스트 관리 (기존 유지)
 
-### 부분 구현
-- Todo Detail Settings - 시간 설정/반복 기능은 데이터 구조에 있으나 UI 미완성
-
-### 누락
-- Progress & Stats (완료율 차트, 스트릭, 추이)
+### 구현 차이점 (기획 대비)
+- **TodoDetailSheet**: vaul 대신 shadcn Drawer 컴포넌트 사용 (동일한 Bottom Sheet UX)
+- **알림 옵션**: 기획의 "없음/시작시/10분전/30분전" → 구현은 "없음/시작시/10분전" 3종 (30분 전 미포함)
+- **우선순위 설정**: 기획의 `priority?: 'low' | 'medium' | 'high'` 미구현
+- **StatsChart 컴포넌트**: 기획의 별도 차트 래퍼(StatsChart.tsx) 대신 ProgressStatsPage 내부에 서브 컴포넌트로 구현
+- **기간 필터**: 기획의 "1주/1개월/3개월" → 구현은 "주간/월간" 2종 ("3개월" 미포함)
+- **드래그 이동**: 미완료 투두 날짜간 드래그 미구현 (기획에서도 향후 개선으로 분류)
+- **주간 타임라인 뷰**: 미구현 (기획에서도 선택 사항)
+- **RPC 반환 형식**: FB-004로 get_user_stats RPC 반환 형식 명세 요청 중
 
 ---
 

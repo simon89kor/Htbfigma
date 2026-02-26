@@ -1,22 +1,30 @@
 # 02. HOME 확장 기획서
 
 **우선순위:** P1 (Important)
-**상태:** PARTIAL - StorePage, ProductDetailPage 존재하나 일부 기능 누락
+**상태:** EXISTS - Phase 2(F4)에서 구현 완료 (2026-02-26)
 **관련 기존 파일:** `StorePage.tsx`, `ProductDetailPage.tsx`, `ProductCard.tsx`
+**신규 파일:** `BannerCarousel.tsx`, `FilterSheet.tsx`, `SearchResultPage.tsx`, `ProviderProfilePage.tsx`
 
 ---
 
 ## 1. 현재 상태 분석
 
-### 구현 완료
-- `StorePage.tsx` - 스토어 메인 (상품 목록, 카테고리 탭)
-- `ProductDetailPage.tsx` - 상품 상세 (제목, 설명, 가격, 장바구니 추가)
+### 구현 완료 (Phase 2 — F4 에이전트)
+- `StorePage.tsx` - 스토어 메인 (배너 캐러셀 + 검색 모드 + 카테고리 탭)
+- `ProductDetailPage.tsx` - 상품 상세 (리뷰 섹션, Provider 링크, 좋아요, 공유 추가)
 - `ProductCard.tsx` - 상품 카드 컴포넌트
+- `BannerCarousel.tsx` - 배너 캐러셀 (embla-carousel, 자동 롤링 3초)
+- `FilterSheet.tsx` - 필터 Bottom Sheet (카테고리/가격대/정렬, vaul)
+- `SearchResultPage.tsx` - 검색 결과 전용 페이지 (debounce 300ms, 필터 적용)
+- `ProviderProfilePage.tsx` - Provider 프로필 (히어로/팔로우/루틴/리뷰)
 
-### 누락 기능
-- 검색 & 필터 강화 (키워드 검색, 고급 필터, 검색 결과 페이지)
-- Provider Profile 페이지
-- 배너/프로모션 영역
+### 구현 차이점 (기획 대비)
+- **자동완성 API**: 미구현 — 검색 모드에서 최근 검색어(localStorage)와 인기 검색어(API)만 표시. 입력 중 자동완성 드롭다운은 미구현.
+- **Banner linkType**: 기획의 `'routine' | 'category' | 'external'` 외에 `'challenge'` 타입이 DB 스키마에 포함되어 구현에도 반영됨.
+- **좋아요 저장**: ProductDetailPage 좋아요는 localStorage 기반 (`htb_liked_products`). 서버 사이드 저장은 FB-003으로 추후 처리.
+- **필터 카테고리 목록**: 기획의 `[운동, 식단, 자기개발, 자격증, 취미]` → 구현은 DB 카테고리 기준 `[운동, 라이프스타일, 교육, 비즈니스, 여행, 건강, 자기개발, 생산성]` 8종.
+- **검색 결과 데이터**: 현재 로컬 data.ts 기반 클라이언트 필터링. API 통합은 FB-002로 추후 처리.
+- **기간별 가격 표시**: 미구현 — 기존 단일 가격 표시 유지 (PeriodSelectionSheet에서 기간 선택 가능).
 
 ---
 
@@ -189,19 +197,22 @@ interface ProviderProfile {
 
 #### 컴포넌트 구조
 ```typescript
+// 구현 시 DB 타입(Banner from database.types) 사용
+// linkType에 'challenge'가 추가됨 (DB 스키마에 포함)
 interface Banner {
   id: string;
-  imageUrl: string;
+  image_url: string;
   title: string;
   subtitle: string;
-  linkType: 'routine' | 'category' | 'external';
-  linkTarget: string;
+  link_type: 'routine' | 'category' | 'challenge' | 'external';
+  link_target: string;
 }
 ```
 
-- 배너 캐러셀 (자동 롤링 3초 간격)
-- 배너 인디케이터 (하단 점)
-- 배너 비율: 16:9 또는 2:1
+- 배너 캐러셀 (자동 롤링 3초 간격, loop: true)
+- 배너 인디케이터 (하단 점, 활성 점은 accent-color + 넓게)
+- 배너 비율: 2:1 (aspect-[2/1])
+- Autoplay: stopOnInteraction: false
 
 #### 인터랙션
 - 자동 롤링 (3초 간격)

@@ -26,15 +26,19 @@ import {
   User,
   LogOut,
   PlusCircle,
+  Users,
+  Bell,
 } from "lucide-react";
 import { useStore } from "../store-context";
 import { useAuth } from "../auth-context";
+import { useNotifications } from "../notification-context";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export function Layout() {
   const { getCartCount } = useStore();
   const { user, isLoggedIn, logout } = useAuth();
+  const { unreadCount } = useNotifications();
   const location = useLocation();
   const cartCount = getCartCount();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,6 +50,7 @@ export function Layout() {
 
   const navLinks = [
     { path: "/", label: "스토어", icon: Store },
+    { path: "/community", label: "커뮤니티", icon: Users },
     { path: "/my-lists", label: "내 리스트", icon: ClipboardList },
     { path: "/create-routine", label: "루틴 만들기", icon: PlusCircle },
     { path: "/cart", label: "장바구니", icon: ShoppingCart, badge: cartCount },
@@ -111,6 +116,20 @@ export function Layout() {
         </NavbarContent>
 
         <NavbarContent justify="end">
+          {/* [F7] 알림 아이콘 + 뱃지 */}
+          {isLoggedIn && (
+            <NavbarItem>
+              <Link to="/notifications" className="relative p-1 no-underline text-default-600 hover:text-[#1a1a2e] transition-colors" aria-label="알림">
+                <Bell size={22} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#d4183d] text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </Link>
+            </NavbarItem>
+          )}
+
           <NavbarItem className="hidden md:flex">
             {isLoggedIn && user ? (
               <Dropdown placement="bottom-end">
@@ -221,6 +240,28 @@ export function Layout() {
               </NavbarMenuItem>
             );
           })}
+          {/* [F7] 모바일 메뉴 알림 항목 */}
+          {isLoggedIn && (
+            <NavbarMenuItem>
+              <Link
+                to="/notifications"
+                onClick={() => setIsMenuOpen(false)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl no-underline transition-all text-sm ${
+                  location.pathname === "/notifications"
+                    ? "bg-primary text-primary-foreground font-medium"
+                    : "text-default-500 hover:bg-default-100"
+                }`}
+              >
+                <Bell className="w-5 h-5" />
+                <span>알림</span>
+                {unreadCount > 0 && (
+                  <span className="ml-auto bg-[#d4183d] text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </Link>
+            </NavbarMenuItem>
+          )}
           {isLoggedIn ? (
             <>
               <NavbarMenuItem>

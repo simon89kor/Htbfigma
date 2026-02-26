@@ -1,16 +1,81 @@
 import { useState, useRef, useEffect } from "react";
-import { Search, SlidersHorizontal, Sparkles, Plus } from "lucide-react";
-import { Link } from "react-router";
-import { Input, Button, Chip } from "@heroui/react";
+import { Search, SlidersHorizontal, Sparkles, Plus, X, Clock, TrendingUp } from "lucide-react";
+import { Link, useNavigate } from "react-router";
+import { Button, Chip } from "@heroui/react";
 import { products, categories } from "../data";
 import { ProductCard } from "./ProductCard";
+import BannerCarousel from "./BannerCarousel";
+import { getTrendingKeywords } from "@/lib/api/search";
+import { cn } from "./ui/utils";
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+const RECENT_SEARCH_KEY = "htb_recent_searches";
+const MAX_RECENT_SEARCHES = 10;
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+function getRecentSearches(): string[] {
+  try {
+    const stored = localStorage.getItem(RECENT_SEARCH_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveRecentSearch(keyword: string) {
+  try {
+    const stored = localStorage.getItem(RECENT_SEARCH_KEY);
+    let searches: string[] = stored ? JSON.parse(stored) : [];
+    searches = [keyword, ...searches.filter((s) => s !== keyword)].slice(0, MAX_RECENT_SEARCHES);
+    localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(searches));
+  } catch {
+    // localStorage failure: ignore
+  }
+}
+
+function clearAllRecentSearches() {
+  try {
+    localStorage.removeItem(RECENT_SEARCH_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+function removeRecentSearch(keyword: string) {
+  try {
+    const stored = localStorage.getItem(RECENT_SEARCH_KEY);
+    let searches: string[] = stored ? JSON.parse(stored) : [];
+    searches = searches.filter((s) => s !== keyword);
+    localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(searches));
+  } catch {
+    // ignore
+  }
+}
+
+// ============================================================================
+// Component
+// ============================================================================
 
 export function StorePage() {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("전체");
-  const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"popular" | "price-low" | "price-high" | "rating">("popular");
   const [showSortMenu, setShowSortMenu] = useState(false);
   const sortRef = useRef<HTMLDivElement>(null);
+
+  // Search mode state
+  const [searchMode, setSearchMode] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [trendingKeywords, setTrendingKeywords] = useState<string[]>([]);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
   const sortLabels: Record<typeof sortBy, string> = {
     popular: "인기순",
@@ -19,6 +84,7 @@ export function StorePage() {
     rating: "평점순",
   };
 
+  // Close sort menu on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
@@ -29,13 +95,63 @@ export function StorePage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Load recent searches and trending keywords when search mode opens
+  useEffect(() => {
+    if (searchMode) {
+      setRecentSearches(getRecentSearches());
+      searchInputRef.current?.focus();
+
+      // Fetch trending keywords
+      getTrendingKeywords(10)
+        .then((data) => {
+          setTrendingKeywords(data.map((k) => k.keyword));
+        })
+        .catch(() => {
+          // Fallback trending keywords
+          setTrendingKeywords(["홈트레이닝", "다이어트 식단", "아침 루틴", "수능 공부", "습관 형성"]);
+        });
+    }
+  }, [searchMode]);
+
+  // Close search mode on outside click
+  useEffect(() => {
+    if (!searchMode) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setSearchMode(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [searchMode]);
+
+  // Execute search: navigate to SearchResultPage
+  const executeSearch = (query: string) => {
+    const trimmed = query.trim();
+    if (!trimmed) return;
+    saveRecentSearch(trimmed);
+    setSearchMode(false);
+    setSearchInput("");
+    navigate(`/search?q=${encodeURIComponent(trimmed)}`);
+  };
+
+  // Handle recent search delete
+  const handleDeleteRecentSearch = (keyword: string) => {
+    removeRecentSearch(keyword);
+    setRecentSearches((prev) => prev.filter((s) => s !== keyword));
+  };
+
+  // Handle clear all recent searches
+  const handleClearAllRecent = () => {
+    clearAllRecentSearches();
+    setRecentSearches([]);
+  };
+
+  // Filter and sort products (existing logic)
   const filteredProducts = products
     .filter((p) => {
       const matchesCategory = selectedCategory === "전체" || p.category === selectedCategory;
-      const matchesSearch =
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description.includes(searchQuery);
-      return matchesCategory && matchesSearch;
+      return matchesCategory;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -48,6 +164,9 @@ export function StorePage() {
 
   return (
     <div>
+      {/* Banner Carousel */}
+      <BannerCarousel />
+
       {/* Hero Section */}
       <div className="bg-[#1a1a2e] rounded-3xl p-8 sm:p-12 mb-10 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.06]">
@@ -72,42 +191,164 @@ export function StorePage() {
         </div>
       </div>
 
-      {/* Search & Filter */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-8">
-        <Input
-          placeholder="To-Do 리스트 검색..."
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-          startContent={<Search className="w-5 h-5 text-default-400" />}
-          variant="bordered"
-          radius="lg"
-          classNames={{
-            inputWrapper: "border-default-200 bg-white h-12",
-          }}
-          className="flex-1"
-        />
-        <div className="relative" ref={sortRef}>
-          <button
-            onClick={() => setShowSortMenu(!showSortMenu)}
-            className="h-12 flex items-center gap-2 px-4 bg-white border border-default-200 rounded-xl cursor-pointer transition-all hover:bg-default-50"
-          >
-            <SlidersHorizontal className="w-5 h-5 text-default-500" />
-            <span className="text-sm text-default-700 whitespace-nowrap">{sortLabels[sortBy]}</span>
-          </button>
-          {showSortMenu && (
-            <div className="absolute right-0 top-14 bg-white border border-default-200 rounded-xl shadow-lg z-50 min-w-[160px] py-2">
-              {(Object.entries(sortLabels) as [typeof sortBy, string][]).map(([key, label]) => (
+      {/* Search Bar (enhanced with search mode) */}
+      <div className="relative mb-8" ref={searchContainerRef}>
+        <div className="flex flex-col sm:flex-row gap-3">
+          {/* Search input area */}
+          <div className="relative flex-1">
+            {searchMode ? (
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") executeSearch(searchInput);
+                    if (e.key === "Escape") setSearchMode(false);
+                  }}
+                  placeholder="루틴을 검색해보세요"
+                  className="w-full h-12 pl-10 pr-10 bg-white border-2 border-[#65D9AC] rounded-xl text-sm text-gray-900 placeholder:text-gray-400 outline-none"
+                />
                 <button
-                  key={key}
-                  onClick={() => { setSortBy(key); setShowSortMenu(false); }}
-                  className={"w-full text-left px-4 py-3 text-base cursor-pointer transition-colors " + (sortBy === key ? "bg-primary-50 text-primary font-semibold" : "text-default-700 hover:bg-default-100")}
+                  type="button"
+                  onClick={() => {
+                    setSearchMode(false);
+                    setSearchInput("");
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 bg-transparent border-none cursor-pointer"
+                  aria-label="검색 닫기"
                 >
-                  {label}
+                  <X className="w-4 h-4 text-gray-400" />
                 </button>
-              ))}
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setSearchMode(true)}
+                className="w-full h-12 pl-10 pr-4 bg-white border border-gray-200 rounded-xl text-sm text-gray-400 text-left cursor-pointer hover:border-gray-300 transition-colors relative"
+                aria-label="검색 모드 진입"
+              >
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                루틴을 검색해보세요
+              </button>
+            )}
+          </div>
+
+          {/* Sort button (hidden in search mode on mobile) */}
+          {!searchMode && (
+            <div className="relative" ref={sortRef}>
+              <button
+                onClick={() => setShowSortMenu(!showSortMenu)}
+                className="h-12 flex items-center gap-2 px-4 bg-white border border-gray-200 rounded-xl cursor-pointer transition-all hover:bg-gray-50"
+              >
+                <SlidersHorizontal className="w-5 h-5 text-gray-500" />
+                <span className="text-sm text-gray-700 whitespace-nowrap">{sortLabels[sortBy]}</span>
+              </button>
+              {showSortMenu && (
+                <div className="absolute right-0 top-14 bg-white border border-gray-200 rounded-xl shadow-lg z-50 min-w-[160px] py-2">
+                  {(Object.entries(sortLabels) as [typeof sortBy, string][]).map(([key, label]) => (
+                    <button
+                      key={key}
+                      onClick={() => { setSortBy(key); setShowSortMenu(false); }}
+                      className={cn(
+                        "w-full text-left px-4 py-3 text-base cursor-pointer transition-colors border-none bg-transparent",
+                        sortBy === key ? "bg-[#65D9AC]/10 text-[#65D9AC] font-semibold" : "text-gray-700 hover:bg-gray-100"
+                      )}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
+
+        {/* Search mode dropdown */}
+        {searchMode && (
+          <div className="absolute left-0 right-0 top-14 bg-white border border-gray-200 rounded-xl shadow-lg z-50 p-4 max-h-[60vh] overflow-y-auto">
+            {/* Recent searches */}
+            {recentSearches.length > 0 && (
+              <section className="mb-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm font-semibold text-gray-900">최근 검색어</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleClearAllRecent}
+                    className="text-xs text-gray-400 bg-transparent border-none cursor-pointer p-0 hover:text-gray-600"
+                  >
+                    전체삭제
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {recentSearches.map((keyword) => (
+                    <div key={keyword} className="flex items-center gap-1 group">
+                      <button
+                        type="button"
+                        onClick={() => executeSearch(keyword)}
+                        className="px-3 py-1.5 rounded-full bg-gray-100 text-sm text-gray-700 border-none cursor-pointer hover:bg-gray-200 transition-colors"
+                      >
+                        {keyword}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteRecentSearch(keyword);
+                        }}
+                        className="w-5 h-5 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-200"
+                        aria-label={`${keyword} 삭제`}
+                      >
+                        <X className="w-3 h-3 text-gray-400" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Trending keywords */}
+            {trendingKeywords.length > 0 && (
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <TrendingUp className="w-4 h-4 text-[#65D9AC]" />
+                  <span className="text-sm font-semibold text-gray-900">인기 검색어</span>
+                </div>
+                <div className="space-y-1">
+                  {trendingKeywords.map((keyword, index) => (
+                    <button
+                      key={keyword}
+                      type="button"
+                      onClick={() => executeSearch(keyword)}
+                      className="w-full flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-gray-50 bg-transparent border-none cursor-pointer transition-colors text-left"
+                    >
+                      <span className={cn(
+                        "w-6 text-center text-sm font-bold",
+                        index < 3 ? "text-[#65D9AC]" : "text-gray-400"
+                      )}>
+                        {index + 1}
+                      </span>
+                      <span className="text-sm text-gray-700">{keyword}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Empty state */}
+            {recentSearches.length === 0 && trendingKeywords.length === 0 && (
+              <div className="py-8 text-center text-gray-400">
+                <Search className="w-8 h-8 mx-auto mb-2" />
+                <p className="text-sm">검색어를 입력해보세요</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Categories */}
@@ -134,8 +375,8 @@ export function StorePage() {
 
       {filteredProducts.length === 0 && (
         <div className="text-center py-20">
-          <p className="text-default-500 text-lg mb-2">검색 결과가 없습니다</p>
-          <p className="text-default-400 text-sm">다른 키워드로 검색해보세요</p>
+          <p className="text-gray-500 text-lg mb-2">검색 결과가 없습니다</p>
+          <p className="text-gray-400 text-sm">다른 키워드로 검색해보세요</p>
         </div>
       )}
 

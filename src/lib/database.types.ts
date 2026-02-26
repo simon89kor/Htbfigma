@@ -255,6 +255,42 @@ export type Database = {
           }
         ]
       }
+      routine_likes: {
+        Row: {
+          id: string
+          user_id: string
+          routine_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          routine_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          routine_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "routine_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "auth.users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "routine_likes_routine_id_fkey"
+            columns: ["routine_id"]
+            isOneToOne: false
+            referencedRelation: "routines"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       reviews: {
         Row: {
           id: string
@@ -1325,6 +1361,7 @@ export type Profile = Database['public']['Tables']['profiles']['Row']
 export type Follow = Database['public']['Tables']['follows']['Row']
 export type Routine = Database['public']['Tables']['routines']['Row']
 export type RoutinePeriod = Database['public']['Tables']['routine_periods']['Row']
+export type RoutineLike = Database['public']['Tables']['routine_likes']['Row']
 export type Review = Database['public']['Tables']['reviews']['Row']
 export type Purchase = Database['public']['Tables']['purchases']['Row']
 export type UserRoutine = Database['public']['Tables']['user_routines']['Row']
@@ -1352,6 +1389,7 @@ export type ProfileInsert = Database['public']['Tables']['profiles']['Insert']
 export type FollowInsert = Database['public']['Tables']['follows']['Insert']
 export type RoutineInsert = Database['public']['Tables']['routines']['Insert']
 export type RoutinePeriodInsert = Database['public']['Tables']['routine_periods']['Insert']
+export type RoutineLikeInsert = Database['public']['Tables']['routine_likes']['Insert']
 export type ReviewInsert = Database['public']['Tables']['reviews']['Insert']
 export type PurchaseInsert = Database['public']['Tables']['purchases']['Insert']
 export type UserRoutineInsert = Database['public']['Tables']['user_routines']['Insert']
@@ -1379,6 +1417,7 @@ export type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
 export type FollowUpdate = Database['public']['Tables']['follows']['Update']
 export type RoutineUpdate = Database['public']['Tables']['routines']['Update']
 export type RoutinePeriodUpdate = Database['public']['Tables']['routine_periods']['Update']
+export type RoutineLikeUpdate = Database['public']['Tables']['routine_likes']['Update']
 export type ReviewUpdate = Database['public']['Tables']['reviews']['Update']
 export type PurchaseUpdate = Database['public']['Tables']['purchases']['Update']
 export type UserRoutineUpdate = Database['public']['Tables']['user_routines']['Update']

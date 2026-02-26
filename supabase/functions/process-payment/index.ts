@@ -94,6 +94,14 @@ app.post("/process-payment", async (c) => {
       .maybeSingle();
 
     if (existingPurchase) {
+      // 멱등성: 이미 완료된 구매가 있으면 해당 구매 정보 반환 (에러가 아닌 성공 처리)
+      if (body.idempotency_key && existingPurchase.status === "completed") {
+        return c.json({
+          success: true,
+          data: { purchase_id: existingPurchase.id },
+          idempotent: true,
+        }, 200);
+      }
       return c.json({
         error: "이미 구매한 루틴/기간 조합입니다.",
         purchase_id: existingPurchase.id,
@@ -132,6 +140,14 @@ app.post("/process-payment", async (c) => {
     const originalPrice = period.original_price || period.price;
     const discount = originalPrice - amount;
     const finalAmount = amount;
+
+    // 4-2. 무료/유료 결제 수단 검증
+    if (finalAmount === 0 && payment_method !== "free") {
+      return c.json({ error: "무료 루틴은 'free' 결제 수단을 사용해야 합니다." }, 400);
+    }
+    if (finalAmount > 0 && payment_method === "free") {
+      return c.json({ error: "유료 루틴에는 'free' 결제 수단을 사용할 수 없습니다." }, 400);
+    }
 
     // 5. 날짜 계산
     const startDate = new Date();

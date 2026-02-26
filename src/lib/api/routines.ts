@@ -16,10 +16,13 @@ export interface RoutineWithAuthor extends RoutineRow {
   routine_periods?: RoutinePeriod[];
 }
 
+export type PriceRange = 'free' | 'under5000' | 'under10000' | 'over10000';
+
 export interface RoutineListOptions {
   category?: string;
   search?: string;
   sort?: 'popular' | 'latest' | 'price_asc' | 'price_desc' | 'rating';
+  priceRange?: PriceRange;
   page?: number;
   limit?: number;
   status?: Routine['status'];
@@ -55,6 +58,23 @@ export async function getRoutines(options?: RoutineListOptions): Promise<{
     query = query.or(
       `title.ilike.%${options.search}%,description.ilike.%${options.search}%,tags.cs.{${options.search}}`
     );
+  }
+
+  if (options?.priceRange) {
+    switch (options.priceRange) {
+      case 'free':
+        query = query.eq('price', 0);
+        break;
+      case 'under5000':
+        query = query.gt('price', 0).lte('price', 5000);
+        break;
+      case 'under10000':
+        query = query.gt('price', 5000).lte('price', 10000);
+        break;
+      case 'over10000':
+        query = query.gt('price', 10000);
+        break;
+    }
   }
 
   switch (options?.sort) {

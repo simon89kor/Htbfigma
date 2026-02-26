@@ -1,22 +1,32 @@
 # 04. POST (Community) 기획서
 
 **우선순위:** P1 (Important)
-**상태:** MISSING (5개 화면 모두 미구현)
-**예상 라우트:** `/community`, `/community/:id`, `/community/create`, `/user/:id`, `/ranking`
+**상태:** EXISTS - Phase 2(F5)에서 구현 완료 (2026-02-26)
+**라우트:** `/community`, `/community/:id`, `/community/create`, `/user/:id`, `/ranking`
+**신규 파일:** `CommunityFeedPage.tsx`, `PostCard.tsx`, `CommentList.tsx`, `PostDetailPage.tsx`, `PostCreatePage.tsx`, `UserProfileViewPage.tsx`, `RankingDetailPage.tsx`, `community-context.tsx`
 
 ---
 
 ## 1. 현재 상태 분석
 
-### 구현 완료
-- 없음 (Community 관련 컴포넌트 전혀 없음)
+### 구현 완료 (Phase 2 — F5 에이전트)
+- `CommunityFeedPage.tsx` — 커뮤니티 메인 피드 (무한 스크롤, 탭 필터, FAB)
+- `PostCard.tsx` — 게시물 카드 (이미지 스와이프, 좋아요/댓글/북마크/공유)
+- `CommentList.tsx` — 댓글 리스트 + 입력 폼
+- `PostDetailPage.tsx` — 게시물 상세 (이미지 뷰어, 인터랙션, 댓글)
+- `PostCreatePage.tsx` — 게시물 작성 6단계 멀티스텝
+- `UserProfileViewPage.tsx` — 타 유저 프로필 (팔로우, 게시물/루틴 탭)
+- `RankingDetailPage.tsx` — 랭킹 상세 (주간/월간, 카테고리별)
+- `community-context.tsx` — 커뮤니티 상태관리 Context
+- `Layout.tsx` 수정 — 커뮤니티 탭 추가
+- `RootProviders.tsx` 수정 — CommunityProvider 추가
 
-### 미구현
-- Community Feed (메인 피드)
-- Post Detail (게시물 상세)
-- Post Create (게시물 작성)
-- User Profile View (타 유저 프로필)
-- Ranking Detail (랭킹)
+### 구현 차이점 (기획 대비)
+- **피드 탭**: 기획의 `[팔로잉, MY TO-BE, NOW, 랭킹, 감사일기, 다이어트]` → 구현은 `[전체, 팔로잉, MY TO-BE, NOW, 감사일기, 다이어트, 운동인증, 자기개발]`. "전체" 탭이 추가되고, "랭킹" 탭은 별도 페이지(/ranking)로 분리, "운동인증"과 "자기개발" 탭이 추가됨.
+- **QR스캔 버튼**: 기획 헤더의 QR스캔 아이콘 미구현 (검색 아이콘만 배치)
+- **메시지 버튼**: UserProfileViewPage에서 기획의 [메시지] 버튼 미구현 (팔로우 버튼만 배치). 메시지 기능은 별도 Phase에서 처리 예정.
+- **사진 편집/필터**: Step 2, 3은 placeholder UI만 구현 (기획 의도 반영, F5 규칙에 따라 실제 편집/필터 미구현)
+- **낙관적 업데이트**: 좋아요/북마크에 낙관적 업데이트 패턴 적용 (UI 즉시 반영 → 백그라운드 API)
 
 ---
 

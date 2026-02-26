@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router";
 import {
   ChevronLeft,
   ChevronRight,
@@ -6,6 +7,7 @@ import {
   Clock,
   Circle,
   CalendarDays,
+  BarChart3,
 } from "lucide-react";
 import {
   format,
@@ -40,6 +42,7 @@ interface DayTodo {
 }
 
 export function CalendarView({ purchasedLists, customLists }: CalendarViewProps) {
+  const navigate = useNavigate();
   const { toggleTodoItem, toggleCustomTodoItem } = useStore();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
@@ -94,6 +97,18 @@ export function CalendarView({ purchasedLists, customLists }: CalendarViewProps)
 
   return (
     <div className="space-y-4">
+      {/* 통계 보기 링크 */}
+      <div className="flex items-center justify-end px-1">
+        <button
+          onClick={() => navigate("/stats")}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#65D9AC]/10 text-[#65D9AC] text-sm font-medium hover:bg-[#65D9AC]/20 transition-colors cursor-pointer border-none"
+          aria-label="통계 보기"
+        >
+          <BarChart3 className="w-4 h-4" />
+          통계 보기
+        </button>
+      </div>
+
       <Card shadow="sm">
         <CardBody className="p-0">
           <div className="flex items-center justify-between px-5 py-4">
@@ -134,9 +149,17 @@ export function CalendarView({ purchasedLists, customLists }: CalendarViewProps)
                   }`}>{format(day, "d")}</span>
                   {hasTodos && (
                     <div className="flex items-center gap-[2px] mt-1">
-                      {colors.map((color, ci) => (
-                        <div key={ci} className={`w-[5px] h-[5px] rounded-full ${allCompleted ? "opacity-40" : ""}`} style={{ backgroundColor: isSelected ? "white" : color }} />
-                      ))}
+                      {allCompleted ? (
+                        <div
+                          className="w-[6px] h-[6px] rounded-full"
+                          style={{ backgroundColor: isSelected ? "white" : "#65D9AC" }}
+                          aria-label="전체 달성"
+                        />
+                      ) : (
+                        colors.map((color, ci) => (
+                          <div key={ci} className="w-[5px] h-[5px] rounded-full" style={{ backgroundColor: isSelected ? "white" : color }} />
+                        ))
+                      )}
                     </div>
                   )}
                   {hasTodos && allCompleted && !isSelected && (

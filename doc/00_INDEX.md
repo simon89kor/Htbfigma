@@ -7,11 +7,11 @@
 - **상태관리:** React Context (AuthContext, StoreContext)
 - **라우팅:** React Router v7
 
-## 현재 구현 상태 (17개 페이지/라우트 — Phase 1 완료)
+## 현재 구현 상태 (27개 페이지/라우트 — Phase 2 완료)
 | 경로 | 컴포넌트 | 상태 |
 |------|----------|------|
-| `/` | StorePage | EXISTS |
-| `/product/:id` | ProductDetailPage | EXISTS (구매하기 버튼 추가) |
+| `/` | StorePage | EXISTS (배너+검색 강화 — Phase 2) |
+| `/product/:id` | ProductDetailPage | EXISTS (리뷰+좋아요+Provider 링크 — Phase 2) |
 | `/cart` | CartPage | EXISTS |
 | `/my-lists` | MyListsPage | EXISTS (프로그레스 요약 + 3탭) |
 | `/create-routine` | CreateRoutinePage | EXISTS |
@@ -26,6 +26,15 @@
 | `/payment` | PaymentMethodPage | EXISTS (Phase 1 신규) |
 | `/purchase-complete` | PurchaseCompletePage | EXISTS (Phase 1 신규) |
 | `/settings` | SettingsPage | EXISTS (Phase 1 신규) |
+| `/search` | SearchResultPage | EXISTS (Phase 2 신규 — F4) |
+| `/provider/:id` | ProviderProfilePage | EXISTS (Phase 2 신규 — F4) |
+| `/community` | CommunityFeedPage | EXISTS (Phase 2 신규 — F5) |
+| `/community/create` | PostCreatePage | EXISTS (Phase 2 신규 — F5) |
+| `/community/:id` | PostDetailPage | EXISTS (Phase 2 신규 — F5) |
+| `/user/:id` | UserProfileViewPage | EXISTS (Phase 2 신규 — F5) |
+| `/ranking` | RankingDetailPage | EXISTS (Phase 2 신규 — F5) |
+| `/stats` | ProgressStatsPage | EXISTS (Phase 2 신규 — F6) |
+| `/notifications` | NotificationCenterPage | EXISTS (Phase 2 신규 — F7) |
 | `/*` | NotFoundPage | EXISTS |
 
 ## 기획서 목록
@@ -38,7 +47,7 @@
 ### 2. HOME 확장
 - [02_HOME_EXT.md](./02_HOME_EXT.md) - Search 강화, Provider Profile, Banner/Promotions
 - **우선순위:** P1
-- **상태:** PARTIAL (2개 기능 누락)
+- **상태:** EXISTS (4개 신규 컴포넌트 + 2개 수정 — Phase 2 완료)
 
 ### 3. Purchase Flow
 - [03_PURCHASE.md](./03_PURCHASE.md) - Period Selection, Payment, Confirm, Complete
@@ -48,12 +57,12 @@
 ### 4. POST (Community)
 - [04_POST_COMMUNITY.md](./04_POST_COMMUNITY.md) - Feed, Detail, Create, Profile, Ranking
 - **우선순위:** P1
-- **상태:** MISSING (5개 화면)
+- **상태:** EXISTS (7개 신규 컴포넌트 + Context — Phase 2 완료)
 
 ### 5. BOARD 확장
 - [05_BOARD_EXT.md](./05_BOARD_EXT.md) - Progress & Stats, Todo Detail 강화
 - **우선순위:** P1
-- **상태:** PARTIAL (1개 기능 누락)
+- **상태:** EXISTS (2개 신규 컴포넌트 + 2개 수정 — Phase 2 완료)
 
 ### 6. REWARD
 - [06_REWARD.md](./06_REWARD.md) - Reward Main, Badge, Ranking, Challenge
@@ -68,7 +77,7 @@
 ### 8. Global - Notification
 - [08_NOTIFICATION.md](./08_NOTIFICATION.md) - Notification Center
 - **우선순위:** P1
-- **상태:** MISSING (1개 화면)
+- **상태:** EXISTS (2개 신규 컴포넌트 + Context + Realtime — Phase 2 완료)
 
 ### 9. Admin Dashboard
 - [09_ADMIN.md](./09_ADMIN.md) - Dashboard, User/Routine/Purchase/Post Management

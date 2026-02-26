@@ -3,6 +3,7 @@ import {
   Check,
   ChevronUp,
   ChevronDown,
+  ChevronRight,
   Clock,
   Plus,
   Trash2,
@@ -14,8 +15,9 @@ import {
   ListTree,
 } from "lucide-react";
 import { Card, CardBody, Button, Input, Progress, Switch, Chip } from "@heroui/react";
-import { PurchasedList, CustomList, useStore } from "../store-context";
+import { PurchasedList, CustomList, TodoItem, useStore } from "../store-context";
 import { toast } from "sonner";
+import TodoDetailSheet from "./TodoDetailSheet";
 
 interface TodoListUsableProps {
   list?: PurchasedList;
@@ -55,6 +57,7 @@ export function TodoListUsable({
 }: TodoListUsableProps) {
   const {
     toggleTodoItem,
+    updateTodoItem,
     addCustomTodoItem,
     deleteCustomTodoItem,
     toggleCustomTodoItem,
@@ -79,6 +82,8 @@ export function TodoListUsable({
   const [showSubItemInput, setShowSubItemInput] = useState<string | null>(null);
   const [newSubText, setNewSubText] = useState("");
   const [showListSettings, setShowListSettings] = useState(false);
+  const [detailSheetOpen, setDetailSheetOpen] = useState(false);
+  const [detailSheetItem, setDetailSheetItem] = useState<TodoItem | null>(null);
 
   const isCustom = !!customList;
   const id = isCustom ? customList!.id : list!.id;
@@ -135,6 +140,22 @@ export function TodoListUsable({
     if (!newSubText.trim()) return;
     addSubItem(id, itemId, newSubText.trim());
     setNewSubText(""); setShowSubItemInput(null);
+  };
+
+  const handleOpenDetail = (item: TodoItem) => {
+    setDetailSheetItem(item);
+    setDetailSheetOpen(true);
+  };
+
+  const handleDetailSave = (
+    itemId: string,
+    updates: { time?: string; repeatDays?: number[]; memo?: string; notification?: "none" | "ontime" | "10min" }
+  ) => {
+    if (isCustom) {
+      updateCustomTodoItem(id, itemId, updates);
+    } else {
+      updateTodoItem(id, itemId, updates);
+    }
   };
 
   return (
@@ -265,18 +286,27 @@ export function TodoListUsable({
                     )}
                   </div>
 
-                  {isCustom && (
-                    <div className="flex items-center gap-0.5 shrink-0">
-                      <Button isIconOnly size="sm" variant={editingItemId === item.id ? "flat" : "light"}
-                        className={editingItemId !== item.id ? "opacity-0 group-hover:opacity-100" : ""}
-                        onPress={() => setEditingItemId(editingItemId === item.id ? null : item.id)}>
-                        <Settings2 className="w-3.5 h-3.5" />
-                      </Button>
-                      <Button isIconOnly size="sm" variant="light" color="danger" className="opacity-0 group-hover:opacity-100" onPress={() => handleDelete(item.id)}>
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-0.5 shrink-0">
+                    <button
+                      onClick={() => handleOpenDetail(item)}
+                      className="p-1 rounded-full hover:bg-default-100 transition-colors cursor-pointer border-none bg-transparent"
+                      aria-label="상세 설정"
+                    >
+                      <ChevronRight className="w-4 h-4 text-default-400" />
+                    </button>
+                    {isCustom && (
+                      <>
+                        <Button isIconOnly size="sm" variant={editingItemId === item.id ? "flat" : "light"}
+                          className={editingItemId !== item.id ? "opacity-0 group-hover:opacity-100" : ""}
+                          onPress={() => setEditingItemId(editingItemId === item.id ? null : item.id)}>
+                          <Settings2 className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button isIconOnly size="sm" variant="light" color="danger" className="opacity-0 group-hover:opacity-100" onPress={() => handleDelete(item.id)}>
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 {isCustom && editingItemId === item.id && (
@@ -388,6 +418,14 @@ export function TodoListUsable({
           </div>
         </CardBody>
       )}
+
+      {/* Todo Detail Sheet */}
+      <TodoDetailSheet
+        open={detailSheetOpen}
+        onOpenChange={setDetailSheetOpen}
+        item={detailSheetItem}
+        onSave={handleDetailSave}
+      />
     </Card>
   );
 }

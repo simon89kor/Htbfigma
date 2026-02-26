@@ -1,19 +1,26 @@
 # 08. Notification Center 기획서
 
 **우선순위:** P1 (Important)
-**상태:** MISSING (미구현)
-**예상 라우트:** `/notifications`
+**상태:** EXISTS - Phase 2(F7)에서 구현 완료 (2026-02-26)
+**라우트:** `/notifications`
+**신규 파일:** `NotificationCenterPage.tsx`, `NotificationCard.tsx`, `notification-context.tsx`
 
 ---
 
 ## 1. 현재 상태 분석
 
-### 구현 완료
-- 없음 (알림 관련 컴포넌트 없음)
+### 구현 완료 (Phase 2 — F7 에이전트)
+- `NotificationCenterPage.tsx` — 알림 센터 (전체/일정/커뮤니티/구매 탭, 무한 스크롤, 일괄 읽음)
+- `NotificationCard.tsx` — 알림 카드 (타입별 이모지 아이콘, 미읽음 빨간 점, deepLink 네비게이션)
+- `notification-context.tsx` — 알림 Context (Supabase Realtime 구독, unreadCount 전역 관리)
+- `Layout.tsx` 수정 — 헤더에 알림 아이콘 + 미읽음 카운트 뱃지 추가
+- `RootProviders.tsx` 수정 — NotificationProvider 추가
 
-### 미구현
-- Notification Center (통합 알림 페이지)
-- 알림 뱃지 (네비게이션 바)
+### 구현 차이점 (기획 대비)
+- **탭 구성**: 기획의 `[일정, 커뮤니티, 구매]` 3탭 → 구현은 `[전체, 일정, 커뮤니티, 구매]` 4탭. "전체" 탭이 추가됨.
+- **미읽음 점 색상**: 기획의 `--accent-color`(민트) → 구현은 `--destructive`(#d4183d, 빨간색). 읽지 않은 알림의 시각적 긴급성을 높이기 위한 의도적 변경.
+- **알림 뱃지**: 기획의 헤더 위치 배치 구현 완료. 99+ 표시, 빨간 원형 뱃지.
+- **Supabase Realtime**: notifications 테이블 INSERT 이벤트 구독, 새 알림 시 unreadCount +1 자동 반영.
 
 ---
 

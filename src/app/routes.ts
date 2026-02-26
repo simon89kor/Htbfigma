@@ -10,8 +10,6 @@ import { RegisterPage } from "./components/RegisterPage";
 import { ProfilePage } from "./components/ProfilePage";
 import { CreateRoutinePage } from "./components/CreateRoutinePage";
 import { NotFoundPage } from "./components/NotFoundPage";
-// [F2], [F3] 신규 페이지는 lazy loading (F1과 동일 패턴)
-
 export const router = createBrowserRouter([
   {
     Component: RootProviders,
@@ -55,7 +53,7 @@ export const router = createBrowserRouter([
           })),
       },
       // ==================================================================
-      // 기존 Layout 라우트 (변경 없음)
+      // Layout 라우트
       // ==================================================================
       {
         path: "/",
@@ -90,6 +88,73 @@ export const router = createBrowserRouter([
             lazy: () =>
               import("./components/SettingsPage").then((m) => ({
                 Component: m.SettingsPage,
+              })),
+          },
+          // [F4] Home Extension 라우트
+          {
+            path: "search",
+            lazy: async () => {
+              const { SearchResultPage } = await import("./components/SearchResultPage");
+              return { Component: SearchResultPage };
+            },
+          },
+          {
+            path: "provider/:id",
+            lazy: async () => {
+              const { ProviderProfilePage } = await import("./components/ProviderProfilePage");
+              return { Component: ProviderProfilePage };
+            },
+          },
+          // [F5] Community 라우트
+          {
+            path: "community",
+            lazy: async () => {
+              const { default: CommunityFeedPage } = await import("./components/CommunityFeedPage");
+              return { Component: CommunityFeedPage };
+            },
+          },
+          {
+            path: "community/create",
+            lazy: async () => {
+              const { default: PostCreatePage } = await import("./components/PostCreatePage");
+              return { Component: PostCreatePage };
+            },
+          },
+          {
+            path: "community/:id",
+            lazy: async () => {
+              const { default: PostDetailPage } = await import("./components/PostDetailPage");
+              return { Component: PostDetailPage };
+            },
+          },
+          {
+            path: "user/:id",
+            lazy: async () => {
+              const { default: UserProfileViewPage } = await import("./components/UserProfileViewPage");
+              return { Component: UserProfileViewPage };
+            },
+          },
+          {
+            path: "ranking",
+            lazy: async () => {
+              const { default: RankingDetailPage } = await import("./components/RankingDetailPage");
+              return { Component: RankingDetailPage };
+            },
+          },
+          // [F6] Board Extension 라우트
+          {
+            path: "stats",
+            lazy: async () => {
+              const { default: ProgressStatsPage } = await import("./components/ProgressStatsPage");
+              return { Component: ProgressStatsPage };
+            },
+          },
+          // [F7] Notification 라우트
+          {
+            path: "notifications",
+            lazy: () =>
+              import("./components/NotificationCenterPage").then((m) => ({
+                Component: m.NotificationCenterPage,
               })),
           },
           { path: "*", Component: NotFoundPage },

@@ -42,6 +42,8 @@ export interface TodoItem {
   day: number;
   time?: string;
   repeatDays?: number[];
+  memo?: string;
+  notification?: 'none' | 'ontime' | '10min' | '30min';
   moveToNextDay?: boolean;
   subItems?: SubItem[];
 }
@@ -145,6 +147,8 @@ function dbRoutineToTodoItem(
     day: number | null;
     time: string | null;
     repeat_days: string[];
+    memo: string | null;
+    notification: 'none' | 'ontime' | '10min' | '30min' | null;
     sort_order: number;
     todo_sub_items?: { id: string; text: string; completed: boolean; sort_order: number }[];
   };
@@ -156,6 +160,8 @@ function dbRoutineToTodoItem(
     day: dbItem.day ?? 1,
     time: dbItem.time ?? undefined,
     repeatDays: dbItem.repeat_days?.map(Number).filter((n) => !isNaN(n)),
+    memo: dbItem.memo ?? undefined,
+    notification: dbItem.notification ?? undefined,
     subItems: dbItem.todo_sub_items?.map((si) => ({
       id: si.id,
       text: si.text,
@@ -505,6 +511,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       day: updates.day,
       time: updates.time ?? undefined,
       repeatDays: updates.repeatDays?.map(String),
+      memo: updates.memo,
+      notification: updates.notification,
     }).catch(() => {
       // 실패 무시
     });
@@ -782,6 +790,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       day: updates.day,
       time: updates.time ?? undefined,
       repeatDays: updates.repeatDays?.map(String),
+      memo: updates.memo,
+      notification: updates.notification,
     }).catch(() => {
       // 실패 무시
     });

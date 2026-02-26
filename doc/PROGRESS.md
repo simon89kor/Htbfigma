@@ -58,11 +58,48 @@
   - MyListsPage 탭 구조 괴리 기록 (기획 4탭 → 구현 3탭)
 
 ## Phase 2: Frontend P1 (Important)
-- [ ] F4: Home Extension — 대기
-- [ ] F5: Community — 대기
-- [ ] F6: Board Extension — 대기
-- [ ] F7: Notification — 대기
-- [ ] Phase 2 routes.ts + Layout.tsx 통합 — 대기
+- [x] F4: Home Extension — 완료 (2026-02-26)
+  - BannerCarousel.tsx, FilterSheet.tsx, SearchResultPage.tsx, ProviderProfilePage.tsx 신규 생성
+  - StorePage.tsx 수정 (배너 캐러셀 + 검색 모드 + 최근/인기 검색어)
+  - ProductDetailPage.tsx 수정 (좋아요 하트 토글 + 공유 버튼 + 리뷰 섹션 + Provider 링크)
+  - routes.ts에 2개 라우트 추가 (/search, /provider/:id)
+  - FB-002: getRoutines priceRange 필터 (SUGGESTION, OPEN)
+  - FB-003: routine_likes 테이블 (SUGGESTION, OPEN)
+- [x] F5: Community — 완료 (2026-02-26)
+  - CommunityFeedPage.tsx, PostCard.tsx, CommentList.tsx, PostDetailPage.tsx, PostCreatePage.tsx, UserProfileViewPage.tsx, RankingDetailPage.tsx 신규 생성
+  - community-context.tsx 신규 생성 (CommunityProvider)
+  - RootProviders.tsx 수정 (CommunityProvider 추가)
+  - routes.ts에 5개 라우트 추가 (/community, /community/create, /community/:id, /user/:id, /ranking)
+- [x] F6: Board Extension — 완료 (2026-02-26)
+  - TodoDetailSheet.tsx, ProgressStatsPage.tsx 신규 생성
+  - CalendarView.tsx 수정 (달성 마커 + 통계 보기 링크)
+  - TodoListUsable.tsx 수정 (상세 설정 진입점 + TodoDetailSheet 연결)
+  - routes.ts에 1개 라우트 추가 (/stats)
+  - FB-004: get_user_stats RPC 반환 형식 명세 (IMPORTANT, OPEN)
+  - FB-005: store-context memo/notification 서버 동기화 (SUGGESTION, OPEN)
+- [x] F7: Notification — 완료 (2026-02-26)
+  - NotificationCenterPage.tsx, NotificationCard.tsx 신규 생성
+  - notification-context.tsx 신규 생성 (NotificationProvider + Supabase Realtime 구독)
+  - Layout.tsx 수정 (헤더 알림 아이콘 + 미읽음 뱃지 + 커뮤니티 네비 탭)
+  - RootProviders.tsx 수정 (NotificationProvider 추가)
+  - routes.ts에 1개 라우트 추가 (/notifications)
+- [x] Phase 2 routes.ts + Layout.tsx 통합 — 완료 (2026-02-26)
+  - F4: 2개 라우트 (search, provider/:id)
+  - F5: 5개 라우트 (community, community/create, community/:id, user/:id, ranking)
+  - F6: 1개 라우트 (stats)
+  - F7: 1개 라우트 (notifications)
+  - Layout.tsx: 헤더 알림 아이콘 + 네비 커뮤니티 탭 추가
+  - 총 9개 신규 라우트 추가 (+ 1개 기존 라우트 포함 = 10개 lazy-loaded routes)
+- [x] R0: 리뷰 — PASS (2026-02-26)
+  - F4: 88/100 PASS
+  - F5: 90/100 PASS
+  - F6: 87/100 PASS
+  - F7: 92/100 PASS
+  - Backend Feedback: 5건 OPEN (0 BLOCKER, 1 IMPORTANT, 4 SUGGESTION)
+- [x] P0: 기획 동기화 — 완료 (2026-02-26)
+  - 기획서 4개 업데이트 (02_HOME_EXT, 04_POST_COMMUNITY, 05_BOARD_EXT, 08_NOTIFICATION)
+  - 00_INDEX.md 상태 업데이트 (17→27 페이지/라우트)
+  - CHANGELOG.md Phase 2 변경 사항 기록
 
 ## Phase 3: Frontend P2~P3
 - [ ] F8: Reward — 대기
