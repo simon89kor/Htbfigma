@@ -10,6 +10,8 @@ import { RegisterPage } from "./components/RegisterPage";
 import { ProfilePage } from "./components/ProfilePage";
 import { CreateRoutinePage } from "./components/CreateRoutinePage";
 import { NotFoundPage } from "./components/NotFoundPage";
+// [F3] Settings 라우트 추가 — SettingsPage import
+import { SettingsPage } from "./components/SettingsPage";
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +29,8 @@ export const router = createBrowserRouter([
           { path: "login", Component: LoginPage },
           { path: "register", Component: RegisterPage },
           { path: "profile", Component: ProfilePage },
+          // [F3] Settings 라우트 추가
+          { path: "settings", Component: SettingsPage },
           { path: "*", Component: NotFoundPage },
         ],
       },
