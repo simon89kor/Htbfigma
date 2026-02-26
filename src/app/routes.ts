@@ -11,10 +11,60 @@ import { ProfilePage } from "./components/ProfilePage";
 import { CreateRoutinePage } from "./components/CreateRoutinePage";
 import { NotFoundPage } from "./components/NotFoundPage";
 
+// ============================================================================
+// [F1 Onboarding] 신규 라우트 5개 추가
+// - /splash          → SplashScreen (Layout 밖, 풀스크린)
+// - /walkthrough     → WalkthroughPage (Layout 밖, 풀스크린)
+// - /auth/callback   → AuthCallbackPage (Layout 밖, OAuth 리다이렉트)
+// - /terms           → TermsAgreementPage (Layout 밖, 온보딩 플로우)
+// - /preference      → PreferenceSetupPage (Layout 밖, 온보딩 플로우)
+// ============================================================================
+
 export const router = createBrowserRouter([
   {
     Component: RootProviders,
     children: [
+      // ==================================================================
+      // [F1] 온보딩 라우트 — Layout 밖 (풀스크린, 네비게이션 바 없음)
+      // ==================================================================
+      {
+        path: "splash",
+        lazy: () =>
+          import("./components/SplashScreen").then((m) => ({
+            Component: m.default,
+          })),
+      },
+      {
+        path: "walkthrough",
+        lazy: () =>
+          import("./components/WalkthroughPage").then((m) => ({
+            Component: m.default,
+          })),
+      },
+      {
+        path: "auth/callback",
+        lazy: () =>
+          import("./components/AuthCallbackPage").then((m) => ({
+            Component: m.default,
+          })),
+      },
+      {
+        path: "terms",
+        lazy: () =>
+          import("./components/TermsAgreementPage").then((m) => ({
+            Component: m.default,
+          })),
+      },
+      {
+        path: "preference",
+        lazy: () =>
+          import("./components/PreferenceSetupPage").then((m) => ({
+            Component: m.default,
+          })),
+      },
+      // ==================================================================
+      // 기존 Layout 라우트 (변경 없음)
+      // ==================================================================
       {
         path: "/",
         Component: Layout,
