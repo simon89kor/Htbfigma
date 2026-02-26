@@ -7,25 +7,33 @@
 - **상태관리:** React Context (AuthContext, StoreContext)
 - **라우팅:** React Router v7
 
-## 현재 구현 상태 (9개 페이지)
+## 현재 구현 상태 (17개 페이지/라우트 — Phase 1 완료)
 | 경로 | 컴포넌트 | 상태 |
 |------|----------|------|
 | `/` | StorePage | EXISTS |
-| `/product/:id` | ProductDetailPage | PARTIAL |
+| `/product/:id` | ProductDetailPage | EXISTS (구매하기 버튼 추가) |
 | `/cart` | CartPage | EXISTS |
-| `/my-lists` | MyListsPage | EXISTS |
+| `/my-lists` | MyListsPage | EXISTS (프로그레스 요약 + 3탭) |
 | `/create-routine` | CreateRoutinePage | EXISTS |
-| `/login` | LoginPage | EXISTS |
+| `/login` | LoginPage | EXISTS (소셜 로그인 추가) |
 | `/register` | RegisterPage | EXISTS |
-| `/profile` | ProfilePage | PARTIAL |
+| `/profile` | ProfilePage | EXISTS (커버/탭/인라인편집 확장) |
+| `/splash` | SplashScreen | EXISTS (Phase 1 신규) |
+| `/walkthrough` | WalkthroughPage | EXISTS (Phase 1 신규) |
+| `/auth/callback` | AuthCallbackPage | EXISTS (Phase 1 신규) |
+| `/terms` | TermsAgreementPage | EXISTS (Phase 1 신규) |
+| `/preference` | PreferenceSetupPage | EXISTS (Phase 1 신규) |
+| `/payment` | PaymentMethodPage | EXISTS (Phase 1 신규) |
+| `/purchase-complete` | PurchaseCompletePage | EXISTS (Phase 1 신규) |
+| `/settings` | SettingsPage | EXISTS (Phase 1 신규) |
 | `/*` | NotFoundPage | EXISTS |
 
 ## 기획서 목록
 
 ### 1. Onboarding Flow
-- [01_ONBOARDING.md](./01_ONBOARDING.md) - Splash, Walkthrough, Social Login, Terms, Preference
+- [01_ONBOARDING.md](./01_ONBOARDING.md) - Splash, Walkthrough, Social Login, AuthCallback, Terms, Preference
 - **우선순위:** P0 (Critical)
-- **상태:** MISSING (5개 화면)
+- **상태:** EXISTS (6개 화면 — Phase 1 완료)
 
 ### 2. HOME 확장
 - [02_HOME_EXT.md](./02_HOME_EXT.md) - Search 강화, Provider Profile, Banner/Promotions
@@ -35,7 +43,7 @@
 ### 3. Purchase Flow
 - [03_PURCHASE.md](./03_PURCHASE.md) - Period Selection, Payment, Confirm, Complete
 - **우선순위:** P0 (Critical)
-- **상태:** MISSING (4개 화면)
+- **상태:** EXISTS (3개 화면 + ProductDetail 수정 — Phase 1 완료)
 
 ### 4. POST (Community)
 - [04_POST_COMMUNITY.md](./04_POST_COMMUNITY.md) - Feed, Detail, Create, Profile, Ranking
@@ -55,7 +63,7 @@
 ### 7. MY Page 확장
 - [07_MY_PAGE.md](./07_MY_PAGE.md) - Profile 확장, My Routines, QR, Following, Settings
 - **우선순위:** P0~P1
-- **상태:** MISSING (4개 섹션)
+- **상태:** PARTIAL (P0 범위 3개 섹션 완료 — Phase 1, P1 범위 2개 미구현)
 
 ### 8. Global - Notification
 - [08_NOTIFICATION.md](./08_NOTIFICATION.md) - Notification Center

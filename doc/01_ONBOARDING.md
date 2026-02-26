@@ -1,24 +1,25 @@
 # 01. Onboarding Flow 기획서
 
 **우선순위:** P0 (Critical)
-**상태:** MISSING (5개 화면 모두 미구현)
-**예상 라우트:** `/splash`, `/walkthrough`, `/login` (기존 강화), `/terms`, `/preference`
+**상태:** EXISTS (6개 화면 구현 완료 — Phase 1)
+**라우트:** `/splash`, `/walkthrough`, `/login` (기존 강화), `/auth/callback`, `/terms`, `/preference`
 
 ---
 
 ## 1. 현재 상태 분석
 
-### 구현 완료
-- `LoginPage.tsx` - 이메일/비밀번호 기반 로그인 폼
+### 구현 완료 (Phase 1 완료)
+- `LoginPage.tsx` - 이메일/비밀번호 로그인 + 카카오/애플/구글 소셜 로그인 버튼
 - `RegisterPage.tsx` - 이메일/비밀번호 회원가입 폼
-- `auth-context.tsx` - 인증 상태 관리 (login, register, logout, updateProfile)
+- `auth-context.tsx` - 인증 상태 관리 (login, socialLogin, register, logout, updateProfileFull)
+- `SplashScreen.tsx` - 로고 애니메이션 + 세션 체크 분기
+- `WalkthroughPage.tsx` - 3장 슬라이드 (embla-carousel)
+- `AuthCallbackPage.tsx` - OAuth 리다이렉트 콜백 처리
+- `TermsAgreementPage.tsx` - 전체동의, 필수/선택, CTA 활성화
+- `PreferenceSetupPage.tsx` - 카테고리 칩 다중 선택
 
 ### 미구현
-- Splash Screen
-- Walkthrough Slides (3장)
-- Social Login (카카오/애플/구글)
-- Terms Agreement (약관 동의)
-- Preference Setup (관심 카테고리)
+- (없음 — Phase 1 온보딩 범위 전체 구현 완료)
 
 ---
 
@@ -58,30 +59,33 @@
 
 #### 구현 로직
 ```typescript
-// SplashScreen.tsx 의사코드
+// SplashScreen.tsx 실제 구현
+// localStorage 키: 'htb_walkthrough_done' (워크스루 완료 여부)
+// 세션 체크: supabase.auth.getSession()
 useEffect(() => {
-  const timer = setTimeout(async () => {
-    const isFirstVisit = !localStorage.getItem('htb_visited');
-    const token = localStorage.getItem('htb_token');
+  // Logo animation: fade-in(500ms) -> hold(1000ms) -> fade-out(500ms)
+  const navigateTimer = setTimeout(async () => {
+    const walkthroughDone = localStorage.getItem('htb_walkthrough_done');
 
-    if (isFirstVisit) {
-      localStorage.setItem('htb_visited', 'true');
-      navigate('/walkthrough');
-    } else if (token) {
-      // GET /health 서버 상태 확인
-      // GET /api/auth/refresh 토큰 갱신
-      navigate('/');
-    } else {
-      navigate('/login');
+    if (!walkthroughDone) {
+      // First visit: show walkthrough
+      navigate('/walkthrough', { replace: true });
+      return;
     }
-  }, 2000);
-  return () => clearTimeout(timer);
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      navigate('/', { replace: true });      // Has valid session
+    } else {
+      navigate('/login', { replace: true }); // No session
+    }
+  }, 2000); // SPLASH_TOTAL_MS
+  return () => clearTimeout(navigateTimer);
 }, []);
 ```
 
 #### API
-- `GET /health` - 서버 상태 확인
-- `GET /api/auth/refresh` - 토큰 갱신
+- `supabase.auth.getSession()` - 기존 세션 확인 (Supabase Auth 사용)
 
 #### 애니메이션
 - 로고: fade-in (0→1, 500ms) → hold (1000ms) → fade-out (1→0, 500ms)
@@ -148,8 +152,9 @@ interface WalkthroughSlide {
 - 인디케이터 dot: scale + color transition
 
 #### 기술 구현
-- `react-slick` 또는 `embla-carousel-react` 활용 (이미 설치됨)
-- `localStorage`에 walkthrough 완료 플래그 저장
+- `embla-carousel-react` 활용 (설치됨)
+- `localStorage`에 `htb_walkthrough_done` 플래그 저장
+- 일러스트 대신 Lucide 아이콘 placeholder 사용 (BookOpen, CalendarCheck, Users)
 
 ---
 
@@ -196,8 +201,35 @@ interface WalkthroughSlide {
 | 이메일 링크 탭 | → 기존 이메일 로그인/회원가입 폼 |
 
 #### API
-- `POST /api/auth/social` - body: `{ provider: "kakao" | "apple" | "google", token: string }`
-- `POST /api/auth/signup` - 이메일 가입 (기존)
+- `supabase.auth.signInWithOAuth({ provider })` - Supabase OAuth (카카오/애플/구글)
+- 인증 성공 시 → `/auth/callback` 으로 리다이렉트
+- `supabase.auth.signInWithPassword({ email, password })` - 이메일 로그인 (기존)
+
+---
+
+### ONBOARD-05.5: Auth Callback (OAuth 리다이렉트 처리)
+
+**경로:** `/auth/callback`
+**컴포넌트:** `AuthCallbackPage.tsx` (Phase 1에서 추가)
+
+> 기획서 원본에는 없었으나, Supabase OAuth 플로우에서 리다이렉트 콜백을 처리하기 위해 F1 에이전트가 추가 구현함.
+
+#### 역할
+- Supabase OAuth 인증 완료 후 리다이렉트되는 페이지
+- 세션 확인 → profile 조회 → 라우팅 분기
+
+#### 인터랙션
+| 조건 | 동작 |
+|------|------|
+| 세션 확인 + `terms_agreed_at` 있음 | → HOME (`/`) |
+| 세션 확인 + `terms_agreed_at` 없음 | → Terms (`/terms`) |
+| 프로필 조회 실패 (신규 유저) | → Terms (`/terms`) |
+| 에러 발생 | 에러 메시지 + "로그인으로 돌아가기" 버튼 |
+| 타임아웃 (10초) | 에러 메시지 표시 |
+
+#### UI
+- 로딩 상태: HTB 로고 + "로그인 처리 중..." + 로딩 도트
+- 에러 상태: 에러 아이콘 + 에러 메시지 + CTA 버튼
 
 #### 디자인 스펙
 | 요소 | 스펙 |
@@ -340,41 +372,47 @@ const CATEGORIES = [
 ## 3. 라우트 설정 변경
 
 ```typescript
-// routes.ts 에 추가할 라우트
-{ path: '/splash', element: <SplashScreen /> },       // Layout 밖
-{ path: '/walkthrough', element: <WalkthroughPage /> }, // Layout 밖
-{ path: '/terms', element: <TermsAgreementPage /> },
-{ path: '/preference', element: <PreferenceSetupPage /> },
-// /login, /register 는 기존 유지 (LoginPage 수정)
+// routes.ts — Layout 밖 (풀스크린, 네비게이션 바 없음)
+{ path: 'splash', lazy: () => import('./SplashScreen') },
+{ path: 'walkthrough', lazy: () => import('./WalkthroughPage') },
+{ path: 'auth/callback', lazy: () => import('./AuthCallbackPage') },
+{ path: 'terms', lazy: () => import('./TermsAgreementPage') },
+{ path: 'preference', lazy: () => import('./PreferenceSetupPage') },
+// /login, /register 는 Layout 내부에 유지 (LoginPage 수정)
 ```
 
-> Splash, Walkthrough는 Layout(네비게이션 바) 밖에 위치해야 함
+> Splash, Walkthrough, AuthCallback, Terms, Preference 모두 Layout(네비게이션 바) 밖에 위치.
+> lazy import 패턴 사용으로 코드 스플리팅 적용됨.
 
 ---
 
-## 4. AuthContext 확장 필요 사항
+## 4. AuthContext 확장 (Phase 1 구현 완료)
 
 ```typescript
-// auth-context.tsx 에 추가할 상태/메서드
+// auth-context.tsx — 추가된 메서드
 interface AuthContextType {
   // 기존...
-  socialLogin: (provider: 'kakao' | 'apple' | 'google') => Promise<void>;
-  agreeTerms: (terms: TermsAgreement) => Promise<void>;
-  setPreferences: (categories: string[]) => Promise<void>;
-  isNewUser: boolean;
-  hasCompletedOnboarding: boolean;
+  socialLogin: (provider: SocialProvider) => Promise<{ success: boolean; error?: string }>;
+  updateProfileFull: (updates: Partial<Profile>) => Promise<void>;
+  // 약관 동의: updateProfile({ terms_agreed_at, privacy_agreed_at, marketing_agreed })
+  // 관심사 설정: updateProfile({ preferences })
 }
+
+// SocialProvider 타입 (src/lib/auth.ts에서 export)
+type SocialProvider = 'kakao' | 'apple' | 'google';
 ```
 
 ---
 
-## 5. 신규 파일 목록
+## 5. 파일 목록 (Phase 1 완료 상태)
 
-| 파일 | 설명 |
-|------|------|
-| `src/app/components/SplashScreen.tsx` | Splash 화면 |
-| `src/app/components/WalkthroughPage.tsx` | 워크스루 슬라이드 |
-| `src/app/components/TermsAgreementPage.tsx` | 약관 동의 |
-| `src/app/components/PreferenceSetupPage.tsx` | 관심사 설정 |
-| `src/assets/logo-htb.svg` | HTB 로고 (필요 시) |
-| `src/assets/walkthrough-*.png` | 워크스루 일러스트 3장 |
+| 파일 | 설명 | 상태 |
+|------|------|------|
+| `src/app/components/SplashScreen.tsx` | Splash 화면 | EXISTS |
+| `src/app/components/WalkthroughPage.tsx` | 워크스루 슬라이드 | EXISTS |
+| `src/app/components/AuthCallbackPage.tsx` | OAuth 콜백 처리 | EXISTS (기획 추가) |
+| `src/app/components/TermsAgreementPage.tsx` | 약관 동의 | EXISTS |
+| `src/app/components/PreferenceSetupPage.tsx` | 관심사 설정 | EXISTS |
+| `src/app/components/LoginPage.tsx` | 소셜 로그인 버튼 추가 | MODIFIED |
+| `src/assets/logo-htb.svg` | HTB 로고 | 미생성 (Lucide 아이콘으로 대체) |
+| `src/assets/walkthrough-*.png` | 워크스루 일러스트 3장 | 미생성 (Lucide 아이콘으로 대체) |

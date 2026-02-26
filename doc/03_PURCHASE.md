@@ -1,23 +1,24 @@
 # 03. Purchase Flow 기획서
 
 **우선순위:** P0 (Critical)
-**상태:** MISSING (Cart만 존재, 결제 플로우 전체 미구현)
-**관련 기존 파일:** `CartPage.tsx`, `store-context.tsx`
+**상태:** EXISTS (결제 플로우 전체 구현 완료 — Phase 1)
+**관련 기존 파일:** `CartPage.tsx`, `store-context.tsx`, `ProductDetailPage.tsx`
 
 ---
 
 ## 1. 현재 상태 분석
 
-### 구현 완료
-- `CartPage.tsx` - 장바구니 (아이템 추가/삭제/수량 변경)
-- `store-context.tsx` - cart 상태관리 (addToCart, removeFromCart, checkout)
-- checkout 함수: cart → purchasedLists로 이동 (결제 없이 즉시 구매 처리)
+### 구현 완료 (Phase 1 완료)
+- `CartPage.tsx` - 장바구니 (아이템 추가/삭제/수량 변경) — 기존 유지
+- `store-context.tsx` - cart 상태관리 (addToCart, removeFromCart, checkout) + refreshData
+- `ProductDetailPage.tsx` - "구매하기" 버튼 추가 → PeriodSelectionSheet 연결
+- `PeriodSelectionSheet.tsx` - 기간 선택 Bottom Sheet (vaul Drawer)
+- `PaymentMethodPage.tsx` - 결제 수단 선택 + 금액 요약
+- `PurchaseCompletePage.tsx` - 구매 완료 화면 (체크 애니메이션)
 
 ### 누락
-- 기간 선택 (1주/4주/100일)
-- 결제 수단 선택
-- 결제 확인
-- 구매 완료 화면
+- (없음 — Phase 1 결제 플로우 전체 구현 완료)
+- FB-001: process-payment Edge Function (SUGGESTION, Phase 2 대상)
 
 ---
 
@@ -344,10 +345,11 @@ interface Purchase {
 { path: '/purchase-complete', element: <PurchaseCompletePage /> },
 ```
 
-## 6. 신규 파일 목록
+## 6. 파일 목록 (Phase 1 완료 상태)
 
-| 파일 | 설명 |
-|------|------|
-| `src/app/components/PeriodSelectionSheet.tsx` | 기간 선택 Bottom Sheet |
-| `src/app/components/PaymentMethodPage.tsx` | 결제 수단 선택 |
-| `src/app/components/PurchaseCompletePage.tsx` | 구매 완료 |
+| 파일 | 설명 | 상태 |
+|------|------|------|
+| `src/app/components/PeriodSelectionSheet.tsx` | 기간 선택 Bottom Sheet | EXISTS |
+| `src/app/components/PaymentMethodPage.tsx` | 결제 수단 선택 | EXISTS |
+| `src/app/components/PurchaseCompletePage.tsx` | 구매 완료 | EXISTS |
+| `src/app/components/ProductDetailPage.tsx` | 구매하기 버튼 + PeriodSheet 연결 | MODIFIED |
