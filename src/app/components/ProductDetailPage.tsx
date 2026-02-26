@@ -1,8 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import {
   Star,
-  ShoppingCart,
   Check,
   ArrowLeft,
   CheckCircle2,
@@ -16,6 +15,7 @@ import { Button, Card, CardBody, Chip, Avatar } from "@heroui/react";
 import { products } from "../data";
 import { useStore } from "../store-context";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import PeriodSelectionSheet, { type PeriodOption } from "./PeriodSelectionSheet";
 
 function formatDuration(days: number): string {
   if (days === 7) return "1주일";
@@ -31,16 +31,72 @@ function formatDuration(days: number): string {
 export function ProductDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart, isInCart, isPurchased } = useStore();
+  const { isInCart, isPurchased } = useStore();
   const [selectedDay, setSelectedDay] = useState(1);
   const [showFullDesc, setShowFullDesc] = useState(false);
   const dayScrollRef = useRef<HTMLDivElement>(null);
 
+  const [isPeriodSheetOpen, setIsPeriodSheetOpen] = useState(false);
+
   const product = products.find((p) => p.id === id);
+
+  // 기간별 가격 옵션 생성 (루틴의 durationDays 기반)
+  const periodOptions: PeriodOption[] = useMemo(() => {
+    if (!product) return [];
+    const basePrice = product.price;
+    const days = product.durationDays;
+
+    // 단기(7일 이하) 루틴은 옵션이 1개만
+    if (days <= 7) {
+      return [
+        {
+          id: `${product.id}-${days}d`,
+          label: `${days}일`,
+          days,
+          price: basePrice,
+          originalPrice: product.originalPrice,
+        },
+      ];
+    }
+
+    // 중장기 루틴: 1주/4주/전체 기간 옵션 제공
+    const perDayPrice = Math.round(basePrice / days);
+    const weekPrice = perDayPrice * 7;
+    const fourWeekPrice = perDayPrice * 28;
+
+    const options: PeriodOption[] = [
+      {
+        id: `${product.id}-1w`,
+        label: '1 WEEK',
+        days: 7,
+        price: Math.round(weekPrice / 100) * 100,
+      },
+    ];
+
+    if (days >= 28) {
+      options.push({
+        id: `${product.id}-4w`,
+        label: '4 WEEK',
+        days: 28,
+        price: Math.round(fourWeekPrice / 100) * 100,
+      });
+    }
+
+    options.push({
+      id: `${product.id}-full`,
+      label: `${days} Days`,
+      days,
+      price: basePrice,
+      originalPrice: product.originalPrice,
+    });
+
+    return options;
+  }, [product]);
 
   useEffect(() => {
     setSelectedDay(1);
     setShowFullDesc(false);
+    setIsPeriodSheetOpen(false);
   }, [id]);
 
   if (!product) {
@@ -272,28 +328,43 @@ export function ProductDetailPage() {
             <p className="mb-0">{product.author ? `${product.author}의 ${formatDuration(product.durationDays)} 루틴이 궁금하다면?` : `${formatDuration(product.durationDays)} 루틴으로 시작해보세요`}</p>
           </div>
           <div className="flex items-center gap-3 sm:ml-auto">
-            <span className="text-white text-lg font-bold">₩{product.price.toLocaleString()}</span>
+            <span className="text-white text-lg font-bold">{`\u20A9${new Intl.NumberFormat('ko-KR').format(product.price)}`}</span>
             {purchased ? (
               <Link to="/my-lists" className="no-underline">
                 <Button color="success" startContent={<Check className="w-4 h-4" />} className="font-bold">사용하기</Button>
               </Link>
-            ) : inCart ? (
-              <Link to="/cart" className="no-underline">
-                <Button startContent={<Check className="w-4 h-4" />} className="font-bold" style={{ backgroundColor: product.color, color: "#1a1a2e" }}>장바구니 확인</Button>
-              </Link>
             ) : (
-              <Button
-                startContent={<ShoppingCart className="w-4 h-4" />}
-                className="font-bold"
-                style={{ backgroundColor: product.color, color: "#1a1a2e" }}
-                onPress={() => addToCart(product)}
-              >
-                내 루틴에 추가하기
-              </Button>
+              <>
+                {inCart && (
+                  <Link to="/cart" className="no-underline">
+                    <Button startContent={<Check className="w-4 h-4" />} className="font-bold" style={{ backgroundColor: product.color, color: "#1a1a2e" }}>장바구니 확인</Button>
+                  </Link>
+                )}
+                <Button
+                  className="font-bold"
+                  style={{ backgroundColor: '#65D9AC', color: '#FFFFFF' }}
+                  onPress={() => setIsPeriodSheetOpen(true)}
+                >
+                  구매하기
+                </Button>
+              </>
             )}
           </div>
         </div>
       </div>
+
+      {/* Period Selection Bottom Sheet */}
+      <PeriodSelectionSheet
+        routine={{
+          id: product.id,
+          title: product.name,
+          provider: product.author ?? '알 수 없음',
+          color: product.color,
+        }}
+        options={periodOptions}
+        isOpen={isPeriodSheetOpen}
+        onClose={() => setIsPeriodSheetOpen(false)}
+      />
     </div>
   );
 }
