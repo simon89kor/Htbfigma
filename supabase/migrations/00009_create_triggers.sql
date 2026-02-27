@@ -27,7 +27,8 @@ BEGIN
     ),
     now(),
     now()
-  );
+  )
+  ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
 $$;
