@@ -50,7 +50,7 @@ function getWeekLabel(date: Date): string {
 
 export function MyListsPage() {
   const { purchasedLists, customLists, deleteCustomList } = useStore();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<string>("all");
   const [viewMode, setViewMode] = useState<ViewMode>("weekly");
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
@@ -73,9 +73,39 @@ export function MyListsPage() {
     }
   }, [purchasedLists.length, customLists.length]);
 
+  const allItems = useMemo(() => {
+    const items = [
+      ...purchasedLists.flatMap((l) => l.items),
+      ...customLists.flatMap((l) => l.items),
+    ];
+    return items;
+  }, [purchasedLists, customLists]);
+
+  const activeRoutineCount = useMemo(() => {
+    return [...purchasedLists, ...customLists].filter((list) => {
+      const total = list.items.length;
+      if (total === 0) return true;
+      const done = list.items.filter((i) => i.completed).length;
+      return done < total;
+    }).length;
+  }, [purchasedLists, customLists]);
+
+  const completedRoutineCount = useMemo(() => {
+    return [...purchasedLists, ...customLists].filter((list) => {
+      const total = list.items.length;
+      if (total === 0) return false;
+      const done = list.items.filter((i) => i.completed).length;
+      return done >= total;
+    }).length;
+  }, [purchasedLists, customLists]);
+
   const handleToggleCard = (cardId: string) => {
     setExpandedCards((prev) => { const next = new Set(prev); if (next.has(cardId)) next.delete(cardId); else next.add(cardId); return next; });
   };
+
+  if (authLoading) {
+    return null;
+  }
 
   if (!isLoggedIn) {
     return (
@@ -106,40 +136,9 @@ export function MyListsPage() {
   const filteredPurchased = showPurchased ? purchasedLists : [];
   const filteredCustom = showCustom ? customLists : [];
 
-  // ========================================================================
-  // Progress computation for all routines
-  // ========================================================================
-
-  const allItems = useMemo(() => {
-    const items = [
-      ...purchasedLists.flatMap((l) => l.items),
-      ...customLists.flatMap((l) => l.items),
-    ];
-    return items;
-  }, [purchasedLists, customLists]);
-
   const totalTodoCount = allItems.length;
   const completedTodoCount = allItems.filter((i) => i.completed).length;
   const overallProgress = totalTodoCount > 0 ? Math.round((completedTodoCount / totalTodoCount) * 100) : 0;
-
-  // Routine-level completion breakdown
-  const activeRoutineCount = useMemo(() => {
-    return [...purchasedLists, ...customLists].filter((list) => {
-      const total = list.items.length;
-      if (total === 0) return true; // no items yet = active
-      const done = list.items.filter((i) => i.completed).length;
-      return done < total;
-    }).length;
-  }, [purchasedLists, customLists]);
-
-  const completedRoutineCount = useMemo(() => {
-    return [...purchasedLists, ...customLists].filter((list) => {
-      const total = list.items.length;
-      if (total === 0) return false;
-      const done = list.items.filter((i) => i.completed).length;
-      return done >= total;
-    }).length;
-  }, [purchasedLists, customLists]);
 
   return (
     <div>
