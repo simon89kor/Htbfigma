@@ -28,6 +28,7 @@ import {
   PlusCircle,
   Users,
   Bell,
+  Trophy,
 } from "lucide-react";
 import { useStore } from "../store-context";
 import { useAuth } from "../auth-context";
@@ -53,6 +54,7 @@ export function Layout() {
     { path: "/community", label: "커뮤니티", icon: Users },
     { path: "/my-lists", label: "내 리스트", icon: ClipboardList },
     { path: "/create-routine", label: "루틴 만들기", icon: PlusCircle },
+    { path: "/reward", label: "리워드", icon: Trophy },
     { path: "/cart", label: "장바구니", icon: ShoppingCart, badge: cartCount },
   ];
 

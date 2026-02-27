@@ -7,7 +7,7 @@
 - **상태관리:** React Context (AuthContext, StoreContext)
 - **라우팅:** React Router v7
 
-## 현재 구현 상태 (27개 페이지/라우트 — Phase 2 완료)
+## 현재 구현 상태 (38개 페이지/라우트 — Phase 3 완료, Phase 4 대기: +4개)
 | 경로 | 컴포넌트 | 상태 |
 |------|----------|------|
 | `/` | StorePage | EXISTS (배너+검색 강화 — Phase 2) |
@@ -35,6 +35,21 @@
 | `/ranking` | RankingDetailPage | EXISTS (Phase 2 신규 — F5) |
 | `/stats` | ProgressStatsPage | EXISTS (Phase 2 신규 — F6) |
 | `/notifications` | NotificationCenterPage | EXISTS (Phase 2 신규 — F7) |
+| `/reward` | RewardMainPage | EXISTS (Phase 3 신규 — F8) |
+| `/reward/badges` | BadgeCollectionPage | EXISTS (Phase 3 신규 — F8) |
+| `/reward/ranking` | RankingBoardPage | EXISTS (Phase 3 신규 — F8) |
+| `/reward/challenges` | ChallengePage | EXISTS (Phase 3 신규 — F8) |
+| `/reward/challenges/:id` | ChallengeDetailPage | EXISTS (Phase 3 신규 — F8) |
+| `/admin` | AdminDashboard | EXISTS (Phase 3 신규 — F9) |
+| `/admin/users` | AdminUserManagement | EXISTS (Phase 3 신규 — F9) |
+| `/admin/users/:id` | AdminUserDetail | EXISTS (Phase 3 신규 — F9) |
+| `/admin/routines` | AdminRoutineManagement | EXISTS (Phase 3 신규 — F9) |
+| `/admin/purchases` | AdminPurchaseManagement | EXISTS (Phase 3 신규 — F9) |
+| `/admin/posts` | AdminPostModeration | EXISTS (Phase 3 신규 — F9) |
+| `/admin/challenges` | AdminChallengeManagement | PLACEHOLDER (Phase 4 대상 — F9) |
+| `/admin/settings` | AdminSettings | PLACEHOLDER (Phase 4 대상 — F9) |
+| `/qr` | QRCodeCenterPage | MISSING (Phase 4 대상 — F3) |
+| `/following` | FollowingPage | MISSING (Phase 4 대상 — F3) |
 | `/*` | NotFoundPage | EXISTS |
 
 ## 기획서 목록
@@ -67,7 +82,7 @@
 ### 6. REWARD
 - [06_REWARD.md](./06_REWARD.md) - Reward Main, Badge, Ranking, Challenge
 - **우선순위:** P1~P2
-- **상태:** MISSING (4개 화면)
+- **상태:** EXISTS (5개 화면 + Context — Phase 3 완료)
 
 ### 7. MY Page 확장
 - [07_MY_PAGE.md](./07_MY_PAGE.md) - Profile 확장, My Routines, QR, Following, Settings
@@ -82,13 +97,14 @@
 ### 9. Admin Dashboard
 - [09_ADMIN.md](./09_ADMIN.md) - Dashboard, User/Routine/Purchase/Post Management
 - **우선순위:** P2~P3
-- **상태:** MISSING (9개 화면)
+- **상태:** PARTIAL (9개 화면 + API — Phase 3 완료, 2개 미구현: challenges/settings)
 
 ## 개발 우선순위 로드맵
 ```
-Phase 1 (P0): Onboarding + Purchase Flow + MY Page 핵심
-Phase 2 (P1): HOME 확장 + POST Community + BOARD 확장 + Notification
-Phase 3 (P2): REWARD + Admin Dashboard
+Phase 1 (P0): Onboarding + Purchase Flow + MY Page 핵심 — 완료
+Phase 2 (P1): HOME 확장 + POST Community + BOARD 확장 + Notification — 완료
+Phase 3 (P2): REWARD + Admin Dashboard — 완료
+Phase 4 (잔여): MY Page P1(QR+Following) + Admin 잔여(Challenges+Settings) — 대기
 ```
 
 ## 디자인 토큰 참조

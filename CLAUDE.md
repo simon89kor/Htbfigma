@@ -42,6 +42,7 @@ Phase 0 (Backend):  B1 → (B2 + B3 병렬) → R0 리뷰(통합 검증) → P0 
 Phase 1 (FE P0):   F1 + F2 + F3 병렬 → R0 리뷰(통합 검증) → Backend Feedback 처리 → P0 기획 동기화
 Phase 2 (FE P1):   F4 + F5 + F6 + F7 병렬 → R0 리뷰(통합 검증) → Backend Feedback 처리 → P0 기획 동기화
 Phase 3 (FE P2~3): F8 + F9 병렬 → R0 리뷰(통합 검증) → Backend Feedback 처리 → P0 기획 동기화
+Phase 4 (잔여):    F3(QR+Following) + F9(Challenges+Settings) 병렬 → R0 리뷰 → P0 기획 동기화
 
 각 Phase 완료 후:
 1. R0 리뷰어가 산출물 품질 + 시스템 통합 검증 (PASS/FAIL)
@@ -61,6 +62,7 @@ Phase 3 (FE P2~3): F8 + F9 병렬 → R0 리뷰(통합 검증) → Backend Feedb
 | "Phase 1 시작" | F1 + F2 + F3 병렬 실행 (worktree 격리) → R0 리뷰 |
 | "Phase 2 시작" | F4 + F5 + F6 + F7 병렬 실행 (worktree 격리) → R0 리뷰 |
 | "Phase 3 시작" | F8 + F9 병렬 실행 (worktree 격리) → R0 리뷰 |
+| "Phase 4 시작" | F3(QR+Following) + F9(Challenges+Settings) 병렬 → R0 리뷰 |
 | "B1 실행" | B1 단독 실행 |
 | "F5 실행" | F5(community) 단독 실행 |
 | "리뷰" / "Phase N 리뷰" | R0 리뷰어로 현재/지정 Phase 산출물 검증 |

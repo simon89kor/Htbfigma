@@ -53,6 +53,74 @@ export const router = createBrowserRouter([
           })),
       },
       // ==================================================================
+      // [F9] Admin 라우트 — 별도 AdminLayout (사이드바 + 헤더)
+      // ==================================================================
+      {
+        path: "admin",
+        lazy: async () => {
+          const { default: AdminLayout } = await import("./components/admin/AdminLayout");
+          return { Component: AdminLayout };
+        },
+        children: [
+          {
+            index: true,
+            lazy: async () => {
+              const { default: AdminDashboard } = await import("./components/admin/AdminDashboard");
+              return { Component: AdminDashboard };
+            },
+          },
+          {
+            path: "users",
+            lazy: async () => {
+              const { default: AdminUserManagement } = await import("./components/admin/AdminUserManagement");
+              return { Component: AdminUserManagement };
+            },
+          },
+          {
+            path: "users/:id",
+            lazy: async () => {
+              const { default: AdminUserDetail } = await import("./components/admin/AdminUserDetail");
+              return { Component: AdminUserDetail };
+            },
+          },
+          {
+            path: "routines",
+            lazy: async () => {
+              const { default: AdminRoutineManagement } = await import("./components/admin/AdminRoutineManagement");
+              return { Component: AdminRoutineManagement };
+            },
+          },
+          {
+            path: "purchases",
+            lazy: async () => {
+              const { default: AdminPurchaseManagement } = await import("./components/admin/AdminPurchaseManagement");
+              return { Component: AdminPurchaseManagement };
+            },
+          },
+          {
+            path: "posts",
+            lazy: async () => {
+              const { default: AdminPostModeration } = await import("./components/admin/AdminPostModeration");
+              return { Component: AdminPostModeration };
+            },
+          },
+          {
+            path: "challenges",
+            lazy: async () => {
+              const { default: AdminChallengeManagement } = await import("./components/admin/AdminChallengeManagement");
+              return { Component: AdminChallengeManagement };
+            },
+          },
+          {
+            path: "settings",
+            lazy: async () => {
+              const { default: AdminSettings } = await import("./components/admin/AdminSettings");
+              return { Component: AdminSettings };
+            },
+          },
+        ],
+      },
+      // ==================================================================
       // Layout 라우트
       // ==================================================================
       {
@@ -147,6 +215,42 @@ export const router = createBrowserRouter([
             lazy: async () => {
               const { default: ProgressStatsPage } = await import("./components/ProgressStatsPage");
               return { Component: ProgressStatsPage };
+            },
+          },
+          // [F8] Reward 라우트
+          {
+            path: "reward",
+            lazy: async () => {
+              const { default: RewardMainPage } = await import("./components/RewardMainPage");
+              return { Component: RewardMainPage };
+            },
+          },
+          {
+            path: "reward/badges",
+            lazy: async () => {
+              const { default: BadgeCollectionPage } = await import("./components/BadgeCollectionPage");
+              return { Component: BadgeCollectionPage };
+            },
+          },
+          {
+            path: "reward/ranking",
+            lazy: async () => {
+              const { default: RankingBoardPage } = await import("./components/RankingBoardPage");
+              return { Component: RankingBoardPage };
+            },
+          },
+          {
+            path: "reward/challenges",
+            lazy: async () => {
+              const { default: ChallengePage } = await import("./components/ChallengePage");
+              return { Component: ChallengePage };
+            },
+          },
+          {
+            path: "reward/challenges/:id",
+            lazy: async () => {
+              const { default: ChallengeDetailPage } = await import("./components/ChallengeDetailPage");
+              return { Component: ChallengeDetailPage };
             },
           },
           // [F7] Notification 라우트

@@ -13,9 +13,9 @@
 - `MyListsPage.tsx` - 전체 프로그레스 요약 + 루틴별 프로그레스 바 + 3탭(전체/구매한 루틴/나만의 루틴)
 - `SettingsPage.tsx` - 알림 토글(3개), 계정관리, 앱정보, 고객센터, 로그아웃(확인모달), 탈퇴(이중확인)
 
-### 미구현 (P1 범위 → Phase 2 이후)
-- QR Code Center (`QRCodeCenterPage.tsx`)
-- Following/Followers (`FollowingPage.tsx`)
+### 미구현 (P1 범위 → Phase 4 대상)
+- QR Code Center (`QRCodeCenterPage.tsx`) — 기획 상세: MY-03
+- Following/Followers (`FollowingPage.tsx`) — 기획 상세: MY-04
 
 ---
 

@@ -5,6 +5,61 @@
 
 ---
 
+## [2026-02-26] Phase 3 완료 — Frontend P2~P3 (Reward + Admin)
+
+### 기획 변경
+- [기획서 06] **상태 변경**: MISSING → EXISTS (Phase 3 F8에서 구현 완료)
+- [기획서 06] **뱃지 카테고리 추가**: 기획의 4종(routine/streak/community/challenge) → 구현 5종(+special) (사유: DB badges 테이블에 'special' 카테고리가 정의되어 있어 구현에서 포함)
+- [기획서 06] **RewardSummary 인터페이스 변경**: 기획의 `badges: Badge[]` → 구현 `recentBadges: (Badge & { isUnlocked: boolean; unlockedAt?: string })[]` (사유: 획득 상태를 뱃지 데이터와 함께 관리하기 위해 타입 확장)
+- [기획서 06] **RewardContextType 확장**: 기획의 4개 함수 → 구현 5개 함수 + myRanking, challengesCount, loading 상태 추가 (사유: 내 순위 sticky 표시, 챌린지 카운트, 로딩 상태를 위해 확장)
+- [기획서 06] **랭킹 카테고리 탭 변경**: 기획의 4종(전체/운동/식단/자기개발) → 구현 5종(+라이프) (사유: DB 카테고리 체계와 일치)
+- [기획서 06] **랭킹 유저 탭 인터랙션 축소**: 기획의 "유저 탭 → User Profile View" 미구현 (사유: F5의 UserProfileViewPage와 연동은 스코프 밖, 순수 랭킹 보기에 집중)
+- [기획서 09] **상태 변경**: MISSING → PARTIAL (Phase 3 F9에서 7개 화면 구현, 2개 미구현)
+- [기획서 09] **AdminChallengeManagement 미구현**: 기획의 `/admin/challenges` 화면 미생성 (사유: 사이드바 메뉴는 존재하나 컴포넌트/라우트 미생성, 후속 처리 필요)
+- [기획서 09] **AdminSettings 미구현**: 기획의 `/admin/settings` 화면 미생성 (사유: 사이드바 메뉴는 존재하나 컴포넌트/라우트 미생성, 후속 처리 필요)
+- [기획서 09] **Dashboard 차트 구조 변경**: 기획의 4종(주간 가입자 라인차트, 카테고리별 매출 바차트, DAU 라인차트, 루틴 완료율 히스토그램) → 구현 3종 + 신고 리스트 (주간 가입자 라인차트, 카테고리별 매출 바차트, DAU 에어리어차트, 최근 신고 리스트) (사유: 루틴 완료율 히스토그램 대신 운영에 더 유용한 최근 신고 리스트로 대체, DAU는 에어리어차트로 변경)
+- [기획서 09] **권한 체크 방식**: 기획의 `user.role !== 'admin'` (AuthContext에서 직접 확인) → 구현 `getProfile(user.id)` 후 `profile.role !== 'admin'` (사유: AuthContext의 user 객체가 role을 직접 포함하지 않으므로, profiles 테이블에서 별도 조회)
+
+### 산출물 추가 (기획에 없으나 구현됨)
+- [F8] `reward-context.tsx` — 리워드 데이터 Context Provider (HMR-safe Symbol 패턴, Supabase 연동)
+- [F8] `src/lib/api/rewards.ts` — 리워드 전용 API 레이어 (뱃지/랭킹/챌린지 CRUD, RPC 호출)
+- [F8] Layout.tsx 네비게이션 바에 리워드 탭 추가 (Trophy 아이콘, /reward 경로)
+- [F8] RootProviders.tsx에 RewardProvider 추가
+- [F8] 비로그인 사용자에 대한 리워드 메인 페이지 안내 화면 (로그인 유도)
+- [F9] `src/lib/api/admin.ts` — Admin 전용 API 레이어 (대시보드 통계, 유저/루틴/구매/게시물 관리, 신고 처리)
+- [F9] AdminLayout에 로딩 상태 스켈레톤 UI (auth + profile 로딩 시)
+- [F9] AdminPostModeration에 신고 상세 다이얼로그 (신고자 정보, 사유, 기각/처리 완료 액션)
+- [F9] AdminRoutineManagement에 보관 삭제 확인 다이얼로그
+- [F9] AdminPurchaseManagement에 매출 요약 카드 (페이지 내 합계, 전체 건수)
+
+### 미구현 항목 (기획에 있으나 구현 안 됨)
+- [기획서 06] **뱃지 공유 버튼** — Badge Detail Bottom Sheet 내 SNS 공유/이미지 저장 미구현 (MVP 스코프 외)
+- [기획서 06] **뱃지 progress 필드** — 기획의 `progress?: number (0~100)` 미획득 뱃지의 진행률 표시 미구현 (condition_type/condition_value로 추후 계산 가능)
+- [기획서 09] **AdminChallengeManagement** — `/admin/challenges` 화면 미구현 (사이드바 메뉴만 존재)
+- [기획서 09] **AdminSettings** — `/admin/settings` 화면 미구현 (사이드바 메뉴만 존재)
+- [기획서 09] **Routine CRUD (생성/수정)** — AdminRoutineManagement에서 루틴 생성/수정 기능 미구현 (목록 조회 + 발행 상태 변경 + 삭제(보관)만 구현). `/admin/routines/create` 라우트도 미등록
+- [기획서 09] **유저 삭제 API** — 기획의 `DELETE /api/admin/users/:id`는 미구현 (소프트 삭제: status='deleted'로 처리)
+- [기획서 09] **AdminHeader 알림 건수** — 기획의 "신고 미처리 건수" 뱃지가 알림 아이콘에 표시되지 않음 (아이콘만 존재, 미처리 카운트는 대시보드에서 확인)
+
+### Backend Feedback 반영
+- FB-001 ~ FB-005: 전부 RESOLVED (Phase 2 후속 처리 완료)
+- FB-006: Admin RLS 정책 보강 (IMPORTANT) — OPEN, F9에서 신규 등록. profiles UPDATE, routines SELECT/UPDATE에 admin 조건 추가 필요
+
+### R0 리뷰 결과
+- F8: 87/100 CONDITIONAL_PASS
+- F9: 89/100 CONDITIONAL_PASS
+- Backend Feedback: 1건 OPEN (FB-006, IMPORTANT)
+- 최종: CONDITIONAL_PASS (평균 88/100)
+
+### 문서 업데이트 (P0 Planner)
+- `doc/06_REWARD.md` — 상태 MISSING→EXISTS, 구현 완료 파일목록, 인터페이스/API 변경, 뱃지 카테고리 추가
+- `doc/09_ADMIN.md` — 상태 MISSING→PARTIAL, 구현 완료 파일목록, 미구현 2개 화면 기록, 차트 구조 변경
+- `doc/00_INDEX.md` — 27→38 페이지/라우트 상태 테이블 업데이트, Phase 3 라우트 11개 추가
+- `doc/PROGRESS.md` — Phase 3 완료 상태 기록 (F8+F9 + 통합 + R0 + P0)
+- `doc/CHANGELOG.md` — 이번 항목 추가
+
+---
+
 ## [2026-02-26] Phase 2 완료 — Frontend P1 (Important)
 
 ### 기획 변경

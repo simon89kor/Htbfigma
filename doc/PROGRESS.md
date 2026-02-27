@@ -102,6 +102,54 @@
   - CHANGELOG.md Phase 2 변경 사항 기록
 
 ## Phase 3: Frontend P2~P3
-- [ ] F8: Reward — 대기
-- [ ] F9: Admin — 대기
-- [ ] Phase 3 최종 통합 — 대기
+- [x] F8: Reward — 완료 (2026-02-26), R0 리뷰 87/100 CONDITIONAL_PASS
+  - RewardMainPage.tsx 신규 (달성 현황/스트릭/뱃지/랭킹/챌린지 서머리)
+  - BadgeCollectionPage.tsx 신규 (뱃지 그리드 3열, 전체/획득/미획득 필터, 카테고리 그룹핑)
+  - RankingBoardPage.tsx 신규 (1~3위 포디움 + 4위~ 리스트 + 내 순위 sticky)
+  - ChallengePage.tsx 신규 (진행중/예정/완료 탭 + 챌린지 카드)
+  - ChallengeDetailPage.tsx 신규 (히어로 영역 + 규칙/보상 + 참여하기 CTA)
+  - reward-context.tsx 신규 (RewardProvider, HMR-safe Context)
+  - Layout.tsx 수정 (REWARD 탭 추가: Trophy 아이콘, /reward 경로)
+  - RootProviders.tsx 수정 (RewardProvider 추가)
+  - routes.ts에 5개 라우트 추가 (reward, reward/badges, reward/ranking, reward/challenges, reward/challenges/:id)
+- [x] F9: Admin — 완료 (2026-02-26), R0 리뷰 89/100 CONDITIONAL_PASS
+  - admin/AdminLayout.tsx 신규 (사이드바 + 헤더 + 권한 체크 + 로딩 스켈레톤)
+  - admin/AdminSidebar.tsx 신규 (7개 메뉴 항목, 현재 페이지 하이라이트)
+  - admin/AdminHeader.tsx 신규 (동적 페이지 타이틀 + 알림 + 로그아웃)
+  - admin/AdminDashboard.tsx 신규 (KPI 4종 + LineChart + BarChart + AreaChart + 최근 신고)
+  - admin/AdminUserManagement.tsx 신규 (검색/필터/페이지네이션 + 유저 테이블)
+  - admin/AdminUserDetail.tsx 신규 (프로필 + 활동 통계 + 구매 내역 + 역할/상태 변경)
+  - admin/AdminRoutineManagement.tsx 신규 (검색/필터 + 발행/비발행 토글 + 보관 삭제)
+  - admin/AdminPurchaseManagement.tsx 신규 (매출 요약 + 상태/기간 필터 + 환불 처리)
+  - admin/AdminPostModeration.tsx 신규 (검색/필터 + 신고 필터 + 숨김/삭제 + 신고 상세)
+  - src/lib/api/admin.ts 신규 (Admin 전용 API 레이어)
+  - routes.ts에 admin nested routes 6개 추가 (admin, admin/users, admin/users/:id, admin/routines, admin/purchases, admin/posts)
+  - FB-006: Admin RLS 정책 보강 필요 (IMPORTANT, OPEN)
+  - 미구현: /admin/challenges, /admin/settings (사이드바 메뉴만 존재)
+- [x] Phase 3 routes.ts + Layout.tsx 통합 — 완료 (2026-02-26)
+  - F8: 5개 라우트 (reward, reward/badges, reward/ranking, reward/challenges, reward/challenges/:id)
+  - F9: 6개 라우트 (admin nested: index, users, users/:id, routines, purchases, posts)
+  - Layout.tsx: 네비 REWARD 탭(Trophy) 추가
+  - RootProviders.tsx: RewardProvider 추가
+  - 총 11개 신규 라우트 추가
+- [x] R0: 리뷰 — CONDITIONAL_PASS (2026-02-26)
+  - F8: 87/100 CONDITIONAL_PASS
+  - F9: 89/100 CONDITIONAL_PASS
+  - Backend Feedback: 1건 OPEN (FB-006, IMPORTANT — Admin RLS 정책)
+- [x] P0: 기획 동기화 — 완료 (2026-02-26)
+  - 기획서 2개 업데이트 (06_REWARD, 09_ADMIN)
+  - 00_INDEX.md 상태 업데이트 (27→38 페이지/라우트)
+  - CHANGELOG.md Phase 3 변경 사항 기록
+
+## Phase 4: 잔여 기능 완성
+- [ ] F3: MY Page P1 — QR Code Center + Following/Followers
+  - QRCodeCenterPage.tsx 신규 (기획서 07_MY_PAGE.md MY-03 참조)
+  - FollowingPage.tsx 신규 (기획서 07_MY_PAGE.md MY-04 참조)
+  - routes.ts에 2개 라우트 추가 (/qr, /following)
+- [ ] F9: Admin 잔여 — Challenge Management + Settings
+  - AdminChallengeManagement.tsx 풀 구현 (기획서 09_ADMIN.md ADMIN-06 참조)
+  - AdminSettings.tsx 풀 구현 (기획서 09_ADMIN.md ADMIN-07 참조)
+  - 기존 placeholder 교체
+- [ ] Phase 4 routes.ts 통합
+- [ ] R0: 리뷰
+- [ ] P0: 기획 동기화

@@ -1,21 +1,26 @@
 # 06. REWARD (보상 & 달성) 기획서
 
 **우선순위:** P1~P2
-**상태:** MISSING (4개 화면 모두 미구현)
-**예상 라우트:** `/reward`, `/reward/badges`, `/reward/ranking`, `/reward/challenges`
+**상태:** EXISTS (5개 화면 + Context — Phase 3 완료)
+**라우트:** `/reward`, `/reward/badges`, `/reward/ranking`, `/reward/challenges`, `/reward/challenges/:id`
 
 ---
 
 ## 1. 현재 상태 분석
 
-### 구현 완료
-- 없음
+### 구현 완료 (Phase 3 — F8)
+- Reward Main (메인 대시보드) — `RewardMainPage.tsx`
+- Badge Collection (뱃지 컬렉션) — `BadgeCollectionPage.tsx`
+- Ranking Board (랭킹) — `RankingBoardPage.tsx`
+- Challenge (챌린지 리스트) — `ChallengePage.tsx`
+- Challenge Detail (챌린지 상세) — `ChallengeDetailPage.tsx`
+- Reward Context — `reward-context.tsx`
+- Layout.tsx 네비게이션에 REWARD 탭(Trophy 아이콘) 추가
+- RootProviders.tsx에 RewardProvider 추가
+- routes.ts에 5개 라우트 추가
 
 ### 미구현
-- Reward Main (메인 대시보드)
-- Badge Collection (뱃지 컬렉션)
-- Ranking Board (랭킹)
-- Challenge (챌린지)
+- (없음 — 기획 전체 구현 완료)
 
 ---
 
@@ -66,19 +71,20 @@
 └─────────────────────────┘
 ```
 
-#### 컴포넌트 구조
+#### 컴포넌트 구조 (구현 반영)
 ```typescript
+// reward-context.tsx 내 RewardSummary 인터페이스
 interface RewardSummary {
   totalCompletedRoutines: number;
   currentStreak: number;
   longestStreak: number;
-  badges: Badge[];          // 최근 4개
+  recentBadges: (Badge & { isUnlocked: boolean; unlockedAt?: string })[];  // 최근 4개
   ranking: {
     overall: number;
     category: string;
     categoryRank: number;
   };
-  activeChallenges: Challenge[];
+  activeChallenges: ChallengeWithDetails[];  // 참여 중인 것만 필터
 }
 ```
 
@@ -97,9 +103,11 @@ interface RewardSummary {
 | 챌린지 더보기 | → Challenge (`/reward/challenges`) |
 | 뱃지 개별 탭 | 뱃지 상세 Bottom Sheet |
 
-#### API
-- `GET /api/rewards/summary`
-- `GET /api/rewards/streak`
+#### API (구현 반영)
+- `supabase.from('profiles').select(...)` — 스트릭/달성 정보
+- `getAllBadges()` + `getUserBadges()` — 뱃지 목록
+- `getRanking({ period, category })` — 랭킹 (RPC)
+- `getChallenges({ status: 'active', currentUserId })` — 진행 중 챌린지
 
 #### 디자인 스펙
 | 요소 | 스펙 |
@@ -147,19 +155,17 @@ interface RewardSummary {
 └─────────────────────────┘
 ```
 
-#### 뱃지 데이터
+#### 뱃지 데이터 (구현 반영)
 ```typescript
-interface Badge {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;           // 이모지 또는 이미지 URL
-  category: string;       // 'routine' | 'streak' | 'community' | 'challenge'
-  condition: string;      // 획득 조건 설명
+// Badge는 DB 테이블 기반 (database.types.ts)
+// 프론트엔드에서 BadgeWithStatus로 확장
+interface BadgeWithStatus extends Badge {
   isUnlocked: boolean;
   unlockedAt?: string;    // 획득 일시
-  progress?: number;      // 진행률 (0~100)
 }
+// Badge DB 필드: id, name, description, icon, category, condition_type, condition_value, sort_order, is_active
+// category: 'routine' | 'streak' | 'community' | 'challenge' | 'special'
+// 'special' 카테고리가 기획에 없으나 구현에서 추가됨
 ```
 
 #### 뱃지 카테고리
@@ -177,9 +183,9 @@ interface Badge {
 | 필터 탭 | 전체/획득/미획득 필터링 |
 | 공유 버튼 (Bottom Sheet 내) | SNS 공유 또는 이미지 저장 |
 
-#### API
-- `GET /api/rewards/badges`
-- `GET /api/rewards/badges/:id`
+#### API (구현 반영)
+- `getAllBadges()` — 전체 뱃지 목록 (is_active=true)
+- `getUserBadges(userId)` — 유저가 획득한 뱃지 목록
 
 #### 디자인 스펙
 | 요소 | 스펙 |
@@ -247,11 +253,11 @@ interface RankingData {
 
 #### 인터랙션
 - 기간/카테고리 탭 전환 → 데이터 리로드
-- 유저 탭 → User Profile View
 - 내 순위: 화면 하단 고정 (sticky)
+- (유저 탭 → User Profile View는 미구현, 개별 항목 클릭 시 프로필 이동 없음)
 
-#### API
-- `GET /api/rewards/ranking?period={weekly|monthly}&category={all|exercise|diet|...}`
+#### API (구현 반영)
+- `getRanking({ period, category, limit })` — Supabase RPC `get_ranking` 호출
 
 #### 디자인 스펙
 | 요소 | 스펙 |
@@ -354,10 +360,10 @@ interface ChallengeReward {
 | 참여하기 | 챌린지 등록 + BOARD에 반영 |
 | 탭 필터 | 진행중/예정/완료 필터링 |
 
-#### API
-- `GET /api/challenges?status={active|upcoming|completed}`
-- `GET /api/challenges/:id`
-- `POST /api/challenges/:id/join`
+#### API (구현 반영)
+- `getChallenges({ status, currentUserId })` — 챌린지 목록 (참여 상태 포함)
+- `getChallenge(id, currentUserId)` — 챌린지 상세
+- `joinChallenge(challengeId, userId)` — 챌린지 참여
 
 ---
 
@@ -366,8 +372,8 @@ interface ChallengeReward {
 REWARD 탭 추가:
 
 ```
-현재:  [HOME] [BOARD] [MY]
-목표:  [HOME] [POST] [BOARD] [REWARD] [MY]
+현재 (Phase 3 완료):  [스토어] [커뮤니티] [내 리스트] [루틴 만들기] [리워드] [장바구니]
+REWARD 탭: Trophy 아이콘, /reward 경로, "리워드" 라벨
 ```
 
 ---
@@ -393,18 +399,23 @@ REWARD 탭 추가:
 | `src/app/components/ChallengePage.tsx` | 챌린지 리스트 |
 | `src/app/components/ChallengeDetailPage.tsx` | 챌린지 상세 |
 
-## 6. Context 추가
+## 6. Context (구현 반영)
 
 ```typescript
-// reward-context.tsx (신규)
+// reward-context.tsx
 interface RewardContextType {
   summary: RewardSummary | null;
-  badges: Badge[];
-  ranking: RankingData | null;
-  challenges: Challenge[];
+  badges: BadgeWithStatus[];
+  ranking: RankingEntry[];
+  myRanking: RankingEntry | null;
+  challenges: ChallengeWithDetails[];
+  challengesCount: number;
+  loading: boolean;
   loadSummary: () => Promise<void>;
   loadBadges: () => Promise<void>;
   loadRanking: (period: string, category: string) => Promise<void>;
+  loadChallenges: (status?: string) => Promise<void>;
   joinChallenge: (challengeId: string) => Promise<void>;
 }
+// 기획 대비 추가: myRanking(내 순위 별도 상태), challengesCount, loading, loadChallenges
 ```
