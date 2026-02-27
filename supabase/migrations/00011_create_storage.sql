@@ -17,7 +17,7 @@ VALUES (
   true,
   5242880, -- 5MB
   ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-);
+) ON CONFLICT (id) DO NOTHING;
 
 -- 프로필 배경 이미지
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -27,7 +27,7 @@ VALUES (
   true,
   10485760, -- 10MB
   ARRAY['image/jpeg', 'image/png', 'image/webp']
-);
+) ON CONFLICT (id) DO NOTHING;
 
 -- 게시물 이미지
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -37,7 +37,7 @@ VALUES (
   true,
   10485760, -- 10MB
   ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-);
+) ON CONFLICT (id) DO NOTHING;
 
 -- 루틴 상품 이미지
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -47,7 +47,7 @@ VALUES (
   true,
   10485760, -- 10MB
   ARRAY['image/jpeg', 'image/png', 'image/webp']
-);
+) ON CONFLICT (id) DO NOTHING;
 
 -- 배너 이미지
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -57,7 +57,7 @@ VALUES (
   true,
   10485760, -- 10MB
   ARRAY['image/jpeg', 'image/png', 'image/webp']
-);
+) ON CONFLICT (id) DO NOTHING;
 
 -- ===========================================
 -- 2. Storage RLS 정책
