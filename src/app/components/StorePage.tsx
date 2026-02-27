@@ -2,7 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { Search, SlidersHorizontal, Sparkles, Plus, X, Clock, TrendingUp } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { Button, Chip } from "@heroui/react";
-import { products, categories } from "../data";
+import { categories } from "../data";
+import type { TodoTemplate } from "../data";
+import { getRoutines } from "@/lib/api/routines";
+import { routineToTodoTemplate } from "@/lib/api/routine-adapter";
 import { ProductCard } from "./ProductCard";
 import BannerCarousel from "./BannerCarousel";
 import { getTrendingKeywords } from "@/lib/api/search";
@@ -14,6 +17,14 @@ import { cn } from "./ui/utils";
 
 const RECENT_SEARCH_KEY = "htb_recent_searches";
 const MAX_RECENT_SEARCHES = 10;
+
+// Sort 매핑: 프런트 → API
+const SORT_MAP = {
+  popular: "popular",
+  "price-low": "price_asc",
+  "price-high": "price_desc",
+  rating: "rating",
+} as const;
 
 // ============================================================================
 // Helpers
@@ -69,6 +80,10 @@ export function StorePage() {
   const [showSortMenu, setShowSortMenu] = useState(false);
   const sortRef = useRef<HTMLDivElement>(null);
 
+  // Product data from DB
+  const [products, setProducts] = useState<TodoTemplate[]>([]);
+  const [loading, setLoading] = useState(true);
+
   // Search mode state
   const [searchMode, setSearchMode] = useState(false);
   const [searchInput, setSearchInput] = useState("");
@@ -83,6 +98,18 @@ export function StorePage() {
     "price-high": "높은 가격순",
     rating: "평점순",
   };
+
+  // Fetch routines from DB
+  useEffect(() => {
+    setLoading(true);
+    getRoutines({
+      category: selectedCategory !== "전체" ? selectedCategory : undefined,
+      sort: SORT_MAP[sortBy],
+    })
+      .then(({ data }) => setProducts(data.map(routineToTodoTemplate)))
+      .catch(() => setProducts([]))
+      .finally(() => setLoading(false));
+  }, [selectedCategory, sortBy]);
 
   // Close sort menu on outside click
   useEffect(() => {
@@ -146,21 +173,6 @@ export function StorePage() {
     clearAllRecentSearches();
     setRecentSearches([]);
   };
-
-  // Filter and sort products (existing logic)
-  const filteredProducts = products
-    .filter((p) => {
-      const matchesCategory = selectedCategory === "전체" || p.category === selectedCategory;
-      return matchesCategory;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "price-low": return a.price - b.price;
-        case "price-high": return b.price - a.price;
-        case "rating": return b.rating - a.rating;
-        default: return b.reviews - a.reviews;
-      }
-    });
 
   return (
     <div>
@@ -367,17 +379,27 @@ export function StorePage() {
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        {filteredProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
-
-      {filteredProducts.length === 0 && (
-        <div className="text-center py-20">
-          <p className="text-gray-500 text-lg mb-2">검색 결과가 없습니다</p>
-          <p className="text-gray-400 text-sm">다른 키워드로 검색해보세요</p>
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="h-80 bg-gray-100 rounded-2xl animate-pulse" />
+          ))}
         </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          {products.length === 0 && (
+            <div className="text-center py-20">
+              <p className="text-gray-500 text-lg mb-2">검색 결과가 없습니다</p>
+              <p className="text-gray-400 text-sm">다른 키워드로 검색해보세요</p>
+            </div>
+          )}
+        </>
       )}
 
       {/* Create Custom Routine CTA */}

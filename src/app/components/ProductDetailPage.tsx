@@ -17,13 +17,15 @@ import {
 } from "lucide-react";
 import { Button, Card, CardBody, Chip, Avatar } from "@heroui/react";
 import { toast } from "sonner";
-import { products } from "../data";
+import type { TodoTemplate } from "../data";
 import { useStore } from "../store-context";
 import { useAuth } from "../auth-context";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { getRoutineReviews } from "@/lib/api/routines";
+import { getRoutine, getRoutineReviews } from "@/lib/api/routines";
+import { routineToTodoTemplate } from "@/lib/api/routine-adapter";
 import { isRoutineLiked, toggleRoutineLike } from "@/lib/api/routine-likes";
 import { cn } from "./ui/utils";
+import { Loader2 } from "lucide-react";
 
 // ============================================================================
 // Helpers
@@ -68,38 +70,53 @@ export function ProductDetailPage() {
   const [showFullDesc, setShowFullDesc] = useState(false);
   const dayScrollRef = useRef<HTMLDivElement>(null);
 
+  // Product data from DB
+  const [product, setProduct] = useState<TodoTemplate | null>(null);
+  const [pageLoading, setPageLoading] = useState(true);
+
   // New states for enhanced features
   const [isLiked, setIsLiked] = useState(false);
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
   const [reviewCount, setReviewCount] = useState(0);
   const [showAllReviews, setShowAllReviews] = useState(false);
 
-  const product = products.find((p) => p.id === id);
-
   useEffect(() => {
+    if (!id) return;
+    setPageLoading(true);
     setSelectedDay(1);
     setShowFullDesc(false);
     setShowAllReviews(false);
 
+    // Fetch routine detail from DB
+    getRoutine(id)
+      .then((data) => setProduct(routineToTodoTemplate(data)))
+      .catch(() => setProduct(null))
+      .finally(() => setPageLoading(false));
+
     // Check like status from server
-    if (id && isLoggedIn) {
+    if (isLoggedIn) {
       isRoutineLiked(id).then(setIsLiked).catch(() => setIsLiked(false));
     }
 
     // Fetch reviews from API
-    if (id) {
-      getRoutineReviews(id, { limit: 10 })
-        .then((data) => {
-          setReviews(data.data as unknown as ReviewItem[]);
-          setReviewCount(data.count);
-        })
-        .catch(() => {
-          // API failed, reviews will show from product.reviews count
-          setReviews([]);
-          setReviewCount(0);
-        });
-    }
+    getRoutineReviews(id, { limit: 10 })
+      .then((data) => {
+        setReviews(data.data as unknown as ReviewItem[]);
+        setReviewCount(data.count);
+      })
+      .catch(() => {
+        setReviews([]);
+        setReviewCount(0);
+      });
   }, [id]);
+
+  if (pageLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 text-[#65D9AC] animate-spin" />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -219,9 +236,9 @@ export function ProductDetailPage() {
           </div>
 
           {/* Provider link (enhanced) */}
-          {product.author && (
+          {product.author && product.authorId && (
             <Link
-              to={`/provider/${encodeURIComponent(product.author)}`}
+              to={`/provider/${product.authorId}`}
               className="flex items-center gap-3 mb-4 p-3 rounded-xl hover:bg-gray-50 transition-colors no-underline group"
             >
               <Avatar

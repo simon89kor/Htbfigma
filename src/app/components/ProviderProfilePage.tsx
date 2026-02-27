@@ -12,9 +12,9 @@ import { Button, Avatar } from "@heroui/react";
 import { toast } from "sonner";
 import { ProductCard } from "./ProductCard";
 import { useAuth } from "../auth-context";
-import { products as localProducts } from "../data";
 import { getProfile, followUser, unfollowUser, isFollowing as checkIsFollowing } from "@/lib/api/profiles";
 import { getRoutinesByAuthor, getRoutineReviews } from "@/lib/api/routines";
+import { routineToTodoTemplate } from "@/lib/api/routine-adapter";
 import type { Profile } from "@/lib/database.types";
 import type { TodoTemplate } from "../data";
 
@@ -70,26 +70,7 @@ export function ProviderProfilePage() {
 
         // Convert DB routines to TodoTemplate format for ProductCard reuse
         if (routinesData.data.length > 0) {
-          const converted: TodoTemplate[] = routinesData.data.map((r) => ({
-            id: r.id,
-            name: r.title,
-            description: r.description,
-            longDescription: r.description,
-            price: r.price,
-            originalPrice: r.original_price ?? undefined,
-            image: r.image_url,
-            category: r.category,
-            rating: r.rating,
-            reviews: r.review_count,
-            color: r.color,
-            durationDays: r.duration_days,
-            tags: r.tags ?? [],
-            author: r.profiles?.nickname,
-            authorSubtitle: r.profiles?.bio ?? "",
-            dayPlans: [],
-            features: r.features ?? [],
-          }));
-          setRoutines(converted);
+          setRoutines(routinesData.data.map(routineToTodoTemplate));
 
           // Fetch reviews from the first routine as sample
           try {
@@ -115,45 +96,7 @@ export function ProviderProfilePage() {
           }
         }
       } catch {
-        // Supabase failed: fall back to local data matching
-        const matchingProducts = localProducts.filter(
-          (p) => p.author && p.author === decodeURIComponent(id)
-        );
-        if (matchingProducts.length > 0) {
-          const firstProduct = matchingProducts[0];
-          setProfile({
-            id,
-            nickname: firstProduct.author ?? "",
-            bio: firstProduct.authorSubtitle ?? "",
-            avatar_url: "",
-            cover_image_url: "",
-            email: "",
-            role: "provider",
-            preferences: null,
-            terms_agreed_at: null,
-            privacy_agreed_at: null,
-            marketing_agreed: false,
-            notification_schedule: true,
-            notification_community: true,
-            notification_marketing: false,
-            current_streak: 0,
-            longest_streak: 0,
-            last_active_date: null,
-            post_count: 0,
-            follower_count: 0,
-            following_count: 0,
-            total_completed_routines: 0,
-            status: "active",
-            deleted_at: null,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          });
-          setRoutines(matchingProducts);
-          setAvgRating(
-            matchingProducts.reduce((sum, p) => sum + p.rating, 0) / matchingProducts.length
-          );
-          setReviewCount(matchingProducts.reduce((sum, p) => sum + p.reviews, 0));
-        }
+        // API failed — profile will remain null, showing not-found state
       } finally {
         setLoading(false);
       }

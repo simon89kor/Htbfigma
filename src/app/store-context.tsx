@@ -119,10 +119,17 @@ const StoreContext = globalObj[STORE_CTX_KEY] as React.Context<StoreContextType 
 
 const STORAGE_KEY_CART = "todomarket_cart";
 
+// UUID v4 패턴 (시드 데이터의 고정 UUID 포함)
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function loadCart(): CartItem[] {
   try {
     const stored = localStorage.getItem(STORAGE_KEY_CART);
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      const parsed: CartItem[] = JSON.parse(stored);
+      // 마이그레이션: 옛날 slug ID (e.g. "fitness-weekly") 카트 아이템 제거
+      return parsed.filter((item) => UUID_RE.test(item.product.id));
+    }
   } catch { /* empty */ }
   return [];
 }

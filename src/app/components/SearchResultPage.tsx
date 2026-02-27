@@ -4,7 +4,8 @@ import { ArrowLeft, SlidersHorizontal, Search, Loader2 } from "lucide-react";
 import { Button } from "@heroui/react";
 import { ProductCard } from "./ProductCard";
 import FilterSheet, { DEFAULT_FILTERS } from "./FilterSheet";
-import { products } from "../data";
+import { getRoutines, type PriceRange } from "@/lib/api/routines";
+import { routineToTodoTemplate } from "@/lib/api/routine-adapter";
 import { cn } from "./ui/utils";
 import type { FilterOptions, SortOption } from "./FilterSheet";
 import type { TodoTemplate } from "../data";
@@ -20,36 +21,14 @@ const PAGE_SIZE = 20;
 // Helpers
 // ============================================================================
 
-function matchesPriceRange(price: number, range: string | null): boolean {
-  if (!range) return true;
+function mapPriceRange(range: string | null): PriceRange | undefined {
+  if (!range) return undefined;
   switch (range) {
-    case "free":
-      return price === 0;
-    case "0-5000":
-      return price > 0 && price <= 5000;
-    case "0-10000":
-      return price > 0 && price <= 10000;
-    case "10000-":
-      return price >= 10000;
-    default:
-      return true;
-  }
-}
-
-function sortProducts(items: TodoTemplate[], sort: SortOption): TodoTemplate[] {
-  const sorted = [...items];
-  switch (sort) {
-    case "popular":
-      return sorted.sort((a, b) => b.reviews - a.reviews);
-    case "latest":
-      // Static data has no date; keep original order
-      return sorted;
-    case "price_asc":
-      return sorted.sort((a, b) => a.price - b.price);
-    case "rating":
-      return sorted.sort((a, b) => b.rating - a.rating);
-    default:
-      return sorted;
+    case "free": return "free";
+    case "0-5000": return "under5000";
+    case "0-10000": return "under10000";
+    case "10000-": return "over10000";
+    default: return undefined;
   }
 }
 
@@ -78,53 +57,37 @@ export function SearchResultPage() {
   const debounceTimer = useRef<ReturnType<typeof setTimeout>>();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Apply search + filters on local data
+  // Apply search + filters via API
   const applySearch = useCallback(
     (q: string, filterOpts: FilterOptions) => {
       setLoading(true);
 
-      // Simulate async for consistency with future API integration
-      const timerId = setTimeout(() => {
-        const lowerQ = q.toLowerCase().trim();
+      const apiCategory = filterOpts.categories.length === 1 ? filterOpts.categories[0] : undefined;
+      const apiPriceRange = mapPriceRange(filterOpts.priceRange);
 
-        let filtered = products.filter((p) => {
-          // Text search
-          if (lowerQ) {
-            const matchesText =
-              p.name.toLowerCase().includes(lowerQ) ||
-              p.description.toLowerCase().includes(lowerQ) ||
-              p.tags.some((t) => t.toLowerCase().includes(lowerQ));
-            if (!matchesText) return false;
-          }
-
-          // Category filter
-          if (filterOpts.categories.length > 0) {
-            if (!filterOpts.categories.includes(p.category)) return false;
-          }
-
-          // Price range filter
-          if (!matchesPriceRange(p.price, filterOpts.priceRange)) return false;
-
-          return true;
-        });
-
-        // Sort
-        filtered = sortProducts(filtered, filterOpts.sort);
-
-        setTotalCount(filtered.length);
-        setResults(filtered.slice(0, PAGE_SIZE));
-        setLoading(false);
-      }, 100);
-
-      return () => clearTimeout(timerId);
+      getRoutines({
+        search: q.trim() || undefined,
+        category: apiCategory,
+        sort: filterOpts.sort,
+        priceRange: apiPriceRange,
+        limit: PAGE_SIZE,
+      })
+        .then(({ data, count }) => {
+          setResults(data.map(routineToTodoTemplate));
+          setTotalCount(count);
+        })
+        .catch(() => {
+          setResults([]);
+          setTotalCount(0);
+        })
+        .finally(() => setLoading(false));
     },
     []
   );
 
   // Run search on mount and when params change
   useEffect(() => {
-    const cleanup = applySearch(query, filters);
-    return cleanup;
+    applySearch(query, filters);
   }, [query, filters, applySearch]);
 
   // Debounced search input handler
