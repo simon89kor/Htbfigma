@@ -40,11 +40,21 @@
 
 ## Pending Feedbacks
 
-_(현재 미해결 피드백 없음)_
+(없음)
 
 ---
 
 ## Resolved Feedbacks
+
+### FB-007: app_settings 테이블 생성 + RLS 정책 + 초기 데이터 시딩
+- **Reporter:** F9
+- **Target:** B1
+- **Severity:** BLOCKER
+- **Category:** DB_SCHEMA
+- **Description:** Admin Settings 페이지(`/admin/settings`)에서 사이트 설정, 알림 설정, 콘텐츠 정책을 저장하려면 `app_settings` 테이블이 필요함.
+- **Affected Files:** `supabase/migrations/00016_create_app_settings.sql`, `src/lib/database.types.ts`
+- **Status:** RESOLVED (2026-02-27)
+- **Resolution:** B1 처리. `supabase/migrations/00016_create_app_settings.sql` — app_settings 테이블 생성 (id/key/value/description/updated_by/updated_at). RLS 활성화 + admin 전용 SELECT/INSERT/UPDATE 정책 3개. updated_at 자동 갱신 트리거. 초기 데이터 시딩 9개 키 (site_name, announcement_message, announcement_enabled, maintenance_mode, global_notification_enabled, marketing_notification_enabled, auto_hide_report_threshold, banned_words, min_report_reason_length). `database.types.ts`에 AppSetting Row/Insert/Update/Relationships 타입 추가.
 
 ### FB-001: process-payment Edge Function 필요 (Phase 2)
 - **Reporter:** F2

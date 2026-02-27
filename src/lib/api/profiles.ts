@@ -195,7 +195,7 @@ export async function getFollowers(
   const { data, error, count } = await supabase
     .from('follows')
     .select(
-      'follower_id, profiles!follower_id(id, nickname, avatar_url, bio, follower_count, following_count)',
+      'follower_id, profiles!follower_id(id, nickname, avatar_url, bio, role, follower_count, following_count)',
       { count: 'exact' }
     )
     .eq('following_id', userId)
@@ -224,7 +224,7 @@ export async function getFollowing(
   const { data, error, count } = await supabase
     .from('follows')
     .select(
-      'following_id, profiles!following_id(id, nickname, avatar_url, bio, follower_count, following_count)',
+      'following_id, profiles!following_id(id, nickname, avatar_url, bio, role, follower_count, following_count)',
       { count: 'exact' }
     )
     .eq('follower_id', userId)

@@ -1,10 +1,17 @@
 import { supabase } from '../supabase';
 import type {
+  Json,
   Profile,
   Routine,
   Purchase,
   Post,
   Report,
+  Challenge,
+  ChallengeParticipant,
+  ChallengeReward,
+  ChallengeInsert,
+  ChallengeUpdate,
+  ChallengeRewardInsert,
 } from '../database.types';
 
 // ============================================================================
@@ -637,4 +644,309 @@ export async function updateReportStatus(
 
   if (error) throw error;
   return data as Report;
+}
+
+// ============================================================================
+// Challenge Management
+// ============================================================================
+
+export interface AdminChallengeRow extends Challenge {
+  profiles: { nickname: string } | null;
+  challenge_rewards: ChallengeReward[];
+}
+
+export interface AdminChallengeListOptions {
+  search?: string;
+  status?: Challenge['status'] | 'all';
+  category?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface AdminChallengeParticipantRow extends ChallengeParticipant {
+  profiles: { nickname: string; avatar_url: string } | null;
+}
+
+export interface AdminParticipantListOptions {
+  challengeId: string;
+  search?: string;
+  status?: ChallengeParticipant['status'] | 'all';
+  page?: number;
+  limit?: number;
+}
+
+/** 챌린지 목록 (관리자용) */
+export async function getAdminChallenges(
+  options?: AdminChallengeListOptions
+): Promise<{ data: AdminChallengeRow[]; count: number }> {
+  const page = options?.page ?? 1;
+  const limit = options?.limit ?? 20;
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  let query = supabase
+    .from('challenges')
+    .select(
+      '*, profiles!created_by(nickname), challenge_rewards(*)',
+      { count: 'exact' }
+    );
+
+  if (options?.status && options.status !== 'all') {
+    query = query.eq('status', options.status);
+  }
+
+  if (options?.category && options.category !== '전체') {
+    query = query.eq('category', options.category);
+  }
+
+  if (options?.search) {
+    query = query.ilike('title', `%${options.search}%`);
+  }
+
+  query = query.order('created_at', { ascending: false }).range(from, to);
+
+  const { data, error, count } = await query;
+  if (error) throw error;
+
+  return { data: (data as unknown as AdminChallengeRow[]) ?? [], count: count ?? 0 };
+}
+
+/** 챌린지 상세 */
+export async function getAdminChallenge(
+  challengeId: string
+): Promise<AdminChallengeRow> {
+  const { data, error } = await supabase
+    .from('challenges')
+    .select('*, profiles!created_by(nickname), challenge_rewards(*)')
+    .eq('id', challengeId)
+    .single();
+
+  if (error) throw error;
+  return data as unknown as AdminChallengeRow;
+}
+
+/** 챌린지 생성 */
+export async function createAdminChallenge(
+  challengeData: Omit<ChallengeInsert, 'created_by'>,
+  rewards: Omit<ChallengeRewardInsert, 'challenge_id'>[]
+): Promise<Challenge> {
+  // Get current admin user id
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('인증되지 않은 사용자입니다.');
+
+  const { data: challenge, error: challengeError } = await supabase
+    .from('challenges')
+    .insert({ ...challengeData, created_by: user.id })
+    .select('*')
+    .single();
+
+  if (challengeError) throw challengeError;
+
+  // Insert rewards if any
+  if (rewards.length > 0) {
+    const rewardInserts: ChallengeRewardInsert[] = rewards.map((r, i) => ({
+      ...r,
+      challenge_id: challenge.id,
+      sort_order: r.sort_order ?? i,
+    }));
+
+    const { error: rewardsError } = await supabase
+      .from('challenge_rewards')
+      .insert(rewardInserts);
+
+    if (rewardsError) throw rewardsError;
+  }
+
+  return challenge as Challenge;
+}
+
+/** 챌린지 수정 */
+export async function updateAdminChallenge(
+  challengeId: string,
+  challengeData: ChallengeUpdate,
+  rewards?: Omit<ChallengeRewardInsert, 'challenge_id'>[]
+): Promise<Challenge> {
+  const { data: challenge, error: challengeError } = await supabase
+    .from('challenges')
+    .update(challengeData)
+    .eq('id', challengeId)
+    .select('*')
+    .single();
+
+  if (challengeError) throw challengeError;
+
+  // If rewards are provided, replace them (delete + insert)
+  if (rewards !== undefined) {
+    const { error: deleteError } = await supabase
+      .from('challenge_rewards')
+      .delete()
+      .eq('challenge_id', challengeId);
+
+    if (deleteError) throw deleteError;
+
+    if (rewards.length > 0) {
+      const rewardInserts: ChallengeRewardInsert[] = rewards.map((r, i) => ({
+        ...r,
+        challenge_id: challengeId,
+        sort_order: r.sort_order ?? i,
+      }));
+
+      const { error: rewardsError } = await supabase
+        .from('challenge_rewards')
+        .insert(rewardInserts);
+
+      if (rewardsError) throw rewardsError;
+    }
+  }
+
+  return challenge as Challenge;
+}
+
+/** 챌린지 취소 (soft delete) */
+export async function cancelAdminChallenge(
+  challengeId: string
+): Promise<Challenge> {
+  const { data, error } = await supabase
+    .from('challenges')
+    .update({ status: 'cancelled' })
+    .eq('id', challengeId)
+    .select('*')
+    .single();
+
+  if (error) throw error;
+  return data as Challenge;
+}
+
+/** 챌린지 참가자 목록 */
+export async function getAdminChallengeParticipants(
+  options: AdminParticipantListOptions
+): Promise<{ data: AdminChallengeParticipantRow[]; count: number }> {
+  const page = options.page ?? 1;
+  const limit = options.limit ?? 20;
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  let query = supabase
+    .from('challenge_participants')
+    .select(
+      '*, profiles!user_id(nickname, avatar_url)',
+      { count: 'exact' }
+    )
+    .eq('challenge_id', options.challengeId);
+
+  if (options.status && options.status !== 'all') {
+    query = query.eq('status', options.status);
+  }
+
+  // Search by nickname is done client-side since it's a joined field
+  query = query.order('joined_at', { ascending: false }).range(from, to);
+
+  const { data, error, count } = await query;
+  if (error) throw error;
+
+  let participants = (data as unknown as AdminChallengeParticipantRow[]) ?? [];
+
+  // Client-side nickname search
+  if (options.search) {
+    const search = options.search.toLowerCase();
+    participants = participants.filter(
+      (p) => p.profiles?.nickname?.toLowerCase().includes(search)
+    );
+  }
+
+  return { data: participants, count: count ?? 0 };
+}
+
+// ============================================================================
+// Admin Settings
+// ============================================================================
+
+export interface AppSetting {
+  key: string;
+  value: Json;
+  description: string;
+  updated_at: string;
+}
+
+export interface SystemInfo {
+  dbStatus: 'healthy' | 'degraded' | 'down';
+  totalUsers: number;
+  totalRoutines: number;
+  totalPosts: number;
+  totalChallenges: number;
+  storageUsed: string;
+  storageLimit: string;
+  supabaseProjectId: string;
+  lastRefreshed: string;
+}
+
+/** 전체 설정 조회 (app_settings 테이블) */
+export async function getAdminSettings(): Promise<AppSetting[]> {
+  const { data, error } = await supabase
+    .from('app_settings')
+    .select('key, value, description, updated_at')
+    .order('key', { ascending: true });
+
+  if (error) throw error;
+  return (data as AppSetting[]) ?? [];
+}
+
+/** 설정 일괄 업데이트 (app_settings 테이블) */
+export async function updateAdminSettingsBatch(
+  updates: { key: string; value: Json }[]
+): Promise<AppSetting[]> {
+  for (const { key, value } of updates) {
+    const { error } = await supabase
+      .from('app_settings')
+      .update({ value, updated_at: new Date().toISOString() })
+      .eq('key', key);
+
+    if (error) throw error;
+  }
+
+  return getAdminSettings();
+}
+
+/** 시스템 정보 조회 */
+export async function getSystemInfo(): Promise<SystemInfo> {
+  const [usersRes, routinesRes, postsRes, challengesRes] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true })
+      .neq('status', 'deleted'),
+    supabase
+      .from('routines')
+      .select('id', { count: 'exact', head: true }),
+    supabase
+      .from('posts')
+      .select('id', { count: 'exact', head: true })
+      .neq('status', 'deleted'),
+    supabase
+      .from('challenges')
+      .select('id', { count: 'exact', head: true }),
+  ]);
+
+  // Check DB health based on whether queries succeeded
+  const hasError = [usersRes, routinesRes, postsRes, challengesRes].some(
+    (r) => r.error
+  );
+
+  // Extract project ID from Supabase URL
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? '';
+  const projectIdMatch = supabaseUrl.match(
+    /https:\/\/([^.]+)\.supabase\./
+  );
+  const projectId = projectIdMatch?.[1] ?? 'unknown';
+
+  return {
+    dbStatus: hasError ? 'degraded' : 'healthy',
+    totalUsers: usersRes.count ?? 0,
+    totalRoutines: routinesRes.count ?? 0,
+    totalPosts: postsRes.count ?? 0,
+    totalChallenges: challengesRes.count ?? 0,
+    storageUsed: '-',
+    storageLimit: '1 GB',
+    supabaseProjectId: projectId,
+    lastRefreshed: new Date().toISOString(),
+  };
 }

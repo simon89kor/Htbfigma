@@ -5,6 +5,55 @@
 
 ---
 
+## [2026-02-27] Phase 4 완료 — 잔여 화면 (MY Page P1 + Admin 잔여)
+
+### 기획 변경
+- [기획서 07] **상태 변경**: PARTIAL → EXISTS (Phase 4 F3에서 P1 범위 구현 완료)
+- [기획서 07] **MY-03 QR Code Center 상태 변경**: MISSING → EXISTS (QRCodeCenterPage.tsx 신규 생성)
+- [기획서 07] **MY-04 Following/Followers 상태 변경**: MISSING → EXISTS (FollowingPage.tsx 신규 생성)
+- [기획서 09] **상태 변경**: PARTIAL → EXISTS (Phase 4 F9에서 잔여 2개 화면 구현 완료)
+- [기획서 09] **ADMIN-06 Challenge Management 상태 변경**: PLACEHOLDER → EXISTS (AdminChallengeManagement.tsx 완전 구현)
+- [기획서 09] **ADMIN-07 Admin Settings 상태 변경**: PLACEHOLDER → EXISTS (AdminSettings.tsx 완전 구현)
+- [기획서 09] **ADMIN-07 DB 스키마 변경**: app_settings 테이블 "신규 필요" → "구현 완료" (FB-007 RESOLVED)
+
+### 스키마 변경
+- `app_settings` 테이블 생성: `supabase/migrations/00016_create_app_settings.sql`
+  - 컬럼: id(uuid PK), key(text UNIQUE), value(jsonb), description(text), updated_by(uuid FK), updated_at(timestamptz)
+  - RLS: admin 전용 SELECT/INSERT/UPDATE 3개 정책
+  - 트리거: updated_at 자동 갱신
+  - 초기 시딩: 9개 키 (site_name, announcement_message, announcement_enabled, maintenance_mode, global_notification_enabled, marketing_notification_enabled, auto_hide_report_threshold, banned_words, min_report_reason_length)
+- `database.types.ts`: AppSetting Row/Insert/Update/Relationships 타입 추가
+
+### 산출물 추가
+- [F3] `QRCodeCenterPage.tsx` (18.7KB) — 내 QR/스캔 2탭, 루틴 선택 QR 생성, 이미지 저장/공유, 공유 이력
+- [F3] `FollowingPage.tsx` (13.6KB) — 팔로워/팔로잉 2탭, 검색 필터, 팔로우/언팔로우 토글, Provider 태그
+- [F9] `AdminChallengeManagement.tsx` (39.8KB) — 챌린지 CRUD, 보상 설정, 참가자 현황 다이얼로그, 상태 관리(배지 색상), 검색/필터/페이지네이션
+- [F9] `AdminSettings.tsx` (22.0KB) — 사이트 설정, 알림 설정, 콘텐츠 정책, 시스템 정보(읽기 전용), 섹션별 독립 저장
+- [F9] `admin.ts` API 확장 — 챌린지 관리(getAdminChallenges, createAdminChallenge, updateAdminChallenge, cancelAdminChallenge, getAdminChallengeParticipants) + 설정 관리(getAdminSettings, updateAdminSetting, updateAdminSettingsBatch, getSystemInfo) 함수 추가
+- [B1] `00016_create_app_settings.sql` — app_settings 테이블 마이그레이션
+
+### 라우트 추가 (4개, 38 → 42)
+- `/qr` → QRCodeCenterPage (F3)
+- `/following` → FollowingPage (F3)
+- `/admin/challenges` → AdminChallengeManagement (F9, PLACEHOLDER → 완전 구현)
+- `/admin/settings` → AdminSettings (F9, PLACEHOLDER → 완전 구현)
+
+### Backend Feedback 반영
+- FB-007: app_settings 테이블 생성 + RLS + 초기 시딩 (BLOCKER) — RESOLVED (2026-02-27, B1 처리)
+- FB-001 ~ FB-006: 전부 RESOLVED (이전 Phase에서 처리 완료)
+
+### R0 리뷰 결과
+- Phase 4 전체: 90/100 PASS
+- Backend Feedback: 0건 OPEN (전체 7건 RESOLVED)
+
+### 문서 업데이트 (P0 Planner)
+- `doc/07_MY_PAGE.md` — 상태 PARTIAL → EXISTS, MY-03/MY-04 구현 완료, 파일목록 상태 업데이트
+- `doc/09_ADMIN.md` — 상태 PARTIAL → EXISTS, ADMIN-06/ADMIN-07 구현 완료, app_settings 스키마 반영, FB-007 RESOLVED, 파일목록 상태 업데이트
+- `doc/00_INDEX.md` — 38 → 42 페이지/라우트, Phase 4 완료 반영, 기획서 7/9 상태 업데이트, 로드맵 업데이트
+- `doc/CHANGELOG.md` — 이번 항목 추가
+
+---
+
 ## [2026-02-26] Phase 3 완료 — Frontend P2~P3 (Reward + Admin)
 
 ### 기획 변경

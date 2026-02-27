@@ -1,7 +1,7 @@
 # 09. Admin Dashboard 기획서
 
-**우선순위:** P2~P3 (Phase 3)
-**상태:** PARTIAL (7개 화면 구현, 2개 미구현 — Phase 3 완료, Phase 4 대상)
+**우선순위:** P2~P3 (Phase 3 + Phase 4)
+**상태:** EXISTS (9개 화면 전체 구현 완료 — Phase 3 7개 + Phase 4 2개)
 **라우트:** `/admin/*` (별도 AdminLayout)
 
 ### 구현 완료 (Phase 3 — F9)
@@ -16,9 +16,11 @@
 - AdminPostModeration (게시물 관리 + 신고 필터 + 숨김/삭제 + 신고 상세 다이얼로그)
 - admin.ts API 레이어 (전용 API 모듈)
 
-### 미구현 (Phase 4 대상)
-- AdminChallengeManagement (`/admin/challenges`) — PLACEHOLDER 존재, 기능 미구현 (ADMIN-06 기획 참조)
-- AdminSettings (`/admin/settings`) — PLACEHOLDER 존재, 기능 미구현 (ADMIN-07 기획 참조)
+### 구현 완료 (Phase 4 — F9)
+- AdminChallengeManagement (`/admin/challenges`) — 챌린지 CRUD, 보상 설정, 참가자 현황, 상태 관리
+- AdminSettings (`/admin/settings`) — 사이트 설정, 알림 설정, 콘텐츠 정책, 시스템 정보
+- admin.ts API 확장 (챌린지 관리 + 설정 관리 함수 추가)
+- app_settings 테이블 신규 생성 (FB-007 RESOLVED)
 
 ---
 
@@ -30,7 +32,7 @@
 - 6개 관리 화면 (대시보드, 유저, 루틴, 구매, 게시물, 유저상세)
 - admin.ts 전용 API 레이어
 - routes.ts에 nested routes (lazy loading)
-- Backend Feedback: FB-006 (Admin RLS 정책 보강) OPEN
+- Backend Feedback: FB-006 (Admin RLS 정책 보강) RESOLVED, FB-007 (app_settings 테이블) RESOLVED
 
 ---
 
@@ -277,7 +279,7 @@ interface DashboardStats {
 
 **경로:** `/admin/challenges`
 **컴포넌트:** `AdminChallengeManagement.tsx`
-**상태:** PLACEHOLDER (Phase 4 대상)
+**상태:** EXISTS (Phase 4 완료)
 
 #### UI 구성
 ```
@@ -565,7 +567,7 @@ GET  getAdminChallengeParticipants(options: AdminParticipantListOptions)
 
 **경로:** `/admin/settings`
 **컴포넌트:** `AdminSettings.tsx`
-**상태:** PLACEHOLDER (Phase 4 대상)
+**상태:** EXISTS (Phase 4 완료)
 
 > 유저용 SettingsPage.tsx (`/settings`)와 완전히 별도인 **관리자 전용 시스템 설정** 페이지입니다.
 
@@ -642,10 +644,10 @@ GET  getAdminChallengeParticipants(options: AdminParticipantListOptions)
 
 #### DB 스키마 참조
 
-> 현재 DB에 `app_settings` 또는 `site_settings` 테이블이 **없음**.
-> Phase 4 구현 시 B1 에이전트에게 Backend Feedback으로 테이블 생성을 요청해야 함.
+> app_settings 테이블 생성 완료 (FB-007 RESOLVED, 2026-02-27).
+> 마이그레이션: `supabase/migrations/00016_create_app_settings.sql`
 
-**제안: app_settings 테이블 (신규 필요)**
+**app_settings 테이블 (구현 완료)**
 | 컬럼 | 타입 | 설명 | 기본값 |
 |------|------|------|--------|
 | id | uuid (PK) | 설정 ID | gen_random_uuid() |
@@ -775,11 +777,10 @@ GET  getSystemInfo()
 | min_report_reason_length | 양의 정수, 1 이상 | "1 이상의 숫자를 입력해주세요" |
 | banned_words | 쉼표 구분 문자열 | (자유 입력, 파싱 오류 시 경고) |
 
-#### Backend Feedback 필요 항목 (Phase 4 착수 시)
-- **FB-007 (예정):** `app_settings` 테이블 생성 + RLS 정책 (admin만 read/write) + 초기 데이터 시딩
-  - Target: B1
-  - Severity: BLOCKER
-  - Category: DB_SCHEMA
+#### Backend Feedback 처리 완료
+- **FB-007:** `app_settings` 테이블 생성 + RLS 정책 (admin만 read/write) + 초기 데이터 시딩 9개 키 — **RESOLVED** (2026-02-27, B1 처리)
+  - 마이그레이션: `supabase/migrations/00016_create_app_settings.sql`
+  - `database.types.ts`에 AppSetting Row/Insert/Update/Relationships 타입 추가
 
 ---
 
@@ -863,9 +864,9 @@ interface User {
 | `src/app/components/admin/AdminRoutineManagement.tsx` | 루틴 관리 | EXISTS |
 | `src/app/components/admin/AdminPurchaseManagement.tsx` | 구매 관리 | EXISTS |
 | `src/app/components/admin/AdminPostModeration.tsx` | 게시물 관리 | EXISTS |
-| `src/app/components/admin/AdminChallengeManagement.tsx` | 챌린지 관리 | PLACEHOLDER (Phase 4) |
-| `src/app/components/admin/AdminSettings.tsx` | 어드민 설정 | PLACEHOLDER (Phase 4) |
-| `src/lib/api/admin.ts` | Admin 전용 API 레이어 | EXISTS (기획서 외 추가) |
+| `src/app/components/admin/AdminChallengeManagement.tsx` | 챌린지 관리 | EXISTS (Phase 4 완료) |
+| `src/app/components/admin/AdminSettings.tsx` | 어드민 설정 | EXISTS (Phase 4 완료) |
+| `src/lib/api/admin.ts` | Admin 전용 API 레이어 | EXISTS (Phase 4 확장 — 챌린지+설정 API 추가) |
 
 > 어드민 컴포넌트는 `src/app/components/admin/` 디렉토리에 분리하여 관리
-> AdminChallengeManagement, AdminSettings는 사이드바 메뉴에는 포함되어 있으나 컴포넌트/라우트 미생성. 후속 처리 필요.
+> 전체 9개 화면 + API 레이어 구현 완료 (Phase 3 + Phase 4)

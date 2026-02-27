@@ -1306,6 +1306,41 @@ export type Database = {
           }
         ]
       }
+      app_settings: {
+        Row: {
+          id: string
+          key: string
+          value: Json
+          description: string
+          updated_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          key: string
+          value?: Json
+          description?: string
+          updated_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          key?: string
+          value?: Json
+          description?: string
+          updated_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1383,6 +1418,7 @@ export type Banner = Database['public']['Tables']['banners']['Row']
 export type SearchKeyword = Database['public']['Tables']['search_keywords']['Row']
 export type UserSearchHistory = Database['public']['Tables']['user_search_history']['Row']
 export type QrCode = Database['public']['Tables']['qr_codes']['Row']
+export type AppSetting = Database['public']['Tables']['app_settings']['Row']
 
 // 테이블별 Insert 타입 단축형
 export type ProfileInsert = Database['public']['Tables']['profiles']['Insert']
@@ -1411,6 +1447,7 @@ export type BannerInsert = Database['public']['Tables']['banners']['Insert']
 export type SearchKeywordInsert = Database['public']['Tables']['search_keywords']['Insert']
 export type UserSearchHistoryInsert = Database['public']['Tables']['user_search_history']['Insert']
 export type QrCodeInsert = Database['public']['Tables']['qr_codes']['Insert']
+export type AppSettingInsert = Database['public']['Tables']['app_settings']['Insert']
 
 // 테이블별 Update 타입 단축형
 export type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
@@ -1439,3 +1476,4 @@ export type BannerUpdate = Database['public']['Tables']['banners']['Update']
 export type SearchKeywordUpdate = Database['public']['Tables']['search_keywords']['Update']
 export type UserSearchHistoryUpdate = Database['public']['Tables']['user_search_history']['Update']
 export type QrCodeUpdate = Database['public']['Tables']['qr_codes']['Update']
+export type AppSettingUpdate = Database['public']['Tables']['app_settings']['Update']

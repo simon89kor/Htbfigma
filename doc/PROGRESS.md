@@ -142,14 +142,27 @@
   - CHANGELOG.md Phase 3 변경 사항 기록
 
 ## Phase 4: 잔여 기능 완성
-- [ ] F3: MY Page P1 — QR Code Center + Following/Followers
-  - QRCodeCenterPage.tsx 신규 (기획서 07_MY_PAGE.md MY-03 참조)
-  - FollowingPage.tsx 신규 (기획서 07_MY_PAGE.md MY-04 참조)
+- [x] F3: MY Page P1 — 완료 (2026-02-27)
+  - QRCodeCenterPage.tsx 신규 (18.7KB — 내 QR/스캔 2탭, 루틴 선택 QR 생성, 공유 이력)
+  - FollowingPage.tsx 신규 (13.6KB — 팔로워/팔로잉 2탭, 검색, 팔로우/언팔로우 토글)
   - routes.ts에 2개 라우트 추가 (/qr, /following)
-- [ ] F9: Admin 잔여 — Challenge Management + Settings
-  - AdminChallengeManagement.tsx 풀 구현 (기획서 09_ADMIN.md ADMIN-06 참조)
-  - AdminSettings.tsx 풀 구현 (기획서 09_ADMIN.md ADMIN-07 참조)
-  - 기존 placeholder 교체
-- [ ] Phase 4 routes.ts 통합
-- [ ] R0: 리뷰
-- [ ] P0: 기획 동기화
+- [x] F9: Admin 잔여 — 완료 (2026-02-27)
+  - AdminChallengeManagement.tsx 풀 구현 (39.8KB — 챌린지 CRUD, 보상 설정, 참가자 현황, 상태 관리)
+  - AdminSettings.tsx 풀 구현 (22.0KB — 사이트 설정, 알림 설정, 콘텐츠 정책, 시스템 정보)
+  - admin.ts API 확장 (챌린지 관리 + 설정 관리 함수 추가)
+  - 기존 placeholder 교체 완료
+- [x] B1: Backend Feedback — 완료 (2026-02-27)
+  - FB-007 RESOLVED: app_settings 테이블 생성 (00016_create_app_settings.sql)
+  - database.types.ts 업데이트
+- [x] Phase 4 routes.ts 통합 — 완료 (2026-02-27)
+  - F3: 2개 라우트 (/qr, /following)
+  - F9: 2개 라우트 (/admin/challenges, /admin/settings — PLACEHOLDER → 완전 구현)
+  - 총 42개 페이지/라우트 (38 + 4)
+- [x] R0: 리뷰 — PASS (2026-02-27)
+  - Phase 4 전체: 90/100 PASS
+  - Backend Feedback: 0건 OPEN (FB-007 RESOLVED)
+- [x] P0: 기획 동기화 — 완료 (2026-02-27)
+  - 기획서 2개 업데이트 (07_MY_PAGE, 09_ADMIN)
+  - 00_INDEX.md 상태 업데이트 (38 → 42 페이지/라우트)
+  - CHANGELOG.md Phase 4 변경 사항 기록
+  - PROGRESS.md Phase 4 완료 기록

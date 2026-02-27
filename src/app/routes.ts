@@ -261,6 +261,21 @@ export const router = createBrowserRouter([
                 Component: m.NotificationCenterPage,
               })),
           },
+          // [F3] Phase 4 — QR Code Center + Following
+          {
+            path: "qr",
+            lazy: async () => {
+              const { default: QRCodeCenterPage } = await import("./components/QRCodeCenterPage");
+              return { Component: QRCodeCenterPage };
+            },
+          },
+          {
+            path: "following",
+            lazy: async () => {
+              const { default: FollowingPage } = await import("./components/FollowingPage");
+              return { Component: FollowingPage };
+            },
+          },
           { path: "*", Component: NotFoundPage },
         ],
       },

@@ -7,7 +7,7 @@
 - **상태관리:** React Context (AuthContext, StoreContext)
 - **라우팅:** React Router v7
 
-## 현재 구현 상태 (38개 페이지/라우트 — Phase 3 완료, Phase 4 대기: +4개)
+## 현재 구현 상태 (42개 페이지/라우트 — Phase 4 완료)
 | 경로 | 컴포넌트 | 상태 |
 |------|----------|------|
 | `/` | StorePage | EXISTS (배너+검색 강화 — Phase 2) |
@@ -46,10 +46,10 @@
 | `/admin/routines` | AdminRoutineManagement | EXISTS (Phase 3 신규 — F9) |
 | `/admin/purchases` | AdminPurchaseManagement | EXISTS (Phase 3 신규 — F9) |
 | `/admin/posts` | AdminPostModeration | EXISTS (Phase 3 신규 — F9) |
-| `/admin/challenges` | AdminChallengeManagement | PLACEHOLDER (Phase 4 대상 — F9) |
-| `/admin/settings` | AdminSettings | PLACEHOLDER (Phase 4 대상 — F9) |
-| `/qr` | QRCodeCenterPage | MISSING (Phase 4 대상 — F3) |
-| `/following` | FollowingPage | MISSING (Phase 4 대상 — F3) |
+| `/admin/challenges` | AdminChallengeManagement | EXISTS (Phase 4 완료 — F9) |
+| `/admin/settings` | AdminSettings | EXISTS (Phase 4 완료 — F9) |
+| `/qr` | QRCodeCenterPage | EXISTS (Phase 4 신규 — F3) |
+| `/following` | FollowingPage | EXISTS (Phase 4 신규 — F3) |
 | `/*` | NotFoundPage | EXISTS |
 
 ## 기획서 목록
@@ -87,7 +87,7 @@
 ### 7. MY Page 확장
 - [07_MY_PAGE.md](./07_MY_PAGE.md) - Profile 확장, My Routines, QR, Following, Settings
 - **우선순위:** P0~P1
-- **상태:** PARTIAL (P0 범위 3개 섹션 완료 — Phase 1, P1 범위 2개 미구현)
+- **상태:** EXISTS (5개 섹션 전체 구현 완료 — Phase 1 P0 + Phase 4 P1)
 
 ### 8. Global - Notification
 - [08_NOTIFICATION.md](./08_NOTIFICATION.md) - Notification Center
@@ -95,16 +95,16 @@
 - **상태:** EXISTS (2개 신규 컴포넌트 + Context + Realtime — Phase 2 완료)
 
 ### 9. Admin Dashboard
-- [09_ADMIN.md](./09_ADMIN.md) - Dashboard, User/Routine/Purchase/Post Management
+- [09_ADMIN.md](./09_ADMIN.md) - Dashboard, User/Routine/Purchase/Post/Challenge Management + Settings
 - **우선순위:** P2~P3
-- **상태:** PARTIAL (9개 화면 + API — Phase 3 완료, 2개 미구현: challenges/settings)
+- **상태:** EXISTS (9개 화면 + API 전체 구현 완료 — Phase 3 + Phase 4)
 
 ## 개발 우선순위 로드맵
 ```
 Phase 1 (P0): Onboarding + Purchase Flow + MY Page 핵심 — 완료
 Phase 2 (P1): HOME 확장 + POST Community + BOARD 확장 + Notification — 완료
 Phase 3 (P2): REWARD + Admin Dashboard — 완료
-Phase 4 (잔여): MY Page P1(QR+Following) + Admin 잔여(Challenges+Settings) — 대기
+Phase 4 (잔여): MY Page P1(QR+Following) + Admin 잔여(Challenges+Settings) — 완료 (R0 PASS 90/100)
 ```
 
 ## 디자인 토큰 참조

@@ -1,21 +1,19 @@
 # 07. MY Page 확장 기획서
 
 **우선순위:** P0~P1
-**상태:** PARTIAL (P0 범위 구현 완료 — Phase 1, P1 범위 미구현)
-**관련 기존 파일:** `ProfilePage.tsx`, `MyListsPage.tsx`, `SettingsPage.tsx`
+**상태:** EXISTS (P0 범위 Phase 1 완료 + P1 범위 Phase 4 완료 — 전체 구현 완료)
+**관련 기존 파일:** `ProfilePage.tsx`, `MyListsPage.tsx`, `SettingsPage.tsx`, `QRCodeCenterPage.tsx`, `FollowingPage.tsx`
 
 ---
 
 ## 1. 현재 상태 분석
 
-### 구현 완료 (Phase 1 완료)
+### 구현 완료 (Phase 1 + Phase 4 완료)
 - `ProfilePage.tsx` - 커버이미지, 아바타 업로드, 팔로워/팔로잉 카운트, 게시물/루틴/구매내역 탭, 인라인 편집
 - `MyListsPage.tsx` - 전체 프로그레스 요약 + 루틴별 프로그레스 바 + 3탭(전체/구매한 루틴/나만의 루틴)
 - `SettingsPage.tsx` - 알림 토글(3개), 계정관리, 앱정보, 고객센터, 로그아웃(확인모달), 탈퇴(이중확인)
-
-### 미구현 (P1 범위 → Phase 4 대상)
-- QR Code Center (`QRCodeCenterPage.tsx`) — 기획 상세: MY-03
-- Following/Followers (`FollowingPage.tsx`) — 기획 상세: MY-04
+- `QRCodeCenterPage.tsx` - 내 QR/스캔 탭, 루틴 선택 QR 생성, 공유 이력 (Phase 4 신규)
+- `FollowingPage.tsx` - 팔로워/팔로잉 탭, 검색, 팔로우/언팔로우 토글 (Phase 4 신규)
 
 ---
 
@@ -426,12 +424,12 @@ interface FollowUser {
 { path: '/settings', element: <SettingsPage /> },
 ```
 
-## 4. 파일 목록 (Phase 1 완료 상태)
+## 4. 파일 목록 (Phase 4 완료 상태 — 전체 구현 완료)
 
 | 파일 | 설명 | 상태 |
 |------|------|------|
-| `src/app/components/ProfilePage.tsx` | 프로필 확장 (커버, 탭, 인라인편집) | MODIFIED |
-| `src/app/components/MyListsPage.tsx` | 프로그레스 요약 + 루틴별 프로그레스 바 | MODIFIED |
+| `src/app/components/ProfilePage.tsx` | 프로필 확장 (커버, 탭, 인라인편집) | EXISTS |
+| `src/app/components/MyListsPage.tsx` | 프로그레스 요약 + 루틴별 프로그레스 바 | EXISTS |
 | `src/app/components/SettingsPage.tsx` | 설정 | EXISTS |
-| `src/app/components/QRCodeCenterPage.tsx` | QR 코드 센터 | MISSING (P1) |
-| `src/app/components/FollowingPage.tsx` | 팔로잉/팔로워 | MISSING (P1) |
+| `src/app/components/QRCodeCenterPage.tsx` | QR 코드 센터 | EXISTS (Phase 4 신규) |
+| `src/app/components/FollowingPage.tsx` | 팔로잉/팔로워 | EXISTS (Phase 4 신규) |
