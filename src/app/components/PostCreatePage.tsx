@@ -233,18 +233,18 @@ const PostCreatePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 flex flex-col">
+    <div className="min-h-screen bg-background -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 flex flex-col">
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB]">
+      <div className="sticky top-0 z-30 bg-background border-b border-white/10">
         <div className="flex items-center justify-between px-4 py-3">
           <button
             onClick={goBack}
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer hover:bg-gray-100"
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer hover:bg-white/5"
             aria-label="뒤로가기"
           >
-            <ArrowLeft size={22} className="text-[#1a1a2e]" />
+            <ArrowLeft size={22} className="text-foreground" />
           </button>
-          <h1 className="text-base font-semibold text-[#1a1a2e]">
+          <h1 className="text-base font-semibold text-foreground">
             {STEP_TITLES[state.step - 1]}
           </h1>
           {state.step < 6 ? (
@@ -253,7 +253,7 @@ const PostCreatePage = () => {
               disabled={!canGoNext()}
               className={cn(
                 'text-sm font-semibold border-none bg-transparent cursor-pointer px-2 py-1',
-                canGoNext() ? 'text-[#65D9AC]' : 'text-[#9CA3AF]'
+                canGoNext() ? 'text-[#65D9AC]' : 'text-foreground/50'
               )}
             >
               다음
@@ -264,7 +264,7 @@ const PostCreatePage = () => {
         </div>
 
         {/* Progress bar */}
-        <div className="h-0.5 bg-gray-100">
+        <div className="h-0.5 bg-white/5">
           <div
             className="h-full bg-[#65D9AC] transition-all duration-300"
             style={{ width: `${(state.step / 6) * 100}%` }}
@@ -350,7 +350,7 @@ interface Step1Props {
 
 const Step1ImageSelect = ({ images, previews, onSelect, onRemove }: Step1Props) => (
   <div className="p-4">
-    <p className="text-sm text-[#6B7280] mb-4">
+    <p className="text-sm text-foreground/60 mb-4">
       최대 {MAX_IMAGES}장까지 선택할 수 있습니다 ({images.length}/{MAX_IMAGES})
     </p>
     <div className="grid grid-cols-3 gap-0.5">
@@ -358,16 +358,16 @@ const Step1ImageSelect = ({ images, previews, onSelect, onRemove }: Step1Props) 
       {images.length < MAX_IMAGES && (
         <button
           onClick={onSelect}
-          className="aspect-square bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-100 transition-colors"
+          className="aspect-square bg-white/5 border-2 border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-white/8 transition-colors"
           aria-label="사진 추가"
         >
-          <ImagePlus size={28} className="text-[#9CA3AF]" />
-          <span className="text-xs text-[#9CA3AF]">사진 추가</span>
+          <ImagePlus size={28} className="text-foreground/50" />
+          <span className="text-xs text-foreground/50">사진 추가</span>
         </button>
       )}
       {/* Selected images */}
       {previews.map((preview, idx) => (
-        <div key={idx} className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
+        <div key={idx} className="relative aspect-square bg-white/5 rounded-lg overflow-hidden">
           <img
             src={preview}
             alt={`선택된 사진 ${idx + 1}`}
@@ -402,7 +402,7 @@ interface Step2Props {
 const Step2EditPlaceholder = ({ preview }: Step2Props) => (
   <div className="p-4">
     {preview && (
-      <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden mb-4">
+      <div className="relative w-full aspect-[4/3] bg-white/5 rounded-xl overflow-hidden mb-4">
         <img src={preview} alt="편집 미리보기" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
           <span className="text-white text-sm font-medium bg-black/40 px-4 py-2 rounded-full">
@@ -413,25 +413,25 @@ const Step2EditPlaceholder = ({ preview }: Step2Props) => (
     )}
     <div className="flex items-center justify-center gap-6 py-3">
       <button className="flex flex-col items-center gap-1.5 bg-transparent border-none cursor-not-allowed opacity-50" disabled>
-        <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center">
-          <Crop size={20} className="text-[#6B7280]" />
+        <div className="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center">
+          <Crop size={20} className="text-foreground/60" />
         </div>
-        <span className="text-xs text-[#6B7280]">자르기</span>
+        <span className="text-xs text-foreground/60">자르기</span>
       </button>
       <button className="flex flex-col items-center gap-1.5 bg-transparent border-none cursor-not-allowed opacity-50" disabled>
-        <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center">
-          <RotateCcw size={20} className="text-[#6B7280]" />
+        <div className="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center">
+          <RotateCcw size={20} className="text-foreground/60" />
         </div>
-        <span className="text-xs text-[#6B7280]">회전</span>
+        <span className="text-xs text-foreground/60">회전</span>
       </button>
       <button className="flex flex-col items-center gap-1.5 bg-transparent border-none cursor-not-allowed opacity-50" disabled>
-        <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center">
-          <Maximize2 size={20} className="text-[#6B7280]" />
+        <div className="w-11 h-11 rounded-full bg-white/5 flex items-center justify-center">
+          <Maximize2 size={20} className="text-foreground/60" />
         </div>
-        <span className="text-xs text-[#6B7280]">비율</span>
+        <span className="text-xs text-foreground/60">비율</span>
       </button>
     </div>
-    <p className="text-center text-xs text-[#9CA3AF] mt-2">
+    <p className="text-center text-xs text-foreground/50 mt-2">
       사진 편집 기능은 추후 업데이트 예정입니다
     </p>
   </div>
@@ -450,7 +450,7 @@ interface Step3Props {
 const Step3FilterPlaceholder = ({ preview, selectedFilter, onFilterChange }: Step3Props) => (
   <div className="p-4">
     {preview && (
-      <div className="w-full aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden mb-4">
+      <div className="w-full aspect-[4/3] bg-white/5 rounded-xl overflow-hidden mb-4">
         <img src={preview} alt="필터 미리보기" className="w-full h-full object-cover" />
       </div>
     )}
@@ -465,7 +465,7 @@ const Step3FilterPlaceholder = ({ preview, selectedFilter, onFilterChange }: Ste
         >
           <div
             className={cn(
-              'w-[72px] h-[72px] rounded-xl bg-gray-200 overflow-hidden border-2 transition-colors',
+              'w-[72px] h-[72px] rounded-xl bg-white/8 overflow-hidden border-2 transition-colors',
               selectedFilter === filter.key ? 'border-[#65D9AC]' : 'border-transparent'
             )}
           >
@@ -476,7 +476,7 @@ const Step3FilterPlaceholder = ({ preview, selectedFilter, onFilterChange }: Ste
           <span
             className={cn(
               'text-xs',
-              selectedFilter === filter.key ? 'text-[#65D9AC] font-semibold' : 'text-[#6B7280]'
+              selectedFilter === filter.key ? 'text-[#65D9AC] font-semibold' : 'text-foreground/60'
             )}
           >
             {filter.label}
@@ -484,7 +484,7 @@ const Step3FilterPlaceholder = ({ preview, selectedFilter, onFilterChange }: Ste
         </button>
       ))}
     </div>
-    <p className="text-center text-xs text-[#9CA3AF] mt-4">
+    <p className="text-center text-xs text-foreground/50 mt-4">
       필터 기능은 추후 업데이트 예정입니다
     </p>
   </div>
@@ -522,31 +522,31 @@ const Step4Writing = ({
   <div className="p-4 space-y-5">
     {/* Title */}
     <div>
-      <label className="block text-sm font-semibold text-[#1a1a2e] mb-2">제목</label>
+      <label className="block text-sm font-semibold text-foreground mb-2">제목</label>
       <input
         type="text"
         value={title}
         onChange={(e) => onTitleChange(e.target.value)}
         placeholder="제목을 입력하세요 (선택)"
-        className="w-full text-sm bg-gray-50 rounded-xl px-4 py-3 border border-[#E5E7EB] outline-none focus:ring-2 focus:ring-[#65D9AC]/30 focus:border-[#65D9AC] placeholder:text-[#9CA3AF]"
+        className="w-full text-sm bg-white/5 rounded-xl px-4 py-3 border border-white/10 outline-none focus:ring-2 focus:ring-[#65D9AC]/30 focus:border-[#65D9AC] placeholder:text-foreground/50"
       />
     </div>
 
     {/* Content */}
     <div>
-      <label className="block text-sm font-semibold text-[#1a1a2e] mb-2">본문</label>
+      <label className="block text-sm font-semibold text-foreground mb-2">본문</label>
       <textarea
         value={content}
         onChange={(e) => onContentChange(e.target.value)}
         placeholder="내용을 작성하세요..."
         rows={6}
-        className="w-full text-sm bg-gray-50 rounded-xl px-4 py-3 border border-[#E5E7EB] outline-none focus:ring-2 focus:ring-[#65D9AC]/30 focus:border-[#65D9AC] placeholder:text-[#9CA3AF] resize-none"
+        className="w-full text-sm bg-white/5 rounded-xl px-4 py-3 border border-white/10 outline-none focus:ring-2 focus:ring-[#65D9AC]/30 focus:border-[#65D9AC] placeholder:text-foreground/50 resize-none"
       />
     </div>
 
     {/* Hashtags */}
     <div>
-      <label className="block text-sm font-semibold text-[#1a1a2e] mb-2">해시태그</label>
+      <label className="block text-sm font-semibold text-foreground mb-2">해시태그</label>
       <div className="flex flex-wrap gap-2 mb-2">
         {hashtags.map((tag) => (
           <span
@@ -570,15 +570,15 @@ const Step4Writing = ({
         onChange={(e) => onHashtagInputChange(e.target.value)}
         onKeyDown={onHashtagKeyDown}
         placeholder="# 해시태그 입력 (엔터로 추가)"
-        className="w-full text-sm bg-gray-50 rounded-xl px-4 py-3 border border-[#E5E7EB] outline-none focus:ring-2 focus:ring-[#65D9AC]/30 focus:border-[#65D9AC] placeholder:text-[#9CA3AF]"
+        className="w-full text-sm bg-white/5 rounded-xl px-4 py-3 border border-white/10 outline-none focus:ring-2 focus:ring-[#65D9AC]/30 focus:border-[#65D9AC] placeholder:text-foreground/50"
       />
       <div className="flex flex-wrap gap-2 mt-3">
-        <span className="text-xs text-[#9CA3AF]">#추천:</span>
+        <span className="text-xs text-foreground/50">#추천:</span>
         {SUGGESTED_TAGS.filter((t) => !hashtags.includes(t)).map((tag) => (
           <button
             key={tag}
             onClick={() => onAddHashtag(tag)}
-            className="text-xs text-[#6B7280] bg-gray-100 px-2.5 py-1 rounded-full border-none cursor-pointer hover:bg-gray-200 transition-colors"
+            className="text-xs text-foreground/60 bg-white/5 px-2.5 py-1 rounded-full border-none cursor-pointer hover:bg-white/10 transition-colors"
           >
             #{tag}
           </button>
@@ -599,7 +599,7 @@ interface Step5Props {
 
 const Step5Category = ({ selected, onChange }: Step5Props) => (
   <div className="p-4">
-    <p className="text-sm text-[#6B7280] mb-4">게시물 카테고리를 선택하세요</p>
+    <p className="text-sm text-foreground/60 mb-4">게시물 카테고리를 선택하세요</p>
     <div className="space-y-2">
       {CATEGORIES.map((cat) => (
         <button
@@ -609,13 +609,13 @@ const Step5Category = ({ selected, onChange }: Step5Props) => (
             'w-full flex items-center justify-between px-4 py-3.5 rounded-xl border transition-colors bg-transparent cursor-pointer',
             selected === cat.key
               ? 'border-[#65D9AC] bg-[#65D9AC]/5'
-              : 'border-[#E5E7EB] hover:bg-gray-50'
+              : 'border-white/10 hover:bg-white/5'
           )}
         >
           <span
             className={cn(
               'text-sm',
-              selected === cat.key ? 'text-[#65D9AC] font-semibold' : 'text-[#1a1a2e]'
+              selected === cat.key ? 'text-[#65D9AC] font-semibold' : 'text-foreground'
             )}
           >
             {cat.label}
@@ -650,11 +650,11 @@ const Step6RoutineLink = ({
 }: Step6Props) => (
   <div className="p-4 flex flex-col min-h-[calc(100vh-120px)]">
     <div className="flex-1">
-      <p className="text-sm text-[#6B7280] mb-1">게시물에 루틴을 연결할까요?</p>
-      <p className="text-xs text-[#9CA3AF] mb-4">(선택사항)</p>
+      <p className="text-sm text-foreground/60 mb-1">게시물에 루틴을 연결할까요?</p>
+      <p className="text-xs text-foreground/50 mb-4">(선택사항)</p>
 
       {routines.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-10 text-[#9CA3AF]">
+        <div className="flex flex-col items-center justify-center py-10 text-foreground/50">
           <p className="text-sm">진행 중인 루틴이 없습니다</p>
         </div>
       ) : (
@@ -669,7 +669,7 @@ const Step6RoutineLink = ({
                 'w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border transition-colors bg-transparent cursor-pointer text-left',
                 selectedId === routine.id
                   ? 'border-[#65D9AC] bg-[#65D9AC]/5'
-                  : 'border-[#E5E7EB] hover:bg-gray-50'
+                  : 'border-white/10 hover:bg-white/5'
               )}
             >
               <div
@@ -677,7 +677,7 @@ const Step6RoutineLink = ({
                   'w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0',
                   selectedId === routine.id
                     ? 'border-[#65D9AC] bg-[#65D9AC]'
-                    : 'border-gray-300'
+                    : 'border-white/20'
                 )}
               >
                 {selectedId === routine.id && (
@@ -685,11 +685,11 @@ const Step6RoutineLink = ({
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[#1a1a2e] truncate">
+                <p className="text-sm font-medium text-foreground truncate">
                   {routine.title}
                 </p>
                 {routine.description && (
-                  <p className="text-xs text-[#9CA3AF] truncate mt-0.5">
+                  <p className="text-xs text-foreground/50 truncate mt-0.5">
                     {routine.description}
                   </p>
                 )}
@@ -708,7 +708,7 @@ const Step6RoutineLink = ({
         className={cn(
           'w-full h-[52px] rounded-xl text-lg font-semibold border-none cursor-pointer transition-colors flex items-center justify-center gap-2',
           publishing
-            ? 'bg-gray-100 text-[#9CA3AF]'
+            ? 'bg-white/5 text-foreground/50'
             : 'bg-[#65D9AC] text-white hover:brightness-95 active:scale-[0.98]'
         )}
       >

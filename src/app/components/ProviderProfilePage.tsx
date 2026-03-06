@@ -146,8 +146,8 @@ export function ProviderProfilePage() {
   if (!profile) {
     return (
       <div className="text-center py-20">
-        <User className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-        <p className="text-gray-500 text-lg mb-2">프로필을 찾을 수 없습니다</p>
+        <User className="w-12 h-12 text-foreground/30 mx-auto mb-4" />
+        <p className="text-foreground/60 text-lg mb-2">프로필을 찾을 수 없습니다</p>
         <Link to="/" className="text-[#65D9AC] hover:underline text-sm">
           홈으로 돌아가기
         </Link>
@@ -164,7 +164,7 @@ export function ProviderProfilePage() {
         variant="light"
         startContent={<ArrowLeft className="w-5 h-5" />}
         onPress={() => navigate(-1)}
-        className="mb-4 text-gray-500"
+        className="mb-4 text-foreground/60"
         size="sm"
       >
         뒤로가기
@@ -195,15 +195,15 @@ export function ProviderProfilePage() {
               className="w-20 h-20 border-4 border-white shrink-0"
               src={profile.avatar_url || undefined}
               showFallback
-              fallback={<User className="w-8 h-8 text-gray-400" />}
-              style={{ backgroundColor: "#f3f4f6" }}
+              fallback={<User className="w-8 h-8 text-foreground/50" />}
+              style={{ backgroundColor: "rgba(255,255,255,0.08)" }}
             />
             <div className="pb-1 min-w-0">
-              <h1 className="text-xl font-bold text-gray-900 truncate">
+              <h1 className="text-xl font-bold text-foreground truncate">
                 {profile.nickname}
               </h1>
               {profile.bio && (
-                <p className="text-sm text-gray-500 line-clamp-2">{profile.bio}</p>
+                <p className="text-sm text-foreground/60 line-clamp-2">{profile.bio}</p>
               )}
             </div>
           </div>
@@ -213,16 +213,16 @@ export function ProviderProfilePage() {
       {/* Stats */}
       <div className="flex items-center gap-6 px-1 mb-4">
         <div className="flex items-center gap-2">
-          <Users className="w-4 h-4 text-gray-400" />
-          <span className="text-sm text-gray-600">
-            팔로워 <span className="font-semibold text-gray-900">{followerCount.toLocaleString()}</span>
+          <Users className="w-4 h-4 text-foreground/50" />
+          <span className="text-sm text-foreground/80">
+            팔로워 <span className="font-semibold text-foreground">{followerCount.toLocaleString()}</span>
           </span>
         </div>
-        <div className="w-px h-4 bg-gray-200" />
+        <div className="w-px h-4 bg-white/10" />
         <div className="flex items-center gap-2">
-          <ShoppingBag className="w-4 h-4 text-gray-400" />
-          <span className="text-sm text-gray-600">
-            총 판매 <span className="font-semibold text-gray-900">{formatCount(totalSales)}</span>
+          <ShoppingBag className="w-4 h-4 text-foreground/50" />
+          <span className="text-sm text-foreground/80">
+            총 판매 <span className="font-semibold text-foreground">{formatCount(totalSales)}</span>
           </span>
         </div>
       </div>
@@ -232,7 +232,7 @@ export function ProviderProfilePage() {
         <Button
           className={
             isFollowingState
-              ? "w-full h-11 bg-gray-100 text-gray-600 rounded-xl font-semibold"
+              ? "w-full h-11 bg-white/5 text-foreground/60 rounded-xl font-semibold"
               : "w-full h-11 bg-[#65D9AC] text-white rounded-xl font-semibold"
           }
           onPress={handleFollowToggle}
@@ -244,7 +244,7 @@ export function ProviderProfilePage() {
 
       {/* Provided routines */}
       <section className="mb-8">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">
+        <h2 className="text-lg font-bold text-foreground mb-4">
           제공 루틴 ({routines.length})
         </h2>
         {routines.length > 0 ? (
@@ -254,7 +254,7 @@ export function ProviderProfilePage() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-12 text-foreground/50">
             <ShoppingBag className="w-10 h-10 mb-3" />
             <p className="text-sm">아직 제공 중인 루틴이 없습니다</p>
           </div>
@@ -264,13 +264,13 @@ export function ProviderProfilePage() {
       {/* Reviews section */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-gray-900">
+          <h2 className="text-lg font-bold text-foreground">
             리뷰 ({reviewCount})
           </h2>
           {avgRating > 0 && (
             <div className="flex items-center gap-1.5">
               <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
-              <span className="text-base font-semibold text-gray-900">
+              <span className="text-base font-semibold text-foreground">
                 {avgRating.toFixed(1)}
               </span>
             </div>
@@ -282,18 +282,18 @@ export function ProviderProfilePage() {
             {reviews.map((review) => (
               <div
                 key={review.id}
-                className="p-4 bg-gray-50 rounded-xl"
+                className="p-4 bg-white/5 rounded-xl"
               >
                 <div className="flex items-center gap-3 mb-2">
                   <Avatar
                     className="w-8 h-8"
                     src={review.profiles?.avatar_url || undefined}
                     showFallback
-                    fallback={<User className="w-4 h-4 text-gray-400" />}
-                    style={{ backgroundColor: "#e5e7eb" }}
+                    fallback={<User className="w-4 h-4 text-foreground/50" />}
+                    style={{ backgroundColor: "rgba(255,255,255,0.08)" }}
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-sm font-medium text-foreground truncate">
                       {review.profiles?.nickname ?? "익명"}
                     </p>
                     <div className="flex items-center gap-0.5">
@@ -303,24 +303,24 @@ export function ProviderProfilePage() {
                           className={`w-3 h-3 ${
                             i < Math.floor(review.rating)
                               ? "fill-amber-400 text-amber-400"
-                              : "fill-gray-200 text-gray-200"
+                              : "fill-white/20 text-white/20"
                           }`}
                         />
                       ))}
                     </div>
                   </div>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-foreground/50">
                     {new Date(review.created_at).toLocaleDateString("ko-KR")}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
+                <p className="text-sm text-foreground/80 leading-relaxed line-clamp-3">
                   {review.content}
                 </p>
               </div>
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-12 text-foreground/50">
             <Star className="w-10 h-10 mb-3" />
             <p className="text-sm">아직 리뷰가 없습니다</p>
           </div>

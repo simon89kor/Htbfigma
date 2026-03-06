@@ -183,7 +183,7 @@ const AdminUserDetail = () => {
 
   if (!profile) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)]">
+      <div className="flex flex-col items-center justify-center py-20 text-foreground/60">
         <User size={48} className="mb-4 opacity-40" />
         <p className="text-lg">유저를 찾을 수 없습니다</p>
         <Button variant="outline" className="mt-4" onClick={() => navigate('/admin/users')}>
@@ -199,7 +199,7 @@ const AdminUserDetail = () => {
       <Button
         variant="ghost"
         size="sm"
-        className="text-[var(--text-secondary)] hover:text-[var(--primary)]"
+        className="text-foreground/60 hover:text-foreground"
         onClick={() => navigate('/admin/users')}
       >
         <ArrowLeft className="w-4 h-4 mr-1" />
@@ -208,9 +208,9 @@ const AdminUserDetail = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Profile Info */}
-        <Card className="bg-white shadow-sm border-0">
+        <Card className="bg-white/8 shadow-sm border-0">
           <CardHeader>
-            <CardTitle className="text-base font-semibold text-[var(--primary)]">
+            <CardTitle className="text-base font-semibold text-foreground">
               기본 정보
             </CardTitle>
           </CardHeader>
@@ -231,33 +231,33 @@ const AdminUserDetail = () => {
                 )}
               </div>
               <div>
-                <p className="font-semibold text-[var(--primary)]">{profile.nickname}</p>
-                <p className="text-sm text-[var(--text-secondary)]">{profile.email}</p>
+                <p className="font-semibold text-foreground">{profile.nickname}</p>
+                <p className="text-sm text-foreground/60">{profile.email}</p>
               </div>
             </div>
 
             {/* Info Fields */}
-            <div className="space-y-3 pt-2 border-t border-[var(--border)]">
+            <div className="space-y-3 pt-2 border-t border-white/10">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-[var(--text-secondary)]">ID</span>
-                <span className="text-xs text-[var(--text-muted)] font-mono truncate max-w-[160px]">
+                <span className="text-sm text-foreground/60">ID</span>
+                <span className="text-xs text-foreground/60 font-mono truncate max-w-[160px]">
                   {profile.id}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-[var(--text-secondary)]">가입일</span>
-                <span className="text-sm text-[var(--primary)]">
+                <span className="text-sm text-foreground/60">가입일</span>
+                <span className="text-sm text-foreground">
                   {new Date(profile.created_at).toLocaleDateString('ko-KR')}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-[var(--text-secondary)]">상태</span>
+                <span className="text-sm text-foreground/60">상태</span>
                 <Badge className={cn('text-xs', STATUS_COLORS[profile.status])}>
                   {STATUS_LABELS[profile.status]}
                 </Badge>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-[var(--text-secondary)]">역할</span>
+                <span className="text-sm text-foreground/60">역할</span>
                 <Select
                   value={profile.role}
                   onValueChange={handleRoleChange}
@@ -274,8 +274,8 @@ const AdminUserDetail = () => {
                 </Select>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-[var(--text-secondary)]">최근 접속</span>
-                <span className="text-sm text-[var(--primary)]">
+                <span className="text-sm text-foreground/60">최근 접속</span>
+                <span className="text-sm text-foreground">
                   {profile.last_active_date
                     ? new Date(profile.last_active_date).toLocaleDateString('ko-KR')
                     : '-'}
@@ -284,7 +284,7 @@ const AdminUserDetail = () => {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-2 pt-3 border-t border-[var(--border)]">
+            <div className="flex gap-2 pt-3 border-t border-white/10">
               {profile.status !== 'deleted' && (
                 <>
                   <Button
@@ -312,9 +312,9 @@ const AdminUserDetail = () => {
         </Card>
 
         {/* Activity Stats */}
-        <Card className="bg-white shadow-sm border-0 lg:col-span-2">
+        <Card className="bg-white/8 shadow-sm border-0 lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-base font-semibold text-[var(--primary)]">
+            <CardTitle className="text-base font-semibold text-foreground">
               활동 통계
             </CardTitle>
           </CardHeader>
@@ -351,26 +351,26 @@ const AdminUserDetail = () => {
             </div>
 
             {/* Streak / Profile extras */}
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-4 pt-4 border-t border-[var(--border)]">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mt-4 pt-4 border-t border-white/10">
               <div>
-                <p className="text-xs text-[var(--text-muted)] mb-1">현재 스트릭</p>
-                <p className="text-lg font-bold text-[var(--primary)]">{profile.current_streak}일</p>
+                <p className="text-xs text-foreground/60 mb-1">현재 스트릭</p>
+                <p className="text-lg font-bold text-foreground">{profile.current_streak}일</p>
               </div>
               <div>
-                <p className="text-xs text-[var(--text-muted)] mb-1">최장 스트릭</p>
-                <p className="text-lg font-bold text-[var(--primary)]">{profile.longest_streak}일</p>
+                <p className="text-xs text-foreground/60 mb-1">최장 스트릭</p>
+                <p className="text-lg font-bold text-foreground">{profile.longest_streak}일</p>
               </div>
               <div>
-                <p className="text-xs text-[var(--text-muted)] mb-1">완료 루틴</p>
-                <p className="text-lg font-bold text-[var(--primary)]">{profile.total_completed_routines}개</p>
+                <p className="text-xs text-foreground/60 mb-1">완료 루틴</p>
+                <p className="text-lg font-bold text-foreground">{profile.total_completed_routines}개</p>
               </div>
             </div>
 
             {/* Bio */}
             {profile.bio && (
-              <div className="mt-4 pt-4 border-t border-[var(--border)]">
-                <p className="text-xs text-[var(--text-muted)] mb-1">자기소개</p>
-                <p className="text-sm text-[var(--primary)]">{profile.bio}</p>
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <p className="text-xs text-foreground/60 mb-1">자기소개</p>
+                <p className="text-sm text-foreground">{profile.bio}</p>
               </div>
             )}
           </CardContent>
@@ -378,9 +378,9 @@ const AdminUserDetail = () => {
       </div>
 
       {/* Purchase History */}
-      <Card className="bg-white shadow-sm border-0">
+      <Card className="bg-white/8 shadow-sm border-0">
         <CardHeader>
-          <CardTitle className="text-base font-semibold text-[var(--primary)]">
+          <CardTitle className="text-base font-semibold text-foreground">
             구매 내역
           </CardTitle>
         </CardHeader>
@@ -388,7 +388,7 @@ const AdminUserDetail = () => {
           {purchases.length > 0 ? (
             <Table>
               <TableHeader>
-                <TableRow className="bg-[var(--bg-secondary)]">
+                <TableRow className="bg-white/5">
                   <TableHead>루틴</TableHead>
                   <TableHead className="w-[100px]">기간</TableHead>
                   <TableHead className="w-[100px]">금액</TableHead>
@@ -400,16 +400,16 @@ const AdminUserDetail = () => {
               <TableBody>
                 {purchases.map((purchase) => (
                   <TableRow key={purchase.id}>
-                    <TableCell className="font-medium text-[var(--primary)] truncate max-w-[200px]">
+                    <TableCell className="font-medium text-foreground truncate max-w-[200px]">
                       {purchase.routines?.title ?? '-'}
                     </TableCell>
-                    <TableCell className="text-sm text-[var(--text-secondary)]">
+                    <TableCell className="text-sm text-foreground/60">
                       {purchase.period_label}
                     </TableCell>
-                    <TableCell className="text-sm font-medium text-[var(--primary)]">
+                    <TableCell className="text-sm font-medium text-foreground">
                       ₩{purchase.final_amount.toLocaleString()}
                     </TableCell>
-                    <TableCell className="text-sm text-[var(--text-secondary)]">
+                    <TableCell className="text-sm text-foreground/60">
                       {purchase.payment_method}
                     </TableCell>
                     <TableCell>
@@ -430,7 +430,7 @@ const AdminUserDetail = () => {
                             : purchase.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-xs text-[var(--text-secondary)]">
+                    <TableCell className="text-xs text-foreground/60">
                       {new Date(purchase.purchased_at).toLocaleDateString('ko-KR')}
                     </TableCell>
                   </TableRow>
@@ -438,7 +438,7 @@ const AdminUserDetail = () => {
               </TableBody>
             </Table>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-[var(--text-muted)]">
+            <div className="flex flex-col items-center justify-center py-12 text-foreground/60">
               <Calendar size={36} className="mb-2 opacity-40" />
               <p className="text-sm">구매 내역이 없습니다</p>
             </div>
@@ -502,13 +502,13 @@ interface StatItemProps {
 }
 
 const StatItem = ({ icon: Icon, label, value, iconColor, iconBg }: StatItemProps) => (
-  <div className="flex items-center gap-3 p-3 rounded-lg bg-[var(--bg-secondary)]">
+  <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5">
     <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center shrink-0', iconBg)}>
       <Icon className={cn('w-4 h-4', iconColor)} />
     </div>
     <div>
-      <p className="text-xs text-[var(--text-muted)]">{label}</p>
-      <p className="text-sm font-semibold text-[var(--primary)]">{value}</p>
+      <p className="text-xs text-foreground/60">{label}</p>
+      <p className="text-sm font-semibold text-foreground">{value}</p>
     </div>
   </div>
 );

@@ -102,19 +102,19 @@ const FilterSheet = ({ open, onOpenChange, initialFilters, onApply, resultCount 
     <Drawer.Root open={open} onOpenChange={onOpenChange}>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/50 z-50" />
-        <Drawer.Content className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-50 max-h-[85vh] flex flex-col">
+        <Drawer.Content className="fixed bottom-0 left-0 right-0 bg-background rounded-t-2xl z-50 max-h-[85vh] flex flex-col">
           {/* Drag handle */}
-          <div className="mx-auto w-12 h-1.5 bg-gray-300 rounded-full my-3 shrink-0" />
+          <div className="mx-auto w-12 h-1.5 bg-white/20 rounded-full my-3 shrink-0" />
 
           {/* Header */}
           <div className="flex items-center justify-between px-5 pb-4 shrink-0">
-            <Drawer.Title className="text-lg font-bold text-gray-900">필터</Drawer.Title>
+            <Drawer.Title className="text-lg font-bold text-foreground">필터</Drawer.Title>
             <button
               type="button"
               onClick={resetFilters}
               className={cn(
                 "flex items-center gap-1.5 text-sm border-none bg-transparent cursor-pointer p-0",
-                hasActiveFilters ? "text-[#65D9AC]" : "text-gray-400"
+                hasActiveFilters ? "text-[#65D9AC]" : "text-foreground/50"
               )}
               aria-label="필터 초기화"
             >
@@ -127,7 +127,7 @@ const FilterSheet = ({ open, onOpenChange, initialFilters, onApply, resultCount 
           <div className="overflow-y-auto flex-1 px-5 pb-4">
             {/* Category Section */}
             <section className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">카테고리</h3>
+              <h3 className="text-sm font-semibold text-foreground mb-3">카테고리</h3>
               <div className="flex flex-wrap gap-2">
                 {CATEGORIES.map((cat) => (
                   <button
@@ -138,7 +138,7 @@ const FilterSheet = ({ open, onOpenChange, initialFilters, onApply, resultCount 
                       "px-4 py-2 rounded-full text-sm font-medium border transition-colors cursor-pointer",
                       filters.categories.includes(cat)
                         ? "bg-[#65D9AC] text-white border-[#65D9AC]"
-                        : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                        : "bg-white/8 text-foreground/80 border-white/10 hover:bg-white/5"
                     )}
                   >
                     {cat}
@@ -149,7 +149,7 @@ const FilterSheet = ({ open, onOpenChange, initialFilters, onApply, resultCount 
 
             {/* Price Range Section */}
             <section className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">가격대</h3>
+              <h3 className="text-sm font-semibold text-foreground mb-3">가격대</h3>
               <div className="flex flex-wrap gap-2">
                 {PRICE_RANGES.map((range) => (
                   <button
@@ -160,7 +160,7 @@ const FilterSheet = ({ open, onOpenChange, initialFilters, onApply, resultCount 
                       "px-4 py-2 rounded-full text-sm font-medium border transition-colors cursor-pointer",
                       filters.priceRange === range.value
                         ? "bg-[#65D9AC] text-white border-[#65D9AC]"
-                        : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                        : "bg-white/8 text-foreground/80 border-white/10 hover:bg-white/5"
                     )}
                   >
                     {range.label}
@@ -171,7 +171,7 @@ const FilterSheet = ({ open, onOpenChange, initialFilters, onApply, resultCount 
 
             {/* Sort Section */}
             <section className="mb-6">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">정렬</h3>
+              <h3 className="text-sm font-semibold text-foreground mb-3">정렬</h3>
               <div className="flex flex-col gap-2">
                 {SORT_OPTIONS.map((option) => (
                   <label
@@ -183,7 +183,7 @@ const FilterSheet = ({ open, onOpenChange, initialFilters, onApply, resultCount 
                         "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors",
                         filters.sort === option.value
                           ? "border-[#65D9AC]"
-                          : "border-gray-300"
+                          : "border-white/20"
                       )}
                     >
                       {filters.sort === option.value && (
@@ -194,8 +194,8 @@ const FilterSheet = ({ open, onOpenChange, initialFilters, onApply, resultCount 
                       className={cn(
                         "text-sm",
                         filters.sort === option.value
-                          ? "text-gray-900 font-medium"
-                          : "text-gray-600"
+                          ? "text-foreground font-medium"
+                          : "text-foreground/80"
                       )}
                     >
                       {option.label}
@@ -215,7 +215,7 @@ const FilterSheet = ({ open, onOpenChange, initialFilters, onApply, resultCount 
           </div>
 
           {/* Bottom action bar */}
-          <div className="px-5 py-4 border-t border-gray-100 shrink-0 safe-area-pb">
+          <div className="px-5 py-4 border-t border-white/10 shrink-0 safe-area-pb">
             <Button
               className="w-full h-[52px] bg-[#65D9AC] text-white rounded-xl text-lg font-semibold"
               onPress={handleApply}

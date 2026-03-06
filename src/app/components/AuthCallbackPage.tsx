@@ -98,12 +98,12 @@ const AuthCallbackPage = () => {
 
   if (error) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white px-6">
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-background px-6">
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
             <AlertCircle className="w-8 h-8 text-[#d4183d]" />
           </div>
-          <h2 className="text-[#1a1a2e] text-xl font-bold">{error}</h2>
+          <h2 className="text-foreground text-xl font-bold">{error}</h2>
           <button
             type="button"
             onClick={() => navigate('/login', { replace: true })}
@@ -117,7 +117,7 @@ const AuthCallbackPage = () => {
   }
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-background">
       <motion.div
         className="flex flex-col items-center gap-4"
         initial={{ opacity: 0 }}
@@ -130,7 +130,7 @@ const AuthCallbackPage = () => {
         </div>
 
         {/* Loading text */}
-        <p className="text-[#6B7280] text-sm mt-2">로그인 처리 중...</p>
+        <p className="text-foreground/60 text-sm mt-2">로그인 처리 중...</p>
 
         {/* Loading dots */}
         <div className="flex gap-1.5 mt-2">

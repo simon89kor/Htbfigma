@@ -72,9 +72,9 @@ const CommentList = ({ comments, loading, onSubmit, isLoggedIn }: CommentListPro
   return (
     <div>
       {/* Comment list */}
-      <div className="divide-y divide-[#E5E7EB]">
+      <div className="divide-y divide-white/10">
         {comments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-10 text-[#9CA3AF]">
+          <div className="flex flex-col items-center justify-center py-10 text-foreground/50">
             <p className="text-sm">아직 댓글이 없습니다</p>
             <p className="text-xs mt-1">첫 번째 댓글을 남겨보세요</p>
           </div>
@@ -90,7 +90,7 @@ const CommentList = ({ comments, loading, onSubmit, isLoggedIn }: CommentListPro
       </div>
 
       {/* Comment input */}
-      <div className="sticky bottom-0 bg-white border-t border-[#E5E7EB] px-4 py-3 flex items-center gap-3">
+      <div className="sticky bottom-0 bg-background border-t border-white/10 px-4 py-3 flex items-center gap-3">
         {isLoggedIn ? (
           <>
             <input
@@ -99,7 +99,7 @@ const CommentList = ({ comments, loading, onSubmit, isLoggedIn }: CommentListPro
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="댓글을 입력하세요..."
-              className="flex-1 text-sm bg-gray-100 rounded-full px-4 py-2.5 border-none outline-none focus:ring-2 focus:ring-[#65D9AC]/30 placeholder:text-[#9CA3AF]"
+              className="flex-1 text-sm bg-white/8 rounded-full px-4 py-2.5 border-none outline-none focus:ring-2 focus:ring-[#65D9AC]/30 placeholder:text-foreground/50"
               disabled={submitting}
               aria-label="댓글 입력"
             />
@@ -110,7 +110,7 @@ const CommentList = ({ comments, loading, onSubmit, isLoggedIn }: CommentListPro
                 'w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer transition-colors',
                 inputValue.trim() && !submitting
                   ? 'bg-[#65D9AC] text-white'
-                  : 'bg-gray-100 text-[#9CA3AF]'
+                  : 'bg-white/5 text-foreground/50'
               )}
               aria-label="댓글 전송"
             >
@@ -122,7 +122,7 @@ const CommentList = ({ comments, loading, onSubmit, isLoggedIn }: CommentListPro
             </button>
           </>
         ) : (
-          <p className="text-sm text-[#9CA3AF] w-full text-center py-1">
+          <p className="text-sm text-foreground/50 w-full text-center py-1">
             댓글을 작성하려면 로그인하세요
           </p>
         )}
@@ -152,7 +152,7 @@ const CommentItem = ({ comment, onUserClick }: CommentItemProps) => {
     <div className="px-4 py-3">
       <div className="flex gap-3">
         <div
-          className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 cursor-pointer"
+          className="w-8 h-8 rounded-full bg-white/8 overflow-hidden flex-shrink-0 cursor-pointer"
           onClick={() => onUserClick(comment.author_id)}
           role="button"
           tabIndex={0}
@@ -165,7 +165,7 @@ const CommentItem = ({ comment, onUserClick }: CommentItemProps) => {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">
+            <div className="w-full h-full flex items-center justify-center text-xs text-foreground/60">
               {authorNickname[0]}
             </div>
           )}
@@ -173,16 +173,16 @@ const CommentItem = ({ comment, onUserClick }: CommentItemProps) => {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span
-              className="text-sm font-semibold text-[#1a1a2e] cursor-pointer"
+              className="text-sm font-semibold text-foreground cursor-pointer"
               onClick={() => onUserClick(comment.author_id)}
               role="button"
               tabIndex={0}
             >
               {authorNickname}
             </span>
-            <span className="text-xs text-[#9CA3AF]">{timeAgo}</span>
+            <span className="text-xs text-foreground/50">{timeAgo}</span>
           </div>
-          <p className="text-sm text-[#1a1a2e] mt-1 whitespace-pre-wrap break-words">
+          <p className="text-sm text-foreground mt-1 whitespace-pre-wrap break-words">
             {comment.content}
           </p>
         </div>

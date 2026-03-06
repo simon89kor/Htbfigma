@@ -106,24 +106,24 @@ const UserProfileViewPage = () => {
 
   if (!profile) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-[#9CA3AF]">
+      <div className="flex flex-col items-center justify-center py-20 text-foreground/50">
         <p className="text-lg">프로필을 찾을 수 없습니다</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white -mx-4 sm:-mx-6 lg:-mx-8 -mt-8">
+    <div className="min-h-screen bg-background -mx-4 sm:-mx-6 lg:-mx-8 -mt-8">
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB] flex items-center px-4 py-3">
+      <div className="sticky top-0 z-30 bg-background border-b border-white/10 flex items-center px-4 py-3">
         <button
           onClick={() => navigate(-1)}
-          className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer hover:bg-gray-100"
+          className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer hover:bg-white/5"
           aria-label="뒤로가기"
         >
-          <ArrowLeft size={22} className="text-[#1a1a2e]" />
+          <ArrowLeft size={22} className="text-foreground" />
         </button>
-        <h1 className="flex-1 text-center text-base font-semibold text-[#1a1a2e] mr-9">
+        <h1 className="flex-1 text-center text-base font-semibold text-foreground mr-9">
           {profile.nickname}
         </h1>
       </div>
@@ -132,7 +132,7 @@ const UserProfileViewPage = () => {
       <div className="px-4 py-6">
         {/* Avatar */}
         <div className="flex flex-col items-center">
-          <div className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden mb-3">
+          <div className="w-20 h-20 rounded-full bg-white/10 overflow-hidden mb-3">
             {profile.avatar_url ? (
               <img
                 src={profile.avatar_url}
@@ -140,14 +140,14 @@ const UserProfileViewPage = () => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-2xl text-gray-400">
+              <div className="w-full h-full flex items-center justify-center text-2xl text-foreground/50">
                 {profile.nickname[0]}
               </div>
             )}
           </div>
-          <h2 className="text-lg font-bold text-[#1a1a2e]">{profile.nickname}</h2>
+          <h2 className="text-lg font-bold text-foreground">{profile.nickname}</h2>
           {profile.bio && (
-            <p className="text-sm text-[#6B7280] mt-1 text-center max-w-[250px]">
+            <p className="text-sm text-foreground/60 mt-1 text-center max-w-[250px]">
               {profile.bio}
             </p>
           )}
@@ -156,16 +156,16 @@ const UserProfileViewPage = () => {
         {/* Stats */}
         <div className="flex items-center justify-center gap-8 mt-5">
           <div className="text-center">
-            <p className="text-lg font-bold text-[#1a1a2e]">{profile.post_count}</p>
-            <p className="text-xs text-[#6B7280]">게시물</p>
+            <p className="text-lg font-bold text-foreground">{profile.post_count}</p>
+            <p className="text-xs text-foreground/60">게시물</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold text-[#1a1a2e]">{profile.follower_count}</p>
-            <p className="text-xs text-[#6B7280]">팔로워</p>
+            <p className="text-lg font-bold text-foreground">{profile.follower_count}</p>
+            <p className="text-xs text-foreground/60">팔로워</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold text-[#1a1a2e]">{profile.following_count}</p>
-            <p className="text-xs text-[#6B7280]">팔로잉</p>
+            <p className="text-lg font-bold text-foreground">{profile.following_count}</p>
+            <p className="text-xs text-foreground/60">팔로잉</p>
           </div>
         </div>
 
@@ -178,7 +178,7 @@ const UserProfileViewPage = () => {
               className={cn(
                 'flex-1 h-10 rounded-xl text-sm font-semibold border-none cursor-pointer transition-colors flex items-center justify-center gap-2',
                 isFollowingUser
-                  ? 'bg-gray-100 text-[#6B7280]'
+                  ? 'bg-white/5 text-foreground/60'
                   : 'bg-[#65D9AC] text-white'
               )}
             >
@@ -199,15 +199,15 @@ const UserProfileViewPage = () => {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-[#E5E7EB]">
+      <div className="border-b border-white/10">
         <div className="flex">
           <button
             onClick={() => setActiveViewTab('posts')}
             className={cn(
               'flex-1 flex items-center justify-center gap-2 py-3 border-b-2 bg-transparent cursor-pointer transition-colors',
               activeViewTab === 'posts'
-                ? 'border-[#1a1a2e] text-[#1a1a2e]'
-                : 'border-transparent text-[#9CA3AF]'
+                ? 'border-foreground text-foreground'
+                : 'border-transparent text-foreground/50'
             )}
           >
             <Grid3X3 size={18} />
@@ -218,8 +218,8 @@ const UserProfileViewPage = () => {
             className={cn(
               'flex-1 flex items-center justify-center gap-2 py-3 border-b-2 bg-transparent cursor-pointer transition-colors',
               activeViewTab === 'routines'
-                ? 'border-[#1a1a2e] text-[#1a1a2e]'
-                : 'border-transparent text-[#9CA3AF]'
+                ? 'border-foreground text-foreground'
+                : 'border-transparent text-foreground/50'
             )}
           >
             <ClipboardList size={18} />
@@ -232,7 +232,7 @@ const UserProfileViewPage = () => {
       <div className="pb-8">
         {activeViewTab === 'posts' ? (
           posts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-[#9CA3AF]">
+            <div className="flex flex-col items-center justify-center py-16 text-foreground/50">
               <Grid3X3 size={40} className="mb-3" />
               <p className="text-sm">게시물이 없습니다</p>
             </div>
@@ -241,7 +241,7 @@ const UserProfileViewPage = () => {
               {posts.map((post) => (
                 <div
                   key={post.id}
-                  className="aspect-square bg-gray-100 overflow-hidden cursor-pointer"
+                  className="aspect-square bg-white/5 overflow-hidden cursor-pointer"
                   onClick={() => navigate(`/community/${post.id}`)}
                   role="button"
                   tabIndex={0}
@@ -255,7 +255,7 @@ const UserProfileViewPage = () => {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-xs text-gray-400 p-2 text-center">
+                    <div className="w-full h-full flex items-center justify-center text-xs text-foreground/50 p-2 text-center">
                       {post.title || post.content?.substring(0, 30) || '게시물'}
                     </div>
                   )}
@@ -264,7 +264,7 @@ const UserProfileViewPage = () => {
             </div>
           )
         ) : routines.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-[#9CA3AF]">
+          <div className="flex flex-col items-center justify-center py-16 text-foreground/50">
             <ClipboardList size={40} className="mb-3" />
             <p className="text-sm">루틴이 없습니다</p>
           </div>
@@ -273,16 +273,16 @@ const UserProfileViewPage = () => {
             {routines.map((routine) => (
               <div
                 key={routine.id}
-                className="flex items-center gap-3 px-4 py-3 border border-[#E5E7EB] rounded-xl"
+                className="flex items-center gap-3 px-4 py-3 border border-white/10 rounded-xl"
               >
-                <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
-                  <ClipboardList size={18} className="text-[#6B7280]" />
+                <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center flex-shrink-0">
+                  <ClipboardList size={18} className="text-foreground/60" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[#1a1a2e] truncate">
+                  <p className="text-sm font-medium text-foreground truncate">
                     {routine.title}
                   </p>
-                  <p className="text-xs text-[#9CA3AF] truncate">
+                  <p className="text-xs text-foreground/50 truncate">
                     {routine.category} · 달성률 {Math.round(routine.completion_rate)}%
                   </p>
                 </div>
@@ -300,8 +300,8 @@ const UserProfileViewPage = () => {
 // ============================================================================
 
 const ProfileSkeleton = () => (
-  <div className="min-h-screen bg-white -mx-4 sm:-mx-6 lg:-mx-8 -mt-8">
-    <div className="flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+  <div className="min-h-screen bg-background -mx-4 sm:-mx-6 lg:-mx-8 -mt-8">
+    <div className="flex items-center px-4 py-3 border-b border-white/10">
       <Skeleton className="w-9 h-9 rounded-full" />
       <Skeleton className="h-5 w-24 mx-auto" />
     </div>

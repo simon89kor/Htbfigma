@@ -63,8 +63,8 @@ const NotificationCard = ({ notification, onRead }: NotificationCardProps) => {
       onClick={handleClick}
       className={cn(
         "w-full flex items-start gap-3 px-4 py-3 text-left transition-colors",
-        "border-b border-[#E5E7EB] cursor-pointer bg-transparent",
-        "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#65D9AC]/30",
+        "border-b border-white/10 cursor-pointer bg-transparent",
+        "hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-[#65D9AC]/30",
         !is_read && "bg-[#65D9AC]/5"
       )}
       aria-label={`${is_read ? '읽은 알림' : '새 알림'}: ${title}`}
@@ -85,16 +85,16 @@ const NotificationCard = ({ notification, onRead }: NotificationCardProps) => {
       <div className="flex-1 min-w-0">
         <p className={cn(
           "text-sm leading-snug",
-          !is_read ? "font-semibold text-[#1a1a2e]" : "font-medium text-[#1a1a2e]"
+          !is_read ? "font-semibold text-foreground" : "font-medium text-foreground"
         )}>
           {title}
         </p>
         {message && (
-          <p className="text-sm text-[#6B7280] mt-0.5 line-clamp-2 leading-snug">
+          <p className="text-sm text-foreground/60 mt-0.5 line-clamp-2 leading-snug">
             {message}
           </p>
         )}
-        <p className="text-xs text-[#9CA3AF] mt-1">
+        <p className="text-xs text-foreground/50 mt-1">
           {timeAgo}
         </p>
       </div>

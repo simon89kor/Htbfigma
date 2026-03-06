@@ -106,7 +106,7 @@ const PostCard = ({ post, onLike, onBookmark }: PostCardProps) => {
   }, [touchStart, currentImageIndex, images.length]);
 
   return (
-    <article className="bg-white border-b border-[#E5E7EB]">
+    <article className="bg-background border-b border-white/10">
       {/* User profile header */}
       <div
         className="flex items-center gap-3 px-4 py-3 cursor-pointer"
@@ -115,7 +115,7 @@ const PostCard = ({ post, onLike, onBookmark }: PostCardProps) => {
         tabIndex={0}
         aria-label={`${authorNickname}의 프로필 보기`}
       >
-        <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+        <div className="w-9 h-9 rounded-full bg-white/8 overflow-hidden flex-shrink-0">
           {authorAvatar ? (
             <img
               src={authorAvatar}
@@ -123,21 +123,21 @@ const PostCard = ({ post, onLike, onBookmark }: PostCardProps) => {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-sm text-gray-500">
+            <div className="w-full h-full flex items-center justify-center text-sm text-foreground/60">
               {authorNickname[0]}
             </div>
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <span className="text-sm font-semibold text-[#1a1a2e]">{authorNickname}</span>
-          <span className="text-xs text-[#9CA3AF] ml-2">{timeAgo}</span>
+          <span className="text-sm font-semibold text-foreground">{authorNickname}</span>
+          <span className="text-xs text-foreground/50 ml-2">{timeAgo}</span>
         </div>
       </div>
 
       {/* Image area */}
       {images.length > 0 && (
         <div
-          className="relative w-full aspect-[4/3] bg-gray-100 overflow-hidden cursor-pointer"
+          className="relative w-full aspect-[4/3] bg-white/5 overflow-hidden cursor-pointer"
           onClick={handlePostClick}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
@@ -189,7 +189,7 @@ const PostCard = ({ post, onLike, onBookmark }: PostCardProps) => {
               size={22}
               className={cn(
                 'transition-colors',
-                post.is_liked ? 'fill-red-500 text-red-500' : 'text-[#6B7280]'
+                post.is_liked ? 'fill-red-500 text-red-500' : 'text-foreground/60'
               )}
             />
           </button>
@@ -198,7 +198,7 @@ const PostCard = ({ post, onLike, onBookmark }: PostCardProps) => {
             className="flex items-center gap-1 bg-transparent border-none cursor-pointer p-0"
             aria-label="댓글 보기"
           >
-            <MessageCircle size={22} className="text-[#6B7280]" />
+            <MessageCircle size={22} className="text-foreground/60" />
           </button>
           <button
             onClick={handleBookmark}
@@ -209,7 +209,7 @@ const PostCard = ({ post, onLike, onBookmark }: PostCardProps) => {
               size={22}
               className={cn(
                 'transition-colors',
-                post.is_bookmarked ? 'fill-[#1a1a2e] text-[#1a1a2e]' : 'text-[#6B7280]'
+                post.is_bookmarked ? 'fill-foreground text-foreground' : 'text-foreground/60'
               )}
             />
           </button>
@@ -218,7 +218,7 @@ const PostCard = ({ post, onLike, onBookmark }: PostCardProps) => {
             className="flex items-center gap-1 bg-transparent border-none cursor-pointer p-0"
             aria-label="공유하기"
           >
-            <Share2 size={22} className="text-[#6B7280]" />
+            <Share2 size={22} className="text-foreground/60" />
           </button>
         </div>
       </div>
@@ -227,10 +227,10 @@ const PostCard = ({ post, onLike, onBookmark }: PostCardProps) => {
       <div className="px-4 pb-1">
         <div className="flex items-center gap-3 text-sm">
           {post.like_count > 0 && (
-            <span className="font-semibold text-[#1a1a2e]">좋아요 {post.like_count}개</span>
+            <span className="font-semibold text-foreground">좋아요 {post.like_count}개</span>
           )}
           {post.comment_count > 0 && (
-            <span className="text-[#6B7280]">댓글 {post.comment_count}개</span>
+            <span className="text-foreground/60">댓글 {post.comment_count}개</span>
           )}
         </div>
       </div>
@@ -244,10 +244,10 @@ const PostCard = ({ post, onLike, onBookmark }: PostCardProps) => {
           tabIndex={0}
         >
           {post.title && (
-            <p className="text-sm font-semibold text-[#1a1a2e] line-clamp-1">{post.title}</p>
+            <p className="text-sm font-semibold text-foreground line-clamp-1">{post.title}</p>
           )}
           {post.content && (
-            <p className="text-sm text-[#6B7280] line-clamp-2 mt-0.5">{post.content}</p>
+            <p className="text-sm text-foreground/60 line-clamp-2 mt-0.5">{post.content}</p>
           )}
         </div>
       )}
@@ -266,7 +266,7 @@ const PostCard = ({ post, onLike, onBookmark }: PostCardProps) => {
       {/* Category badge */}
       {post.category && post.category !== 'general' && (
         <div className="px-4 pb-3">
-          <span className="inline-block text-xs bg-gray-100 text-[#6B7280] px-2.5 py-1 rounded-full">
+          <span className="inline-block text-xs bg-white/5 text-foreground/60 px-2.5 py-1 rounded-full">
             {CATEGORY_LABELS[post.category] ?? post.category}
           </span>
         </div>

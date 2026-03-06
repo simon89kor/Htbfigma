@@ -5,7 +5,7 @@ import { router } from "./routes";
 
 export default function App() {
   return (
-    <HeroUIProvider defaultTheme="light">
+    <HeroUIProvider>
       <RouterProvider router={router} />
       <Toaster position="top-center" richColors />
     </HeroUIProvider>

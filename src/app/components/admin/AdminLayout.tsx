@@ -38,10 +38,10 @@ const AdminLayout = () => {
   // Show loading while auth or profile is loading
   if (authLoading || profileLoading) {
     return (
-      <div className="flex h-screen">
-        <div className="w-[240px] bg-[var(--primary)] shrink-0" />
-        <div className="flex-1 bg-[var(--bg-secondary)]">
-          <div className="h-16 bg-white border-b border-[var(--border)]" />
+      <div className="flex h-screen bg-background">
+        <div className="w-[240px] bg-black/80 border-r border-white/10 shrink-0" />
+        <div className="flex-1 bg-background">
+          <div className="h-16 bg-black/60 border-b border-white/10" />
           <div className="p-6 space-y-4">
             <Skeleton className="h-8 w-48" />
             <div className="grid grid-cols-4 gap-4">
@@ -68,9 +68,9 @@ const AdminLayout = () => {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-background">
       <AdminSidebar />
-      <main className="flex-1 bg-[var(--bg-secondary)] overflow-hidden flex flex-col">
+      <main className="flex-1 bg-background overflow-hidden flex flex-col">
         <AdminHeader />
         <div className="flex-1 overflow-auto p-6">
           <Outlet />

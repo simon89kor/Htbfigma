@@ -61,14 +61,14 @@ interface KpiCardProps {
 }
 
 const KpiCard = ({ title, value, subtitle, icon: Icon, iconColor, iconBg }: KpiCardProps) => (
-  <Card className="bg-white shadow-sm border-0">
+  <Card className="bg-white/8 shadow-sm border-0">
     <CardContent className="pt-6">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-[var(--text-secondary)] font-medium">{title}</p>
-          <p className="text-2xl font-bold text-[var(--primary)] mt-1">{value}</p>
+          <p className="text-sm text-foreground/60 font-medium">{title}</p>
+          <p className="text-2xl font-bold text-foreground mt-1">{value}</p>
           {subtitle && (
-            <p className="text-xs text-[var(--text-muted)] mt-1">{subtitle}</p>
+            <p className="text-xs text-foreground/60 mt-1">{subtitle}</p>
           )}
         </div>
         <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center', iconBg)}>
@@ -149,7 +149,7 @@ const AdminDashboard = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-[var(--text-secondary)]">
+      <div className="flex flex-col items-center justify-center py-20 text-foreground/60">
         <AlertTriangle size={48} className="mb-4" />
         <p className="text-lg">{error}</p>
       </div>
@@ -195,9 +195,9 @@ const AdminDashboard = () => {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Weekly Signups Line Chart */}
-        <Card className="bg-white shadow-sm border-0">
+        <Card className="bg-white/8 shadow-sm border-0">
           <CardHeader>
-            <CardTitle className="text-base font-semibold text-[var(--primary)]">
+            <CardTitle className="text-base font-semibold text-foreground">
               주간 가입자 추이
             </CardTitle>
           </CardHeader>
@@ -234,7 +234,7 @@ const AdminDashboard = () => {
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex items-center justify-center h-[240px] text-[var(--text-muted)]">
+              <div className="flex items-center justify-center h-[240px] text-foreground/60">
                 데이터가 없습니다
               </div>
             )}
@@ -242,9 +242,9 @@ const AdminDashboard = () => {
         </Card>
 
         {/* Category Revenue Bar Chart */}
-        <Card className="bg-white shadow-sm border-0">
+        <Card className="bg-white/8 shadow-sm border-0">
           <CardHeader>
-            <CardTitle className="text-base font-semibold text-[var(--primary)]">
+            <CardTitle className="text-base font-semibold text-foreground">
               카테고리별 매출
             </CardTitle>
           </CardHeader>
@@ -283,7 +283,7 @@ const AdminDashboard = () => {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex items-center justify-center h-[240px] text-[var(--text-muted)]">
+              <div className="flex items-center justify-center h-[240px] text-foreground/60">
                 데이터가 없습니다
               </div>
             )}
@@ -294,9 +294,9 @@ const AdminDashboard = () => {
       {/* DAU Area Chart + Recent Reports */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* DAU Chart - using weekly signups as proxy data */}
-        <Card className="bg-white shadow-sm border-0">
+        <Card className="bg-white/8 shadow-sm border-0">
           <CardHeader>
-            <CardTitle className="text-base font-semibold text-[var(--primary)]">
+            <CardTitle className="text-base font-semibold text-foreground">
               일일 활성 유저 (DAU)
             </CardTitle>
           </CardHeader>
@@ -338,7 +338,7 @@ const AdminDashboard = () => {
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex items-center justify-center h-[240px] text-[var(--text-muted)]">
+              <div className="flex items-center justify-center h-[240px] text-foreground/60">
                 데이터가 없습니다
               </div>
             )}
@@ -346,9 +346,9 @@ const AdminDashboard = () => {
         </Card>
 
         {/* Recent Reports */}
-        <Card className="bg-white shadow-sm border-0">
+        <Card className="bg-white/8 shadow-sm border-0">
           <CardHeader>
-            <CardTitle className="text-base font-semibold text-[var(--primary)]">
+            <CardTitle className="text-base font-semibold text-foreground">
               최근 신고
             </CardTitle>
           </CardHeader>
@@ -358,7 +358,7 @@ const AdminDashboard = () => {
                 {recentReports.map((report) => (
                   <div
                     key={report.id}
-                    className="flex items-start gap-3 p-3 rounded-lg bg-[var(--bg-secondary)] hover:bg-[#EBEBEB] transition-colors cursor-pointer"
+                    className="flex items-start gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
                     onClick={() => navigate('/admin/posts')}
                     role="button"
                     tabIndex={0}
@@ -377,14 +377,14 @@ const AdminDashboard = () => {
                         >
                           {REPORT_TARGET_LABELS[report.target_type] ?? report.target_type}
                         </Badge>
-                        <span className="text-xs text-[var(--text-muted)]">
+                        <span className="text-xs text-foreground/60">
                           {new Date(report.created_at).toLocaleDateString('ko-KR')}
                         </span>
                       </div>
-                      <p className="text-sm text-[var(--primary)] mt-1 truncate">
+                      <p className="text-sm text-foreground mt-1 truncate">
                         {report.reason || '사유 없음'}
                       </p>
-                      <p className="text-xs text-[var(--text-secondary)] mt-0.5 truncate">
+                      <p className="text-xs text-foreground/60 mt-0.5 truncate">
                         신고자: {report.profiles?.nickname ?? '알 수 없음'}
                       </p>
                     </div>
@@ -392,7 +392,7 @@ const AdminDashboard = () => {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-[240px] text-[var(--text-muted)]">
+              <div className="flex flex-col items-center justify-center h-[240px] text-foreground/60">
                 <AlertTriangle size={36} className="mb-2 opacity-40" />
                 <p className="text-sm">미처리 신고가 없습니다</p>
               </div>

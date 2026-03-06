@@ -67,16 +67,16 @@ const PeriodSelectionSheet = ({
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 bg-black/50 z-50" />
           <Drawer.Content
-            className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-50 outline-none"
+            className="fixed bottom-0 left-0 right-0 bg-background rounded-t-2xl z-50 outline-none"
             aria-label="기간 선택"
           >
-            <div className="mx-auto w-12 h-1.5 bg-gray-300 rounded-full my-3" />
+            <div className="mx-auto w-12 h-1.5 bg-white/10 rounded-full my-3" />
             <div className="px-6 pb-8 text-center">
-              <p className="text-[#6B7280] py-8">이용 가능한 기간 옵션이 없습니다.</p>
+              <p className="text-foreground/60 py-8">이용 가능한 기간 옵션이 없습니다.</p>
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full h-[52px] bg-[#F5F5F5] text-[#6B7280] rounded-xl text-lg font-semibold cursor-pointer border-none"
+                className="w-full h-[52px] bg-white/5 text-foreground/60 rounded-xl text-lg font-semibold cursor-pointer border-none"
               >
                 닫기
               </button>
@@ -119,25 +119,25 @@ const PeriodSelectionSheet = ({
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/50 z-50" />
         <Drawer.Content
-          className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-50 outline-none"
+          className="fixed bottom-0 left-0 right-0 bg-background rounded-t-2xl z-50 outline-none"
           aria-label="기간 선택"
         >
           {/* 드래그 핸들 */}
-          <div className="mx-auto w-12 h-1.5 bg-gray-300 rounded-full my-3" />
+          <div className="mx-auto w-12 h-1.5 bg-white/10 rounded-full my-3" />
 
           <div className="px-6 pb-8">
             {/* 루틴 정보 */}
             <div className="mb-4">
-              <h3 className="text-lg font-bold text-[#1a1a2e]">
+              <h3 className="text-lg font-bold text-foreground">
                 {routine.title}
               </h3>
-              <p className="text-sm text-[#6B7280]">by {routine.provider}</p>
+              <p className="text-sm text-foreground/60">by {routine.provider}</p>
             </div>
 
-            <div className="h-px bg-[#E5E7EB] mb-5" />
+            <div className="h-px bg-white/10 mb-5" />
 
             {/* 기간 선택 라벨 */}
-            <p className="text-sm font-semibold text-[#1a1a2e] mb-4">
+            <p className="text-sm font-semibold text-foreground mb-4">
               기간을 선택해주세요
             </p>
 
@@ -151,10 +151,10 @@ const PeriodSelectionSheet = ({
                     type="button"
                     onClick={() => setSelectedIndex(index)}
                     className={cn(
-                      'w-full flex items-center justify-between px-4 py-4 rounded-xl border-2 transition-all cursor-pointer bg-white',
+                      'w-full flex items-center justify-between px-4 py-4 rounded-xl border-2 transition-all cursor-pointer bg-transparent',
                       isSelected
                         ? 'border-[#65D9AC] bg-[#65D9AC]/5'
-                        : 'border-[#E5E7EB] hover:border-[#9CA3AF]'
+                        : 'border-white/10 hover:border-white/30'
                     )}
                     aria-label={`${option.label} ${formatPrice(option.price)}`}
                     aria-pressed={isSelected}
@@ -166,7 +166,7 @@ const PeriodSelectionSheet = ({
                           'w-5 h-5 rounded-full border-2 flex items-center justify-center',
                           isSelected
                             ? 'border-[#65D9AC]'
-                            : 'border-[#E5E7EB]'
+                            : 'border-white/20'
                         )}
                       >
                         {isSelected && (
@@ -176,7 +176,7 @@ const PeriodSelectionSheet = ({
                       <span
                         className={cn(
                           'text-sm font-medium',
-                          isSelected ? 'text-[#1a1a2e]' : 'text-[#6B7280]'
+                          isSelected ? 'text-foreground' : 'text-foreground/60'
                         )}
                       >
                         {option.label}
@@ -184,14 +184,14 @@ const PeriodSelectionSheet = ({
                     </div>
                     <div className="flex items-center gap-2">
                       {option.originalPrice && (
-                        <span className="text-xs text-[#9CA3AF] line-through">
+                        <span className="text-xs text-foreground/50 line-through">
                           {formatPrice(option.originalPrice)}
                         </span>
                       )}
                       <span
                         className={cn(
                           'text-sm font-bold',
-                          isSelected ? 'text-[#1a1a2e]' : 'text-[#6B7280]'
+                          isSelected ? 'text-foreground' : 'text-foreground/60'
                         )}
                       >
                         {formatPrice(option.price)}
@@ -202,7 +202,7 @@ const PeriodSelectionSheet = ({
               })}
             </div>
 
-            <div className="h-px bg-[#E5E7EB] mb-5" />
+            <div className="h-px bg-white/10 mb-5" />
 
             {/* CTA 버튼 */}
             <button

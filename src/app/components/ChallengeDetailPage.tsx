@@ -85,7 +85,7 @@ const ChallengeDetailPage = () => {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <Loader2 size={32} className="animate-spin text-[var(--accent-color)] mb-3" />
-        <p className="text-sm text-[var(--text-muted)]">챌린지를 불러오는 중...</p>
+        <p className="text-sm text-foreground/60">챌린지를 불러오는 중...</p>
       </div>
     );
   }
@@ -93,7 +93,7 @@ const ChallengeDetailPage = () => {
   // 에러
   if (!challenge) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)]">
+      <div className="flex flex-col items-center justify-center py-20 text-foreground/60">
         <span className="text-4xl mb-4">😢</span>
         <p className="text-lg">챌린지를 찾을 수 없습니다</p>
         <button
@@ -119,12 +119,12 @@ const ChallengeDetailPage = () => {
       <div className="flex items-center gap-3 mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="p-1 bg-transparent border-none cursor-pointer text-[var(--primary)]"
+          className="p-1 bg-transparent border-none cursor-pointer text-foreground"
           aria-label="뒤로 가기"
         >
           <ArrowLeft size={24} />
         </button>
-        <h1 className="text-xl font-bold text-[var(--primary)] truncate flex-1">
+        <h1 className="text-xl font-bold text-foreground truncate flex-1">
           {challenge.title}
         </h1>
       </div>
@@ -155,38 +155,38 @@ const ChallengeDetailPage = () => {
 
       {/* 기간 & 참여자 */}
       <div className="grid grid-cols-2 gap-3 mb-6">
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-[var(--border)]">
-          <div className="flex items-center gap-2 text-[var(--text-secondary)] mb-1">
+        <div className="bg-white/8 rounded-xl p-4 shadow-sm border border-white/10">
+          <div className="flex items-center gap-2 text-foreground/60 mb-1">
             <Calendar size={14} />
             <span className="text-xs">기간</span>
           </div>
-          <p className="text-sm font-medium text-[var(--primary)]">
+          <p className="text-sm font-medium text-foreground">
             {format(new Date(challenge.start_date), 'yyyy.MM.dd')}
           </p>
-          <p className="text-sm font-medium text-[var(--primary)]">
+          <p className="text-sm font-medium text-foreground">
             ~ {format(new Date(challenge.end_date), 'yyyy.MM.dd')}
           </p>
           {isActive && daysLeft > 0 && (
             <p className="text-xs text-[var(--accent-color)] font-medium mt-1">D-{daysLeft}</p>
           )}
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-[var(--border)]">
-          <div className="flex items-center gap-2 text-[var(--text-secondary)] mb-1">
+        <div className="bg-white/8 rounded-xl p-4 shadow-sm border border-white/10">
+          <div className="flex items-center gap-2 text-foreground/60 mb-1">
             <Users size={14} />
             <span className="text-xs">참여자</span>
           </div>
-          <p className="text-2xl font-bold text-[var(--primary)]">
+          <p className="text-2xl font-bold text-foreground">
             {challenge.participant_count.toLocaleString()}
-            <span className="text-sm font-normal text-[var(--text-secondary)]">명</span>
+            <span className="text-sm font-normal text-foreground/60">명</span>
           </p>
         </div>
       </div>
 
       {/* 진행률 (참여 중인 경우) */}
       {challenge.is_participating && isActive && (
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-[var(--border)] mb-6">
-          <p className="text-sm font-medium text-[var(--primary)] mb-2">내 진행률</p>
-          <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+        <div className="bg-white/8 rounded-xl p-4 shadow-sm border border-white/10 mb-6">
+          <p className="text-sm font-medium text-foreground mb-2">내 진행률</p>
+          <div className="w-full h-3 bg-white/5 rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-[var(--accent-color)] rounded-full"
               initial={{ width: 0 }}
@@ -200,8 +200,8 @@ const ChallengeDetailPage = () => {
 
       {/* 챌린지 설명 */}
       <div className="mb-6">
-        <h3 className="text-base font-semibold text-[var(--primary)] mb-2">챌린지 설명</h3>
-        <p className="text-sm text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap">
+        <h3 className="text-base font-semibold text-foreground mb-2">챌린지 설명</h3>
+        <p className="text-sm text-foreground/60 leading-relaxed whitespace-pre-wrap">
           {challenge.description}
         </p>
       </div>
@@ -209,10 +209,10 @@ const ChallengeDetailPage = () => {
       {/* 규칙 */}
       {challenge.rules && challenge.rules.length > 0 && (
         <div className="mb-6">
-          <h3 className="text-base font-semibold text-[var(--primary)] mb-2">규칙</h3>
+          <h3 className="text-base font-semibold text-foreground mb-2">규칙</h3>
           <ul className="space-y-2">
             {challenge.rules.map((rule, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
+              <li key={idx} className="flex items-start gap-2 text-sm text-foreground/60">
                 <CheckCircle size={16} className="text-[var(--accent-color)] shrink-0 mt-0.5" />
                 <span>{rule}</span>
               </li>
@@ -224,17 +224,17 @@ const ChallengeDetailPage = () => {
       {/* 보상 */}
       {challenge.challenge_rewards && challenge.challenge_rewards.length > 0 && (
         <div className="mb-6">
-          <h3 className="text-base font-semibold text-[var(--primary)] mb-3">보상</h3>
+          <h3 className="text-base font-semibold text-foreground mb-3">보상</h3>
           <div className="space-y-2">
             {challenge.challenge_rewards.map((reward) => (
               <div
                 key={reward.id}
-                className="flex items-center gap-3 bg-gray-50 rounded-xl p-3"
+                className="flex items-center gap-3 bg-white/5 rounded-xl p-3"
               >
                 <span className="text-2xl">{reward.icon || '🏅'}</span>
                 <div>
-                  <p className="text-sm font-medium text-[var(--primary)]">{reward.name}</p>
-                  <p className="text-xs text-[var(--text-secondary)]">{reward.description}</p>
+                  <p className="text-sm font-medium text-foreground">{reward.name}</p>
+                  <p className="text-xs text-foreground/60">{reward.description}</p>
                 </div>
               </div>
             ))}
@@ -244,12 +244,12 @@ const ChallengeDetailPage = () => {
 
       {/* 참여하기 CTA (하단 고정) */}
       {!isCompleted && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--border)] p-4 z-30">
+        <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-white/10 p-4 z-30">
           <div className="max-w-7xl mx-auto">
             {challenge.is_participating ? (
               <button
                 disabled
-                className="w-full h-[52px] bg-gray-100 text-[var(--text-muted)] rounded-xl text-lg font-semibold border-none"
+                className="w-full h-[52px] bg-white/5 text-foreground/60 rounded-xl text-lg font-semibold border-none"
               >
                 참여 중
               </button>
@@ -260,7 +260,7 @@ const ChallengeDetailPage = () => {
                 className={cn(
                   'w-full h-[52px] rounded-xl text-lg font-semibold border-none cursor-pointer transition-all',
                   joining
-                    ? 'bg-gray-100 text-[var(--text-muted)]'
+                    ? 'bg-white/5 text-foreground/60'
                     : 'bg-[var(--accent-color)] text-white hover:opacity-90'
                 )}
               >

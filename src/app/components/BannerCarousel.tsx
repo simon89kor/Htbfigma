@@ -80,7 +80,7 @@ const BannerCarousel = () => {
 
   if (loading) {
     return (
-      <div className="w-full aspect-[2/1] rounded-2xl bg-gray-100 animate-pulse mb-6" />
+      <div className="w-full aspect-[2/1] rounded-2xl bg-white/5 animate-pulse mb-6" />
     );
   }
 
@@ -108,7 +108,7 @@ const BannerCarousel = () => {
                   className="w-full h-full object-cover"
                 />
                 {/* Gradient overlay + text */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 text-left">
                   <h3 className="text-white text-lg font-bold leading-tight mb-1">
                     {banner.title}
@@ -133,8 +133,8 @@ const BannerCarousel = () => {
               className={cn(
                 "w-2 h-2 rounded-full transition-all duration-300 border-none cursor-pointer p-0",
                 index === selectedIndex
-                  ? "bg-[#65D9AC] w-5"
-                  : "bg-gray-300"
+                  ? "bg-[#13d680] w-5 shadow-[0_0_8px_rgba(19,214,128,0.60)]"
+                  : "bg-white/25 hover:bg-white/40"
               )}
               onClick={() => scrollTo(index)}
               aria-label={`${index + 1}/${banners.length} 배너로 이동`}

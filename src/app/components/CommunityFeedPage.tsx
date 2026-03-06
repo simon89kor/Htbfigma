@@ -82,18 +82,18 @@ const CommunityFeedPage = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-white -mx-4 sm:-mx-6 lg:-mx-8 -mt-8">
+    <div className="min-h-screen bg-background -mx-4 sm:-mx-6 lg:-mx-8 -mt-8">
       {/* Full-bleed: negate Layout <main> padding (px-4 sm:px-6 lg:px-8 py-8) */}
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB]">
+      <div className="sticky top-0 z-30 bg-[#07071a]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-white/14">
         <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-lg font-bold text-[#1a1a2e]">커뮤니티</h1>
+          <h1 className="text-lg font-bold text-foreground">커뮤니티</h1>
           <div className="flex items-center gap-2">
             <button
-              className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer hover:bg-gray-100 transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer hover:bg-white/5 transition-colors"
               aria-label="검색"
             >
-              <Search size={20} className="text-[#1a1a2e]" />
+              <Search size={20} className="text-foreground" />
             </button>
           </div>
         </div>
@@ -106,8 +106,8 @@ const CommunityFeedPage = () => {
               className={cn(
                 'px-4 py-2 rounded-full whitespace-nowrap text-sm border-none cursor-pointer transition-colors',
                 activeTab === tab.key
-                  ? 'bg-[#65D9AC] text-white font-medium'
-                  : 'bg-gray-100 text-[#6B7280]'
+                  ? 'bg-[#13d680] text-white font-semibold shadow-[0_0_16px_rgba(19,214,128,0.40)]'
+                  : 'bg-white/10 text-foreground/60 border border-white/10'
               )}
               onClick={() => handleTabChange(tab.key)}
             >
@@ -122,7 +122,7 @@ const CommunityFeedPage = () => {
         {loading ? (
           <FeedSkeleton />
         ) : posts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[#9CA3AF]">
+          <div className="flex flex-col items-center justify-center py-20 text-foreground/50">
             <UsersIcon size={48} className="mb-4" />
             <p className="text-lg">게시물이 없습니다</p>
             <p className="text-sm mt-1">
@@ -152,7 +152,7 @@ const CommunityFeedPage = () => {
             )}
 
             {!hasMore && posts.length > 0 && (
-              <div className="text-center py-6 text-sm text-[#9CA3AF]">
+              <div className="text-center py-6 text-sm text-foreground/50">
                 모든 게시물을 확인했습니다
               </div>
             )}
@@ -179,7 +179,7 @@ const CommunityFeedPage = () => {
 const FeedSkeleton = () => (
   <div className="space-y-4">
     {Array.from({ length: 3 }).map((_, i) => (
-      <div key={i} className="bg-white border-b border-[#E5E7EB]">
+      <div key={i} className="bg-background border-b border-white/10">
         <div className="flex items-center gap-3 px-4 py-3">
           <Skeleton className="w-9 h-9 rounded-full" />
           <div className="space-y-1.5">

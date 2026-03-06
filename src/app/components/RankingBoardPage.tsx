@@ -82,7 +82,7 @@ function TopThreePodium({
         </span>
         <div
           className={cn(
-            'rounded-full bg-gray-200 flex items-center justify-center text-lg font-medium text-white overflow-hidden',
+            'rounded-full bg-white/10 flex items-center justify-center text-lg font-medium text-white overflow-hidden',
             size === 'lg' ? 'w-16 h-16' : 'w-12 h-12'
           )}
           style={{
@@ -96,7 +96,7 @@ function TopThreePodium({
         </div>
         <p
           className={cn(
-            'mt-1.5 font-medium text-[var(--primary)] truncate max-w-[80px] text-center',
+            'mt-1.5 font-medium text-foreground truncate max-w-[80px] text-center',
             size === 'lg' ? 'text-sm' : 'text-xs'
           )}
         >
@@ -110,7 +110,7 @@ function TopThreePodium({
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-[var(--border)] mb-4">
+    <div className="bg-white/8 rounded-xl p-6 shadow-sm border border-white/10 mb-4">
       <div className="flex items-end justify-center gap-2">
         <PodiumItem entry={second} size="sm" />
         <PodiumItem entry={first} size="lg" />
@@ -154,7 +154,7 @@ function RankingListItem({
       }}
       className={cn(
         'flex items-center gap-3 p-3 rounded-xl transition-colors cursor-pointer',
-        isMe ? 'bg-[var(--accent-color)]/10 border border-[var(--accent-color)]/30' : 'bg-white hover:bg-gray-50'
+        isMe ? 'bg-[var(--accent-color)]/10 border border-[var(--accent-color)]/30' : 'bg-white/8 hover:bg-white/10'
       )}
     >
       {/* 순위 */}
@@ -162,7 +162,7 @@ function RankingListItem({
         <span
           className={cn(
             'text-sm font-bold',
-            isMe ? 'text-[var(--accent-color)]' : 'text-[var(--text-secondary)]'
+            isMe ? 'text-[var(--accent-color)]' : 'text-foreground/60'
           )}
         >
           {rank}
@@ -171,7 +171,7 @@ function RankingListItem({
 
       {/* 아바타 */}
       <div
-        className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium text-white overflow-hidden shrink-0"
+        className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-sm font-medium text-white overflow-hidden shrink-0"
         style={{
           backgroundImage: avatarUrl ? `url(${avatarUrl})` : undefined,
           backgroundSize: 'cover',
@@ -186,7 +186,7 @@ function RankingListItem({
       <p
         className={cn(
           'flex-1 text-sm font-medium truncate',
-          isMe ? 'text-[var(--accent-color)]' : 'text-[var(--primary)]'
+          isMe ? 'text-[var(--accent-color)]' : 'text-foreground'
         )}
       >
         {nickname}
@@ -195,11 +195,11 @@ function RankingListItem({
 
       {/* 프로그레스 */}
       <div className="flex items-center gap-2 shrink-0">
-        <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
           <div
             className={cn(
               'h-full rounded-full',
-              isMe ? 'bg-[var(--accent-color)]' : 'bg-gray-400'
+              isMe ? 'bg-[var(--accent-color)]' : 'bg-white/30'
             )}
             style={{ width: `${completionRate}%` }}
           />
@@ -207,7 +207,7 @@ function RankingListItem({
         <span
           className={cn(
             'text-xs font-bold w-10 text-right',
-            isMe ? 'text-[var(--accent-color)]' : 'text-[var(--text-secondary)]'
+            isMe ? 'text-[var(--accent-color)]' : 'text-foreground/60'
           )}
         >
           {completionRate}%
@@ -249,12 +249,12 @@ const RankingBoardPage = () => {
       <div className="flex items-center gap-3 mb-4">
         <button
           onClick={() => navigate(-1)}
-          className="p-1 bg-transparent border-none cursor-pointer text-[var(--primary)]"
+          className="p-1 bg-transparent border-none cursor-pointer text-foreground"
           aria-label="뒤로 가기"
         >
           <ArrowLeft size={24} />
         </button>
-        <h1 className="text-xl font-bold text-[var(--primary)]">랭킹</h1>
+        <h1 className="text-xl font-bold text-foreground">랭킹</h1>
       </div>
 
       {/* 기간 탭 */}
@@ -266,7 +266,7 @@ const RankingBoardPage = () => {
               'px-4 py-2 rounded-full text-sm border-none cursor-pointer transition-all',
               period === tab.key
                 ? 'bg-[var(--accent-color)] text-white font-medium'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                : 'bg-white/5 text-foreground/60 hover:bg-white/10'
             )}
             onClick={() => setPeriod(tab.key)}
           >
@@ -283,8 +283,8 @@ const RankingBoardPage = () => {
             className={cn(
               'px-3 py-1.5 rounded-full whitespace-nowrap text-xs border-none cursor-pointer transition-all',
               category === tab.key
-                ? 'bg-[var(--primary)] text-white'
-                : 'bg-gray-50 text-gray-500 border border-[var(--border)] hover:bg-gray-100'
+                ? 'bg-foreground text-background'
+                : 'bg-white/5 text-foreground/60 border border-white/10 hover:bg-white/10'
             )}
             onClick={() => setCategory(tab.key)}
           >
@@ -297,13 +297,13 @@ const RankingBoardPage = () => {
       {loading && ranking.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20">
           <Loader2 size={32} className="animate-spin text-[var(--accent-color)] mb-3" />
-          <p className="text-sm text-[var(--text-muted)]">랭킹을 불러오는 중...</p>
+          <p className="text-sm text-foreground/60">랭킹을 불러오는 중...</p>
         </div>
       )}
 
       {/* 빈 상태 */}
       {!loading && ranking.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)]">
+        <div className="flex flex-col items-center justify-center py-20 text-foreground/60">
           <span className="text-4xl mb-4">🏆</span>
           <p className="text-lg">랭킹 데이터가 없습니다</p>
           <p className="text-sm mt-1">루틴을 완료하여 랭킹에 참여하세요!</p>
@@ -339,7 +339,7 @@ const RankingBoardPage = () => {
 
       {/* 내 순위 sticky */}
       {myRanking && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--border)] shadow-lg z-30">
+        <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-white/10 shadow-lg z-30">
           <div className="max-w-7xl mx-auto px-4 py-3">
             <RankingListItem
               rank={myRanking.rank}

@@ -198,9 +198,9 @@ const AdminRoutineManagement = () => {
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 bg-white rounded-xl p-4 shadow-sm">
+      <div className="flex flex-wrap items-center gap-3 bg-white/8 rounded-xl p-4 shadow-sm">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/60" />
           <Input
             placeholder="루틴 제목 검색..."
             value={searchInput}
@@ -238,7 +238,7 @@ const AdminRoutineManagement = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white/8 rounded-xl shadow-sm overflow-hidden">
         {loading ? (
           <div className="p-4 space-y-3">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -246,7 +246,7 @@ const AdminRoutineManagement = () => {
             ))}
           </div>
         ) : routines.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)]">
+          <div className="flex flex-col items-center justify-center py-20 text-foreground/60">
             <ClipboardList size={48} className="mb-4 opacity-40" />
             <p className="text-lg">루틴이 없습니다</p>
           </div>
@@ -254,7 +254,7 @@ const AdminRoutineManagement = () => {
           <>
             <Table>
               <TableHeader>
-                <TableRow className="bg-[var(--bg-secondary)]">
+                <TableRow className="bg-white/5">
                   <TableHead className="w-[60px]">번호</TableHead>
                   <TableHead>제목</TableHead>
                   <TableHead className="w-[100px]">Provider</TableHead>
@@ -269,13 +269,13 @@ const AdminRoutineManagement = () => {
               <TableBody>
                 {routines.map((routine, index) => (
                   <TableRow key={routine.id}>
-                    <TableCell className="text-[var(--text-secondary)] text-xs">
+                    <TableCell className="text-foreground/60 text-xs">
                       {(page - 1) * ITEMS_PER_PAGE + index + 1}
                     </TableCell>
-                    <TableCell className="font-medium text-[var(--primary)] truncate max-w-[200px]">
+                    <TableCell className="font-medium text-foreground truncate max-w-[200px]">
                       {routine.title}
                     </TableCell>
-                    <TableCell className="text-sm text-[var(--text-secondary)] truncate max-w-[100px]">
+                    <TableCell className="text-sm text-foreground/60 truncate max-w-[100px]">
                       {routine.profiles?.nickname ?? '-'}
                     </TableCell>
                     <TableCell>
@@ -283,15 +283,15 @@ const AdminRoutineManagement = () => {
                         {routine.category}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm font-medium text-[var(--primary)]">
+                    <TableCell className="text-sm font-medium text-foreground">
                       {routine.price === 0
                         ? '무료'
                         : `₩${routine.price.toLocaleString()}`}
                     </TableCell>
-                    <TableCell className="text-sm text-[var(--text-secondary)]">
+                    <TableCell className="text-sm text-foreground/60">
                       {routine.purchase_count}
                     </TableCell>
-                    <TableCell className="text-sm text-[var(--text-secondary)]">
+                    <TableCell className="text-sm text-foreground/60">
                       {routine.rating.toFixed(1)}
                     </TableCell>
                     <TableCell>
@@ -328,8 +328,8 @@ const AdminRoutineManagement = () => {
               </TableBody>
             </Table>
 
-            <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border)]">
-              <p className="text-sm text-[var(--text-secondary)]">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-white/10">
+              <p className="text-sm text-foreground/60">
                 총 {totalCount.toLocaleString()}개
               </p>
               {renderPagination()}

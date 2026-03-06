@@ -32,10 +32,10 @@ const AdminSidebar = () => {
   };
 
   return (
-    <aside className="w-[240px] min-h-screen bg-[var(--primary)] flex flex-col shrink-0">
+    <aside className="w-[240px] min-h-screen bg-black/80 backdrop-blur-xl border-r border-white/10 flex flex-col shrink-0">
       {/* Logo */}
       <div className="flex items-center gap-2.5 px-5 py-5 border-b border-white/10">
-        <div className="w-9 h-9 bg-[var(--accent-color)] rounded-xl flex items-center justify-center">
+        <div className="w-9 h-9 bg-[#13d680]/20 border border-[#13d680]/30 rounded-xl flex items-center justify-center">
           <CheckSquare className="w-5 h-5 text-white" />
         </div>
         <div>
@@ -59,7 +59,7 @@ const AdminSidebar = () => {
                   className={cn(
                     'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium no-underline transition-colors',
                     active
-                      ? 'bg-[var(--accent-color)] text-white'
+                      ? 'bg-[#13d680]/20 text-[#13d680] border border-[#13d680]/30'
                       : 'text-white/60 hover:text-white hover:bg-white/10'
                   )}
                 >

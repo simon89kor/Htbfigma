@@ -198,7 +198,7 @@ const PostDetailPage = () => {
 
   if (!post) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-[#9CA3AF]">
+      <div className="flex flex-col items-center justify-center py-20 text-foreground/50">
         <p className="text-lg">게시물을 찾을 수 없습니다</p>
       </div>
     );
@@ -213,22 +213,22 @@ const PostDetailPage = () => {
   });
 
   return (
-    <div className="min-h-screen bg-white -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 pb-20">
+    <div className="min-h-screen bg-background -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 pb-20">
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB] flex items-center justify-between px-4 py-3">
+      <div className="sticky top-0 z-30 bg-background border-b border-white/10 flex items-center justify-between px-4 py-3">
         <button
           onClick={() => navigate(-1)}
-          className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer hover:bg-gray-100"
+          className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer hover:bg-white/5"
           aria-label="뒤로가기"
         >
-          <ArrowLeft size={22} className="text-[#1a1a2e]" />
+          <ArrowLeft size={22} className="text-foreground" />
         </button>
-        <h1 className="text-base font-semibold text-[#1a1a2e]">게시물</h1>
+        <h1 className="text-base font-semibold text-foreground">게시물</h1>
         <button
-          className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer hover:bg-gray-100"
+          className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer hover:bg-white/5"
           aria-label="더보기"
         >
-          <MoreHorizontal size={22} className="text-[#1a1a2e]" />
+          <MoreHorizontal size={22} className="text-foreground" />
         </button>
       </div>
 
@@ -240,25 +240,25 @@ const PostDetailPage = () => {
         tabIndex={0}
         aria-label={`${authorNickname}의 프로필 보기`}
       >
-        <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+        <div className="w-10 h-10 rounded-full bg-white/8 overflow-hidden flex-shrink-0">
           {authorAvatar ? (
             <img src={authorAvatar} alt={authorNickname} className="w-full h-full object-cover" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-sm text-gray-500">
+            <div className="w-full h-full flex items-center justify-center text-sm text-foreground/60">
               {authorNickname[0]}
             </div>
           )}
         </div>
         <div>
-          <p className="text-sm font-semibold text-[#1a1a2e]">{authorNickname}</p>
-          <p className="text-xs text-[#9CA3AF]">{timeAgo}</p>
+          <p className="text-sm font-semibold text-foreground">{authorNickname}</p>
+          <p className="text-xs text-foreground/50">{timeAgo}</p>
         </div>
       </div>
 
       {/* Image viewer */}
       {images.length > 0 && (
         <div
-          className="relative w-full aspect-[4/3] bg-gray-100 overflow-hidden"
+          className="relative w-full aspect-[4/3] bg-white/5 overflow-hidden"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
@@ -302,7 +302,7 @@ const PostDetailPage = () => {
               size={24}
               className={cn(
                 'transition-colors',
-                post.is_liked ? 'fill-red-500 text-red-500' : 'text-[#6B7280]'
+                post.is_liked ? 'fill-red-500 text-red-500' : 'text-foreground/60'
               )}
             />
           </button>
@@ -311,7 +311,7 @@ const PostDetailPage = () => {
             className="bg-transparent border-none cursor-pointer p-0"
             aria-label="댓글"
           >
-            <MessageCircle size={24} className="text-[#6B7280]" />
+            <MessageCircle size={24} className="text-foreground/60" />
           </button>
           <button
             onClick={handleBookmark}
@@ -322,7 +322,7 @@ const PostDetailPage = () => {
               size={24}
               className={cn(
                 'transition-colors',
-                post.is_bookmarked ? 'fill-[#1a1a2e] text-[#1a1a2e]' : 'text-[#6B7280]'
+                post.is_bookmarked ? 'fill-foreground text-foreground' : 'text-foreground/60'
               )}
             />
           </button>
@@ -331,7 +331,7 @@ const PostDetailPage = () => {
             className="bg-transparent border-none cursor-pointer p-0"
             aria-label="공유"
           >
-            <Share2 size={24} className="text-[#6B7280]" />
+            <Share2 size={24} className="text-foreground/60" />
           </button>
         </div>
       </div>
@@ -339,7 +339,7 @@ const PostDetailPage = () => {
       {/* Like count */}
       {post.like_count > 0 && (
         <div className="px-4 pb-2">
-          <span className="text-sm font-semibold text-[#1a1a2e]">
+          <span className="text-sm font-semibold text-foreground">
             좋아요 {post.like_count}개
           </span>
         </div>
@@ -349,14 +349,14 @@ const PostDetailPage = () => {
       {post.routines && (
         <div className="px-4 pb-3">
           <div
-            className="inline-flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors"
+            className="inline-flex items-center gap-2 bg-white/5 px-3 py-2 rounded-lg cursor-pointer hover:bg-white/10 transition-colors"
             onClick={() => navigate(`/product/${post.routines!.id}`)}
             role="button"
             tabIndex={0}
             aria-label="연결된 루틴 보기"
           >
             <span>📋</span>
-            <span className="text-sm font-medium text-[#1a1a2e]">{post.routines.title}</span>
+            <span className="text-sm font-medium text-foreground">{post.routines.title}</span>
           </div>
         </div>
       )}
@@ -364,10 +364,10 @@ const PostDetailPage = () => {
       {/* Content */}
       <div className="px-4 pb-3">
         {post.title && (
-          <h2 className="text-base font-bold text-[#1a1a2e] mb-1">{post.title}</h2>
+          <h2 className="text-base font-bold text-foreground mb-1">{post.title}</h2>
         )}
         {post.content && (
-          <p className="text-sm text-[#1a1a2e] whitespace-pre-wrap leading-relaxed">
+          <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
             {post.content}
           </p>
         )}
@@ -387,16 +387,16 @@ const PostDetailPage = () => {
       {/* Category */}
       {post.category && post.category !== 'general' && (
         <div className="px-4 pb-3">
-          <span className="inline-block text-xs bg-gray-100 text-[#6B7280] px-2.5 py-1 rounded-full">
+          <span className="inline-block text-xs bg-white/5 text-foreground/60 px-2.5 py-1 rounded-full">
             {CATEGORY_LABELS[post.category] ?? post.category}
           </span>
         </div>
       )}
 
       {/* Comments section */}
-      <div ref={commentSectionRef} className="border-t border-[#E5E7EB]">
+      <div ref={commentSectionRef} className="border-t border-white/10">
         <div className="px-4 py-3">
-          <h3 className="text-sm font-semibold text-[#1a1a2e]">
+          <h3 className="text-sm font-semibold text-foreground">
             댓글 {post.comment_count}개
           </h3>
         </div>
@@ -416,8 +416,8 @@ const PostDetailPage = () => {
 // ============================================================================
 
 const DetailSkeleton = () => (
-  <div className="min-h-screen bg-white -mx-4 sm:-mx-6 lg:-mx-8 -mt-8">
-    <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB]">
+  <div className="min-h-screen bg-background -mx-4 sm:-mx-6 lg:-mx-8 -mt-8">
+    <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
       <Skeleton className="w-9 h-9 rounded-full" />
       <Skeleton className="h-5 w-16" />
       <Skeleton className="w-9 h-9 rounded-full" />

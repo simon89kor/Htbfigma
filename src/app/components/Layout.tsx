@@ -33,8 +33,30 @@ import {
 import { useStore } from "../store-context";
 import { useAuth } from "../auth-context";
 import { useNotifications } from "../notification-context";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
+
+// Per-route ambient glow colors (Apple Invite style)
+const PAGE_GLOW_MAP: Record<string, string> = {
+  '/': 'rgba(19, 214, 128, 0.50)',
+  '/community': 'rgba(108, 92, 231, 0.50)',
+  '/reward': 'rgba(253, 180, 60, 0.45)',
+  '/profile': 'rgba(96, 165, 250, 0.45)',
+  '/my-lists': 'rgba(19, 214, 128, 0.45)',
+  '/cart': 'rgba(253, 180, 60, 0.42)',
+  '/notifications': 'rgba(96, 165, 250, 0.42)',
+  '/create-routine': 'rgba(34, 211, 238, 0.45)',
+};
+
+function getRouteGlow(pathname: string): string {
+  if (PAGE_GLOW_MAP[pathname]) return PAGE_GLOW_MAP[pathname];
+  // Detail pages inherit parent route color
+  if (pathname.startsWith('/community')) return PAGE_GLOW_MAP['/community'];
+  if (pathname.startsWith('/reward')) return PAGE_GLOW_MAP['/reward'];
+  if (pathname.startsWith('/profile') || pathname.startsWith('/provider')) return PAGE_GLOW_MAP['/profile'];
+  // Product detail page gets color via CSS var set by the page itself
+  return 'rgba(19, 214, 128, 0.28)';
+}
 
 export function Layout() {
   const { getCartCount } = useStore();
@@ -43,6 +65,18 @@ export function Layout() {
   const location = useLocation();
   const cartCount = getCartCount();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Route-based ambient glow
+  const [glowColor, setGlowColor] = useState(() => getRouteGlow(location.pathname));
+  const prevPathRef = useRef(location.pathname);
+  useEffect(() => {
+    if (prevPathRef.current !== location.pathname) {
+      prevPathRef.current = location.pathname;
+      // Check if the page set a custom glow via CSS var (detail pages)
+      const customGlow = document.documentElement.style.getPropertyValue('--page-glow-color');
+      setGlowColor(customGlow || getRouteGlow(location.pathname));
+    }
+  }, [location.pathname]);
 
   const handleLogout = () => {
     logout();
@@ -59,24 +93,38 @@ export function Layout() {
   ];
 
   return (
-    <div className="min-h-screen bg-default-50">
+    <div className="min-h-screen">
+      {/* Ambient glow overlay — transitions between route accent colors */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          pointerEvents: 'none',
+          zIndex: 0,
+          background: [
+            `radial-gradient(ellipse 130% 65% at 50% -8%, ${glowColor} 0%, transparent 62%)`,
+            `radial-gradient(ellipse 80% 50% at 50% 110%, ${glowColor.replace(/[\d.]+\)$/, '0.20)')} 0%, transparent 58%)`,
+          ].join(', '),
+          transition: 'background 800ms ease',
+        }}
+      />
       <Navbar
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
         maxWidth="xl"
-        isBordered
         classNames={{
-          base: "bg-white/80 backdrop-blur-xl",
+          base: "relative z-20 bg-[#07071a]/70 backdrop-blur-2xl border-b border-white/12 backdrop-saturate-150",
           wrapper: "px-4 sm:px-6",
         }}
       >
         <NavbarBrand>
           <Link to="/" className="flex items-center gap-2.5 no-underline">
-            <div className="w-9 h-9 bg-[#1a1a2e] rounded-xl flex items-center justify-center">
-              <CheckSquare className="w-5 h-5 text-[#65D9AC]" />
+            <div className="w-9 h-9 bg-white/10 border border-white/15 rounded-xl flex items-center justify-center">
+              <CheckSquare className="w-5 h-5 text-[#13d680]" />
             </div>
-            <span className="text-[#1a1a2e] font-semibold tracking-tight hidden sm:block text-lg">
-              TodoMarket
+            <span className="text-foreground font-semibold tracking-tight hidden sm:block text-lg">
+              HOW TO BE
             </span>
           </Link>
         </NavbarBrand>
@@ -121,7 +169,7 @@ export function Layout() {
           {/* [F7] 알림 아이콘 + 뱃지 */}
           {isLoggedIn && (
             <NavbarItem>
-              <Link to="/notifications" className="relative p-1 no-underline text-default-600 hover:text-[#1a1a2e] transition-colors" aria-label="알림">
+              <Link to="/notifications" className="relative p-1 no-underline text-foreground/60 hover:text-foreground transition-colors" aria-label="알림">
                 <Bell size={22} />
                 {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-[#d4183d] text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none">
@@ -304,7 +352,7 @@ export function Layout() {
         </NavbarMenu>
       </Navbar>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-foreground">
         <Outlet />
       </main>
     </div>

@@ -225,18 +225,18 @@ const FollowingPage = () => {
   // ========================================================================
 
   return (
-    <div className="min-h-screen bg-white -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 pb-24">
+    <div className="min-h-screen bg-background -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB]">
+      <div className="sticky top-0 z-30 bg-background border-b border-white/10">
         <div className="flex items-center px-4 py-3">
           <button
             onClick={() => navigate(-1)}
-            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100"
+            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/5"
             aria-label="뒤로가기"
           >
-            <ArrowLeft size={22} className="text-[#1a1a2e]" />
+            <ArrowLeft size={22} className="text-foreground" />
           </button>
-          <h1 className="flex-1 text-center text-lg font-bold text-[#1a1a2e]">
+          <h1 className="flex-1 text-center text-lg font-bold text-foreground">
             {user.name || '프로필'}
           </h1>
           <div className="w-9" />
@@ -244,7 +244,7 @@ const FollowingPage = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-[#E5E7EB]">
+      <div className="flex border-b border-white/10">
         {FOLLOW_TABS.map((tab) => {
           const count = tab.key === 'followers' ? followerCount : followingCount;
           return (
@@ -258,7 +258,7 @@ const FollowingPage = () => {
                 'flex-1 py-3 text-sm font-semibold text-center transition-colors relative',
                 activeTab === tab.key
                   ? 'text-[#65D9AC]'
-                  : 'text-[#6B7280]'
+                  : 'text-foreground/60'
               )}
             >
               {tab.label} {count > 0 && <span>{count}</span>}
@@ -273,13 +273,13 @@ const FollowingPage = () => {
       {/* Search */}
       <div className="px-4 py-3">
         <div className="relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/50" />
           <input
             type="text"
             placeholder="검색..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-[#F5F5F5] rounded-xl text-sm text-[#1a1a2e] placeholder:text-[#9CA3AF] outline-none focus:ring-2 focus:ring-[#65D9AC]/30"
+            className="w-full pl-10 pr-4 py-2.5 bg-white/5 rounded-xl text-sm text-foreground placeholder:text-foreground/50 outline-none focus:ring-2 focus:ring-[#65D9AC]/30"
           />
         </div>
       </div>
@@ -300,8 +300,8 @@ const FollowingPage = () => {
             ))}
           </div>
         ) : filteredList.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[#6B7280]">
-            <Users size={48} className="mb-4 text-gray-300" />
+          <div className="flex flex-col items-center justify-center py-20 text-foreground/60">
+            <Users size={48} className="mb-4 text-foreground/30" />
             <p className="text-sm">
               {searchQuery
                 ? '검색 결과가 없습니다'
@@ -319,7 +319,7 @@ const FollowingPage = () => {
               return (
                 <div
                   key={item.id}
-                  className="flex items-center gap-3 py-3 rounded-xl hover:bg-gray-50 transition-colors px-1 cursor-pointer"
+                  className="flex items-center gap-3 py-3 rounded-xl hover:bg-white/5 transition-colors px-1 cursor-pointer"
                 >
                   {/* Avatar */}
                   <button
@@ -346,7 +346,7 @@ const FollowingPage = () => {
                     className="flex-1 min-w-0 text-left"
                   >
                     <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-semibold text-[#1a1a2e] truncate">
+                      <span className="text-sm font-semibold text-foreground truncate">
                         {item.nickname}
                       </span>
                       {item.isProvider && (
@@ -356,7 +356,7 @@ const FollowingPage = () => {
                       )}
                     </div>
                     {item.bio && (
-                      <p className="text-xs text-[#6B7280] truncate mt-0.5">{item.bio}</p>
+                      <p className="text-xs text-foreground/60 truncate mt-0.5">{item.bio}</p>
                     )}
                   </button>
 
@@ -368,7 +368,7 @@ const FollowingPage = () => {
                       className={cn(
                         'flex-shrink-0 px-4 py-1.5 rounded-lg text-xs font-semibold transition-colors',
                         item.isFollowing
-                          ? 'bg-[#F5F5F5] text-[#6B7280] hover:bg-gray-200'
+                          ? 'bg-white/5 text-foreground/60 hover:bg-white/10'
                           : 'bg-[#65D9AC] text-white hover:bg-[#56c99b]',
                         isButtonLoading && 'opacity-50 cursor-not-allowed'
                       )}

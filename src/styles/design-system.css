@@ -1,0 +1,700 @@
+/* ============================================================
+   Apple Invite Design System
+   Source: Figma — Apple Event Invite UI Kit (Community)
+   Target: HTB Project (htbfigma.vercel.app)
+
+   이 파일을 Htbfigma/src의 기존 CSS에 import하거나
+   :root 변수를 교체하여 전체 디자인 시스템을 전환합니다.
+   ============================================================ */
+
+/* ─────────────────────────────────────────────
+   1. DESIGN TOKENS — CSS Custom Properties
+   ───────────────────────────────────────────── */
+
+:root {
+  /* ── Font Family ── */
+  --font-display: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-rounded: 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size: 16px;
+
+  /* ── Font Weight ── */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* ── Color: Background ── */
+  --background: #07071a;
+  --background-overlay: rgba(10, 10, 35, 0.62);
+  --background-blur: rgba(0, 0, 10, 0.12);
+
+  /* ── Color: Foreground (Text) ── */
+  --foreground: #ffffff;
+  --foreground-secondary: rgba(255, 255, 255, 0.70);
+  --foreground-tertiary: rgba(255, 255, 255, 0.60);
+  --foreground-muted: rgba(255, 255, 255, 0.20);
+
+  /* ── Color: Primary Palette ── */
+  --primary: #ffffff;
+  --primary-foreground: #1a1a2e;
+
+  /* ── Color: Accent ── */
+  --accent: #13d680;
+  --accent-foreground: #ffffff;
+
+  /* ── Color: Destructive / Red Gradient ── */
+  --destructive: #f10302;
+  --destructive-dark: #571019;
+  --gradient-red-start: rgba(241, 3, 2, 1);
+  --gradient-red-25: rgba(202, 6, 8, 1);
+  --gradient-red-50: rgba(164, 10, 14, 1);
+  --gradient-red-75: rgba(125, 13, 19, 1);
+  --gradient-red-end: rgba(87, 16, 25, 1);
+
+  /* ── Color: Surface (Card / Glass) ── */
+  --card: rgba(255, 255, 255, 0.13);
+  --card-foreground: #ffffff;
+  --card-border: rgba(255, 255, 255, 0.22);
+  --card-active: #ffffff;
+  --card-active-foreground: #13d680;
+
+  /* ── Color: Semantic ── */
+  --secondary: rgba(255, 255, 255, 0.10);
+  --secondary-foreground: #ffffff;
+  --muted: rgba(255, 255, 255, 0.12);
+  --muted-foreground: rgba(255, 255, 255, 0.70);
+  --popover: rgba(10, 10, 40, 0.75);
+  --popover-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.22);
+  --input: transparent;
+  --input-background: rgba(255, 255, 255, 0.12);
+  --switch-background: rgba(255, 255, 255, 0.22);
+  --ring: rgba(255, 255, 255, 0.40);
+
+  /* ── Border Radius ── */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 31px;
+  --radius-xl: 37px;
+  --radius-full: 9999px;
+
+  /* ── Spacing ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* ── Backdrop Blur ── */
+  --blur-sm: 14px;
+  --blur-md: 24px;
+  --blur-lg: 60px;
+  --blur-xl: 80px;
+
+  /* ── Shadow ── */
+  --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-elevated: 0 16px 48px rgba(0, 0, 0, 0.24);
+
+  /* ── Transition ── */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* ── Z-Index ── */
+  --z-base: 0;
+  --z-card: 10;
+  --z-overlay: 100;
+  --z-modal: 200;
+  --z-toast: 300;
+
+  /* ── Chart Colors (preserved for compatibility) ── */
+  --chart-1: oklch(64.6% .222 41.116);
+  --chart-2: oklch(60% .118 184.704);
+  --chart-3: oklch(39.8% .07 227.392);
+  --chart-4: oklch(82.8% .189 84.429);
+  --chart-5: oklch(76.9% .188 70.08);
+}
+
+
+/* ─────────────────────────────────────────────
+   2. TYPOGRAPHY SYSTEM
+   ───────────────────────────────────────────── */
+
+/* Title — Large (Housewarming Party, Upcoming) */
+.text-title-lg {
+  font-family: var(--font-rounded);
+  font-weight: var(--font-weight-medium);
+  font-size: 36px;
+  line-height: 41px;
+  letter-spacing: 0.36px;
+  color: var(--foreground);
+}
+
+/* Title — Default (Guest List, Section headers) */
+.text-title {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium);
+  font-size: 18px;
+  line-height: 21px;
+  letter-spacing: 0.18px;
+  color: var(--foreground);
+}
+
+/* Title — Semibold (Upcoming header) */
+.text-title-semibold {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-semibold);
+  font-size: 36px;
+  line-height: 41px;
+  letter-spacing: 0.36px;
+  color: var(--foreground);
+}
+
+/* Body — Default */
+.text-body {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-normal);
+  font-size: 16px;
+  line-height: 21px;
+  letter-spacing: 0.16px;
+  color: var(--foreground);
+}
+
+/* Body — Medium */
+.text-body-medium {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium);
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0.16px;
+  color: var(--foreground);
+}
+
+/* Body — Secondary (date, location) */
+.text-body-secondary {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-normal);
+  font-size: 16px;
+  line-height: 21px;
+  letter-spacing: 0.16px;
+  color: var(--foreground-secondary);
+}
+
+/* Caption — Default (HOST, GOING labels) */
+.text-caption {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-normal);
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: 0.14px;
+  color: var(--foreground-secondary);
+}
+
+/* Caption — Medium (12 Going, Hosted by) */
+.text-caption-medium {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium);
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: 0.14px;
+  color: var(--foreground);
+}
+
+/* Button Text */
+.text-button {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium);
+  font-size: 15px;
+  line-height: 21px;
+  letter-spacing: 0.15px;
+}
+
+/* Italic Comment (I'll be there!, Stoked!) */
+.text-italic {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: var(--font-weight-normal);
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: 0.14px;
+  color: var(--foreground-tertiary);
+}
+
+
+/* ─────────────────────────────────────────────
+   3. GLASSMORPHISM & SURFACE SYSTEM
+   ───────────────────────────────────────────── */
+
+/* Glass Card — Default (guest list items, sections) */
+.glass-card {
+  background: rgba(255, 255, 255, 0.11);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+/* Glass Card — Bordered (RSVP section, content sections) */
+.glass-card-bordered {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-radius: var(--radius-lg);
+}
+
+/* Glass Card — Active (selected tab like "Going") */
+.glass-card-active {
+  background: var(--card-active);
+  border-radius: var(--radius-lg);
+  border: none;
+}
+
+/* Glass Overlay — Full screen frosted background */
+.glass-overlay {
+  background: var(--background-overlay);
+  backdrop-filter: blur(var(--blur-lg)) saturate(1.3);
+  -webkit-backdrop-filter: blur(var(--blur-lg)) saturate(1.3);
+}
+
+/* Glass Badge — Small labels (Hosting badge) */
+.glass-badge {
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+/* ─────────────────────────────────────────────
+   4. COMPONENT STYLES
+   ───────────────────────────────────────────── */
+
+/* ── Event Card (Home screen carousel) ── */
+.event-card {
+  position: relative;
+  width: 354px;
+  height: 612px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.event-card__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.event-card__gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 255px;
+  background: radial-gradient(
+    ellipse at center bottom,
+    var(--gradient-red-start) 0%,
+    var(--gradient-red-25) 25%,
+    var(--gradient-red-50) 50%,
+    var(--gradient-red-75) 75%,
+    var(--gradient-red-end) 100%
+  );
+  filter: blur(var(--blur-xl));
+}
+
+.event-card__content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.event-card__title {
+  font-family: var(--font-rounded);
+  font-weight: var(--font-weight-medium);
+  font-size: 36px;
+  line-height: 41px;
+  letter-spacing: 0.36px;
+  color: var(--foreground);
+  text-align: center;
+}
+
+.event-card__date,
+.event-card__location {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-normal);
+  font-size: 16px;
+  line-height: 21px;
+  letter-spacing: 0.16px;
+  color: var(--foreground-secondary);
+  text-align: center;
+}
+
+/* ── RSVP Selector ── */
+.rsvp-selector {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(22px) saturate(1.4);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-radius: var(--radius-lg);
+  height: 62px;
+  padding: 4px;
+}
+
+.rsvp-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.rsvp-option--active {
+  background: var(--card-active);
+}
+
+.rsvp-option__icon {
+  width: 20px;
+  height: 20px;
+}
+
+.rsvp-option__label {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-normal);
+  font-size: 15px;
+  line-height: 21px;
+  letter-spacing: 0.15px;
+  color: var(--foreground);
+}
+
+.rsvp-option--active .rsvp-option__label {
+  font-weight: var(--font-weight-medium);
+  color: var(--accent);
+}
+
+.rsvp-divider {
+  width: 1px;
+  height: 38px;
+  background: var(--foreground-muted);
+}
+
+/* ── Guest Card ── */
+.guest-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  height: 60px;
+  background: rgba(255, 255, 255, 0.11);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-sm);
+}
+
+.guest-card__info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.guest-card__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.guest-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.guest-card__name {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-normal);
+  font-size: 16px;
+  line-height: 21px;
+  letter-spacing: 0.16px;
+  color: var(--foreground);
+}
+
+.guest-card__message {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: var(--font-weight-normal);
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: 0.14px;
+  color: var(--foreground-tertiary);
+}
+
+.guest-card__action {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+/* ── Section Label ── */
+.section-label {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-normal);
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: 0.14px;
+  color: var(--foreground-secondary);
+  text-transform: uppercase;
+}
+
+/* ── Content Section (Description box) ── */
+.content-section {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(22px) saturate(1.4);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.content-section__host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.content-section__host-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.content-section__host-label {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-normal);
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: 0.14px;
+  color: var(--foreground);
+}
+
+.content-section__text {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-normal);
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0.16px;
+  color: var(--foreground);
+  text-align: center;
+}
+
+/* ── Avatar Group (Memoji cluster) ── */
+.avatar-group {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  justify-content: center;
+}
+
+.avatar-group__item {
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.avatar-group__item--sm { width: 18px; height: 18px; }
+.avatar-group__item--md { width: 24px; height: 24px; }
+.avatar-group__item--lg { width: 30px; height: 30px; }
+.avatar-group__item--xl { width: 32px; height: 32px; }
+
+/* ── Navigation Bar ── */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-5);
+  height: 56px;
+}
+
+.nav-bar__title {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium);
+  font-size: 18px;
+  line-height: 21px;
+  letter-spacing: 0.18px;
+  color: var(--foreground);
+}
+
+.nav-bar__action {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.nav-bar__close {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ── Home Indicator (iPhone bottom bar) ── */
+.home-indicator {
+  width: 147px;
+  height: 5px;
+  background: var(--foreground);
+  border-radius: var(--radius-xs);
+  margin: 0 auto;
+}
+
+/* ── Going Counter ── */
+.going-counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.going-counter__label {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-medium);
+  font-size: 14px;
+  line-height: 21px;
+  letter-spacing: 0.14px;
+  color: var(--foreground);
+}
+
+
+/* ─────────────────────────────────────────────
+   5. UTILITY CLASSES
+   ───────────────────────────────────────────── */
+
+/* Text Alignment */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+
+/* Opacity */
+.opacity-70 { opacity: 0.7; }
+.opacity-60 { opacity: 0.6; }
+.opacity-20 { opacity: 0.2; }
+.opacity-10 { opacity: 0.1; }
+
+/* Backdrop Blur */
+.backdrop-blur-sm { backdrop-filter: blur(var(--blur-sm)); -webkit-backdrop-filter: blur(var(--blur-sm)); }
+.backdrop-blur-lg { backdrop-filter: blur(var(--blur-lg)); -webkit-backdrop-filter: blur(var(--blur-lg)); }
+
+/* Border Radius */
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-full { border-radius: var(--radius-full); }
+
+/* Spacing (padding shortcuts) */
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-5 { padding: var(--space-5); }
+.px-3 { padding-left: var(--space-3); padding-right: var(--space-3); }
+.px-5 { padding-left: var(--space-5); padding-right: var(--space-5); }
+.py-2 { padding-top: var(--space-2); padding-bottom: var(--space-2); }
+
+/* Gap */
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+
+/* Flex */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+
+
+/* ─────────────────────────────────────────────
+   6. GRADIENTS & SPECIAL EFFECTS
+   ───────────────────────────────────────────── */
+
+/* Red radial gradient (event card bottom glow) */
+.gradient-red-glow {
+  background: radial-gradient(
+    ellipse at center bottom,
+    var(--gradient-red-start) 0%,
+    var(--gradient-red-25) 25%,
+    var(--gradient-red-50) 50%,
+    var(--gradient-red-75) 75%,
+    var(--gradient-red-end) 100%
+  );
+}
+
+/* Dark gradient overlay (View Event background fade) */
+.gradient-dark-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.10) 0%,
+    rgba(102, 102, 102, 0.10) 28.5%,
+    transparent 100%
+  );
+}
+
+/* Glass border effect */
+.glass-border {
+  border: 1px solid var(--card-border);
+}
+
+
+/* ─────────────────────────────────────────────
+   7. ANIMATION & TRANSITIONS
+   ───────────────────────────────────────────── */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.animate-fade-in { animation: fadeIn var(--transition-normal) forwards; }
+.animate-slide-up { animation: slideUp var(--transition-slow) forwards; }
+.animate-scale-in { animation: scaleIn var(--transition-normal) forwards; }

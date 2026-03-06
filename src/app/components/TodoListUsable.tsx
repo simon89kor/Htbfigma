@@ -311,12 +311,12 @@ export function TodoListUsable({
 
                 {isCustom && editingItemId === item.id && (
                   <div className="ml-8 mb-3 rounded-xl border border-default-100 overflow-hidden">
-                    <div className="flex items-center justify-between px-3 py-2.5 bg-white border-b border-default-50">
+                    <div className="flex items-center justify-between px-3 py-2.5 bg-white/8 border-b border-default-50">
                       <span className="text-xs text-default-500 flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-primary" />시간</span>
                       <input type="time" value={item.time || ""} onChange={(e) => updateCustomTodoItem(id, item.id, { time: e.target.value || undefined })}
                         className="px-2 py-1 bg-default-50 border border-default-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-primary/20 w-[100px]" />
                     </div>
-                    <div className="px-3 py-2.5 bg-white border-b border-default-50">
+                    <div className="px-3 py-2.5 bg-white/8 border-b border-default-50">
                       <span className="text-xs text-default-500 flex items-center gap-1.5 mb-2"><Repeat className="w-3.5 h-3.5 text-success" />반복 요일</span>
                       <div className="flex gap-1">
                         {["월", "화", "수", "목", "금", "토", "일"].map((d, idx) => {
@@ -328,7 +328,7 @@ export function TodoListUsable({
                               const updated = isActive ? current.filter((v) => v !== dayIdx) : [...current, dayIdx];
                               updateCustomTodoItem(id, item.id, { repeatDays: updated.length ? updated : undefined });
                             }}
-                              className={`w-7 h-7 rounded-full text-[10px] font-medium border transition-all cursor-pointer ${isActive ? "text-white border-transparent" : "bg-white text-default-500 border-default-200 hover:border-default-400"}`}
+                              className={`w-7 h-7 rounded-full text-[10px] font-medium border transition-all cursor-pointer ${isActive ? "text-white border-transparent" : "bg-white/8 text-default-500 border-default-200 hover:border-default-400"}`}
                               style={isActive ? { backgroundColor: headerColor } : {}}>
                               {d}
                             </button>
@@ -336,7 +336,7 @@ export function TodoListUsable({
                         })}
                       </div>
                     </div>
-                    <div className="px-3 py-2.5 bg-white">
+                    <div className="px-3 py-2.5 bg-white/8">
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-xs text-default-500 flex items-center gap-1.5">
                           <ListTree className="w-3.5 h-3.5 text-warning" />하위 항목

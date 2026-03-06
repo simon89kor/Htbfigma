@@ -247,7 +247,7 @@ export function SettingsPage() {
         </button>
         <button
           onClick={() => setShowDeleteStep1(true)}
-          className="w-full text-center py-2 text-[#9CA3AF] text-xs bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity"
+          className="w-full text-center py-2 text-foreground/50 text-xs bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity"
           aria-label="회원탈퇴"
         >
           <span className="flex items-center justify-center gap-1.5">
@@ -349,7 +349,7 @@ function SettingsSection({
       <h2 className="text-xs font-semibold text-default-400 uppercase tracking-wider mb-2 px-1">
         {title}
       </h2>
-      <div className="bg-white rounded-xl border border-default-200 overflow-hidden">
+      <div className="bg-white/8 rounded-xl border border-white/10 overflow-hidden">
         {children}
       </div>
     </div>

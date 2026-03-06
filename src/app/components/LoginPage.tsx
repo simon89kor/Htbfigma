@@ -179,9 +179,9 @@ export function LoginPage() {
 
         {/* Divider */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="flex-1 h-px bg-[#E5E7EB]" />
-          <span className="text-[#9CA3AF] text-xs">또는</span>
-          <div className="flex-1 h-px bg-[#E5E7EB]" />
+          <div className="flex-1 h-px bg-white/10" />
+          <span className="text-foreground/50 text-xs">또는</span>
+          <div className="flex-1 h-px bg-white/10" />
         </div>
 
         {/* Email login toggle / form */}
@@ -190,7 +190,7 @@ export function LoginPage() {
             <button
               type="button"
               onClick={() => setShowEmailForm(true)}
-              className="flex items-center gap-2 text-[#6B7280] text-sm font-medium bg-transparent border-none cursor-pointer hover:text-[#1a1a2e] transition-colors py-2"
+              className="flex items-center gap-2 text-foreground/60 text-sm font-medium bg-transparent border-none cursor-pointer hover:text-foreground transition-colors py-2"
               aria-label="이메일로 시작하기"
             >
               <Mail className="w-4 h-4" />
@@ -260,7 +260,7 @@ export function LoginPage() {
 
                 <Card shadow="none" className="bg-secondary-50 border border-secondary-100">
                   <CardBody className="gap-2 p-4">
-                    <p className="text-sm text-secondary font-medium">데모 계정으로 체험하기</p>
+                    <p className="text-sm text-foreground font-medium">데모 계정으로 체험하기</p>
                     <div className="text-sm text-default-800 space-y-0.5">
                       <p>이메일: demo@todomarket.kr</p>
                       <p>비밀번호: demo1234</p>
@@ -282,7 +282,7 @@ export function LoginPage() {
                   <span className="text-default-700 text-sm">계정이 없으신가요? </span>
                   <Link
                     to={`/register${redirectTo !== "/" ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`}
-                    className="text-secondary hover:text-secondary-600 no-underline text-sm font-medium"
+                    className="text-foreground hover:text-secondary-600 no-underline text-sm font-medium"
                   >
                     회원가입
                   </Link>

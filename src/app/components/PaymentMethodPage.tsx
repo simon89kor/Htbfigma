@@ -42,8 +42,8 @@ const PAYMENT_METHODS: PaymentMethod[] = [
     id: 'card',
     name: '카드결제',
     type: 'card',
-    iconBg: '#F3F4F6',
-    iconText: '#374151',
+    iconBg: 'rgba(255,255,255,0.08)',
+    iconText: 'rgba(255,255,255,0.8)',
     iconLabel: '',
   },
   {
@@ -96,7 +96,7 @@ export function PaymentMethodPage() {
   // state가 없으면 스토어로 리다이렉트
   if (!state) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-[#9CA3AF]">
+      <div className="flex flex-col items-center justify-center py-20 text-foreground/50">
         <CreditCard size={48} className="mb-4" />
         <p className="text-lg mb-4">결제 정보가 없습니다</p>
         <button
@@ -168,52 +168,52 @@ export function PaymentMethodPage() {
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer bg-transparent border-none"
+          className="p-1.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer bg-transparent border-none"
           aria-label="뒤로가기"
         >
-          <ArrowLeft className="w-5 h-5 text-[#1a1a2e]" />
+          <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
-        <h1 className="text-xl font-bold text-[#1a1a2e]">결제하기</h1>
+        <h1 className="text-xl font-bold text-foreground">결제하기</h1>
       </div>
 
       {/* 결제 금액 카드 */}
       <div className="mb-6">
-        <h2 className="text-sm font-semibold text-[#1a1a2e] mb-3">
+        <h2 className="text-sm font-semibold text-foreground mb-3">
           결제 금액
         </h2>
-        <div className="border border-[#E5E7EB] rounded-xl p-5 bg-white">
+        <div className="border border-white/10 rounded-xl p-5 bg-white/8">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-[#6B7280]">상품명</span>
-            <span className="text-sm font-medium text-[#1a1a2e] max-w-[200px] truncate">
+            <span className="text-sm text-foreground/60">상품명</span>
+            <span className="text-sm font-medium text-foreground max-w-[200px] truncate">
               {state.routineTitle}
             </span>
           </div>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-[#6B7280]">기간</span>
-            <span className="text-sm font-medium text-[#1a1a2e]">
+            <span className="text-sm text-foreground/60">기간</span>
+            <span className="text-sm font-medium text-foreground">
               {state.periodLabel}
             </span>
           </div>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-[#6B7280]">상품 금액</span>
-            <span className="text-sm text-[#1a1a2e]">
+            <span className="text-sm text-foreground/60">상품 금액</span>
+            <span className="text-sm text-foreground">
               {formatPrice(state.amount)}
             </span>
           </div>
           {state.discount > 0 && (
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm text-[#6B7280]">할인</span>
+              <span className="text-sm text-foreground/60">할인</span>
               <span className="text-sm text-[#d4183d]">
                 -{formatPrice(state.discount)}
               </span>
             </div>
           )}
-          <div className="h-px bg-[#E5E7EB] my-3" />
+          <div className="h-px bg-white/10 my-3" />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-[#1a1a2e]">
+            <span className="text-sm font-semibold text-foreground">
               최종 금액
             </span>
-            <span className="text-lg font-bold text-[#1a1a2e]">
+            <span className="text-lg font-bold text-foreground">
               {formatPrice(state.finalAmount)}
             </span>
           </div>
@@ -222,10 +222,10 @@ export function PaymentMethodPage() {
 
       {/* 결제 수단 선택 */}
       <div className="mb-8">
-        <h2 className="text-sm font-semibold text-[#1a1a2e] mb-3">
+        <h2 className="text-sm font-semibold text-foreground mb-3">
           결제 수단 선택
         </h2>
-        <div className="border border-[#E5E7EB] rounded-xl overflow-hidden bg-white">
+        <div className="border border-white/10 rounded-xl overflow-hidden bg-white/8">
           {PAYMENT_METHODS.map((method, index) => {
             const isSelected = selectedMethod === method.id;
             return (
@@ -234,14 +234,14 @@ export function PaymentMethodPage() {
                 type="button"
                 onClick={() => setSelectedMethod(method.id)}
                 className={cn(
-                  'w-full flex items-center justify-between px-5 py-4 transition-all cursor-pointer bg-white border-none',
+                  'w-full flex items-center justify-between px-5 py-4 transition-all cursor-pointer bg-transparent border-none',
                   isSelected && 'bg-[#65D9AC]/5',
                   index < PAYMENT_METHODS.length - 1 &&
-                    'border-b border-[#E5E7EB]'
+                    'border-b border-white/10'
                 )}
                 style={
                   index < PAYMENT_METHODS.length - 1
-                    ? { borderBottom: '1px solid #E5E7EB' }
+                    ? { borderBottom: '1px solid rgba(255,255,255,0.1)' }
                     : undefined
                 }
                 aria-label={method.name}
@@ -273,7 +273,7 @@ export function PaymentMethodPage() {
                   <span
                     className={cn(
                       'text-sm font-medium',
-                      isSelected ? 'text-[#1a1a2e]' : 'text-[#6B7280]'
+                      isSelected ? 'text-foreground' : 'text-foreground/60'
                     )}
                   >
                     {method.name}
@@ -284,7 +284,7 @@ export function PaymentMethodPage() {
                 <div
                   className={cn(
                     'w-5 h-5 rounded-full border-2 flex items-center justify-center',
-                    isSelected ? 'border-[#65D9AC]' : 'border-[#E5E7EB]'
+                    isSelected ? 'border-[#65D9AC]' : 'border-white/10'
                   )}
                 >
                   {isSelected && (
@@ -298,7 +298,7 @@ export function PaymentMethodPage() {
       </div>
 
       {/* CTA 버튼 - 고정 하단 */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#E5E7EB] px-4 py-4">
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-white/10 px-4 py-4">
         <div className="max-w-lg mx-auto">
           <button
             type="button"
@@ -308,7 +308,7 @@ export function PaymentMethodPage() {
               'w-full h-[52px] rounded-xl text-lg font-semibold border-none transition-all',
               selectedMethod && !isProcessing
                 ? 'bg-[#65D9AC] text-white cursor-pointer hover:opacity-90 active:opacity-80'
-                : 'bg-[#F5F5F5] text-[#9CA3AF] cursor-not-allowed'
+                : 'bg-white/5 text-foreground/50 cursor-not-allowed'
             )}
             aria-label={
               isProcessing

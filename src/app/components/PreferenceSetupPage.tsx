@@ -70,30 +70,30 @@ const PreferenceSetupPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-white">
+    <div className="fixed inset-0 flex flex-col bg-background">
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3">
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="p-1 bg-transparent border-none cursor-pointer text-[#1a1a2e]"
+          className="p-1 bg-transparent border-none cursor-pointer text-foreground"
           aria-label="뒤로가기"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <h1 className="text-lg font-semibold text-[#1a1a2e]">관심사 설정</h1>
+        <h1 className="text-lg font-semibold text-foreground">관심사 설정</h1>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-5 pt-4">
         {/* Title */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-[#1a1a2e] leading-snug">
+          <h2 className="text-xl font-bold text-foreground leading-snug">
             어떤 루틴에 관심이
             <br />
             있나요?
           </h2>
-          <p className="text-[#6B7280] text-sm mt-2">
+          <p className="text-foreground/60 text-sm mt-2">
             최소 1개를 선택해주세요
           </p>
         </div>
@@ -111,7 +111,7 @@ const PreferenceSetupPage = () => {
                   'flex flex-col items-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-colors min-w-[100px]',
                   isSelected
                     ? 'bg-[#65D9AC] border-[#65D9AC] text-white'
-                    : 'bg-[#F5F5F5] border-transparent text-[#6B7280]'
+                    : 'bg-white/5 border-transparent text-foreground/60'
                 )}
                 whileTap={{ scale: 0.95 }}
                 animate={{
@@ -126,7 +126,7 @@ const PreferenceSetupPage = () => {
                 </span>
                 <span className={cn(
                   'text-sm font-medium',
-                  isSelected ? 'text-white' : 'text-[#6B7280]'
+                  isSelected ? 'text-white' : 'text-foreground/60'
                 )}>
                   {category.label}
                 </span>
@@ -142,7 +142,7 @@ const PreferenceSetupPage = () => {
         <button
           type="button"
           onClick={handleSkip}
-          className="text-[#9CA3AF] text-sm font-medium bg-transparent border-none cursor-pointer py-1"
+          className="text-foreground/50 text-sm font-medium bg-transparent border-none cursor-pointer py-1"
           aria-label="건너뛰기"
         >
           건너뛰기
@@ -157,7 +157,7 @@ const PreferenceSetupPage = () => {
             'w-full h-[52px] rounded-xl text-lg font-semibold border-none cursor-pointer transition-colors',
             hasSelection && !isSubmitting
               ? 'bg-[#65D9AC] text-white'
-              : 'bg-[#F5F5F5] text-[#9CA3AF] cursor-not-allowed'
+              : 'bg-white/5 text-foreground/50 cursor-not-allowed'
           )}
           animate={{ opacity: hasSelection ? 1 : 0.7 }}
           transition={{ duration: 0.2 }}

@@ -284,14 +284,17 @@ export function ProfilePage() {
           style={
             profile?.cover_image_url
               ? { backgroundImage: `url(${profile.cover_image_url})`, backgroundSize: "cover", backgroundPosition: "center" }
-              : { backgroundColor: "#1a1a2e" }
+              : {
+                  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.60) 0%, rgba(19, 214, 128, 0.40) 50%, rgba(108, 92, 231, 0.55) 100%)',
+                }
           }
         >
           {/* Default decorative elements when no cover */}
           {!profile?.cover_image_url && (
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-4 right-12 w-20 h-20 rounded-full bg-[#6C5CE7]" />
-              <div className="absolute bottom-2 left-16 w-14 h-14 rounded-full bg-[#65D9AC]" />
+            <div className="absolute inset-0">
+              <div className="absolute top-3 right-8 w-24 h-24 rounded-full bg-[#6C5CE7] opacity-30 blur-[20px]" />
+              <div className="absolute bottom-1 left-12 w-20 h-20 rounded-full bg-[#13d680] opacity-35 blur-[18px]" />
+              <div className="absolute top-6 left-4 w-16 h-16 rounded-full bg-[#22d3ee] opacity-20 blur-[15px]" />
             </div>
           )}
 
@@ -377,7 +380,7 @@ export function ProfilePage() {
               className={cn(
                 "flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors border-b-2 bg-transparent cursor-pointer",
                 isActive
-                  ? "border-[#1a1a2e] text-default-900"
+                  ? "border-foreground text-default-900"
                   : "border-transparent text-default-400 hover:text-default-600"
               )}
               aria-label={tab.label}

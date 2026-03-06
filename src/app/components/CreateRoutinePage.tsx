@@ -368,7 +368,7 @@ export function CreateRoutinePage() {
 
       {/* Bottom Action */}
       {step === 3 && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-default-100 shadow-lg">
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-white/10 shadow-lg">
           <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-default-900">{title}</p>

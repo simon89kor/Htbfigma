@@ -135,17 +135,20 @@ export function CalendarView({ purchasedLists, customLists }: CalendarViewProps)
               const allCompleted = hasTodos && completedCount === dayTodos.length;
               const dayOfWeek = day.getDay();
               const colors = [...new Set(dayTodos.map((t) => t.headerColor))].slice(0, 3);
+              // 선택된 날짜 배경 = 해당 날 첫 번째 카드 headerColor, 없으면 accent
+              const selectedBgColor = colors[0] ?? '#13d680';
 
               return (
                 <button
                   key={idx}
                   onClick={() => setSelectedDate(day)}
                   className={`relative flex flex-col items-center justify-start py-1.5 min-h-[52px] rounded-xl transition-all cursor-pointer border-none ${
-                    isSelected ? "bg-primary text-white" : todayFlag ? "bg-secondary-50" : "bg-transparent hover:bg-default-50"
+                    isSelected ? "" : todayFlag ? "bg-secondary-50" : "bg-transparent hover:bg-default-50"
                   } ${!isCurrentMonth ? "opacity-30" : ""}`}
+                  style={isSelected ? { backgroundColor: selectedBgColor } : undefined}
                 >
                   <span className={`text-[13px] font-medium leading-none ${
-                    isSelected ? "text-white" : todayFlag ? "text-secondary font-bold" : dayOfWeek === 0 ? "text-danger" : dayOfWeek === 6 ? "text-primary" : "text-default-900"
+                    isSelected ? "text-white font-bold" : todayFlag ? "text-secondary font-bold" : dayOfWeek === 0 ? "text-danger" : dayOfWeek === 6 ? "text-primary" : "text-default-900"
                   }`}>{format(day, "d")}</span>
                   {hasTodos && (
                     <div className="flex items-center gap-[2px] mt-1">

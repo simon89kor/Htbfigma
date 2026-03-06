@@ -343,18 +343,18 @@ const QRCodeCenterPage = () => {
   // ========================================================================
 
   return (
-    <div className="min-h-screen bg-white -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 pb-24">
+    <div className="min-h-screen bg-background -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB]">
+      <div className="sticky top-0 z-30 bg-background border-b border-white/10">
         <div className="flex items-center px-4 py-3">
           <button
             onClick={() => navigate(-1)}
-            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100"
+            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/5"
             aria-label="뒤로가기"
           >
-            <ArrowLeft size={22} className="text-[#1a1a2e]" />
+            <ArrowLeft size={22} className="text-foreground" />
           </button>
-          <h1 className="flex-1 text-center text-lg font-bold text-[#1a1a2e]">QR 코드</h1>
+          <h1 className="flex-1 text-center text-lg font-bold text-foreground">QR 코드</h1>
           <div className="w-9" />
         </div>
       </div>
@@ -369,7 +369,7 @@ const QRCodeCenterPage = () => {
               'flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors',
               activeTab === tab.key
                 ? 'bg-[#65D9AC] text-white'
-                : 'bg-[#F5F5F5] text-[#6B7280]'
+                : 'bg-white/5 text-foreground/60'
             )}
           >
             <tab.icon size={18} />
@@ -383,7 +383,7 @@ const QRCodeCenterPage = () => {
         <div className="px-4 pt-6 space-y-6">
           {/* Routine Selector */}
           <div>
-            <p className="text-sm font-semibold text-[#1a1a2e] mb-3">루틴을 선택하세요</p>
+            <p className="text-sm font-semibold text-foreground mb-3">루틴을 선택하세요</p>
             {loading ? (
               <div className="space-y-2">
                 {Array.from({ length: 3 }).map((_, i) => (
@@ -391,10 +391,10 @@ const QRCodeCenterPage = () => {
                 ))}
               </div>
             ) : routines.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-[#6B7280]">
-                <QrCode size={48} className="mb-4 text-gray-300" />
+              <div className="flex flex-col items-center justify-center py-10 text-foreground/60">
+                <QrCode size={48} className="mb-4 text-foreground/30" />
                 <p className="text-sm">진행 중인 루틴이 없습니다</p>
-                <p className="text-xs text-[#9CA3AF] mt-1">루틴을 시작하면 QR 코드를 생성할 수 있습니다</p>
+                <p className="text-xs text-foreground/50 mt-1">루틴을 시작하면 QR 코드를 생성할 수 있습니다</p>
               </div>
             ) : (
               <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -406,7 +406,7 @@ const QRCodeCenterPage = () => {
                       'w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors',
                       selectedRoutineId === routine.id
                         ? 'bg-[#65D9AC]/10 border-2 border-[#65D9AC]'
-                        : 'bg-[#F5F5F5] border-2 border-transparent'
+                        : 'bg-white/5 border-2 border-transparent'
                     )}
                   >
                     <div
@@ -414,7 +414,7 @@ const QRCodeCenterPage = () => {
                         'w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0',
                         selectedRoutineId === routine.id
                           ? 'border-[#65D9AC]'
-                          : 'border-[#E5E7EB]'
+                          : 'border-white/10'
                       )}
                     >
                       {selectedRoutineId === routine.id && (
@@ -422,9 +422,9 @@ const QRCodeCenterPage = () => {
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-[#1a1a2e] truncate">{routine.title}</p>
+                      <p className="text-sm font-medium text-foreground truncate">{routine.title}</p>
                       {routine.category && (
-                        <p className="text-xs text-[#9CA3AF]">{routine.category}</p>
+                        <p className="text-xs text-foreground/50">{routine.category}</p>
                       )}
                     </div>
                   </button>
@@ -438,7 +438,7 @@ const QRCodeCenterPage = () => {
             <div className="flex flex-col items-center">
               <div
                 ref={qrRef}
-                className="bg-white p-6 rounded-2xl shadow-lg border border-[#E5E7EB] flex flex-col items-center"
+                className="bg-white p-6 rounded-2xl shadow-lg border border-white/10 flex flex-col items-center"
               >
                 <QRCodeSVG
                   value={qrValue}
@@ -448,17 +448,17 @@ const QRCodeCenterPage = () => {
                   level="M"
                   includeMargin={false}
                 />
-                <p className="mt-4 text-base font-semibold text-[#1a1a2e]">
+                <p className="mt-4 text-base font-semibold text-foreground">
                   {selectedRoutine.title}
                 </p>
-                <p className="text-xs text-[#9CA3AF] mt-1">by HTB</p>
+                <p className="text-xs text-foreground/50 mt-1">by HTB</p>
               </div>
 
               {/* Action Buttons */}
               <div className="flex gap-3 mt-6 w-full max-w-xs">
                 <button
                   onClick={handleDownloadQR}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[#F5F5F5] text-[#1a1a2e] text-sm font-semibold hover:bg-gray-200 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-white/5 text-foreground text-sm font-semibold hover:bg-white/10 transition-colors"
                 >
                   <Download size={18} />
                   이미지 저장
@@ -477,17 +477,17 @@ const QRCodeCenterPage = () => {
           {/* Share History */}
           {shareHistory.length > 0 && (
             <div>
-              <p className="text-sm font-semibold text-[#1a1a2e] mb-3">공유 이력</p>
+              <p className="text-sm font-semibold text-foreground mb-3">공유 이력</p>
               <div className="space-y-2">
                 {shareHistory.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between py-2 px-3 bg-[#F5F5F5] rounded-xl"
+                    className="flex items-center justify-between py-2 px-3 bg-white/5 rounded-xl"
                   >
-                    <span className="text-sm text-[#1a1a2e]">
+                    <span className="text-sm text-foreground">
                       {item.targetName}에게 공유
                     </span>
-                    <span className="text-xs text-[#9CA3AF]">{item.date}</span>
+                    <span className="text-xs text-foreground/50">{item.date}</span>
                   </div>
                 ))}
               </div>
@@ -498,7 +498,7 @@ const QRCodeCenterPage = () => {
         /* Scan Tab */
         <div className="px-4 pt-6 space-y-4">
           {/* Scanner View */}
-          <div className="rounded-2xl overflow-hidden border border-[#E5E7EB] bg-black relative">
+          <div className="rounded-2xl overflow-hidden border border-white/10 bg-black relative">
             <div
               id={scannerContainerId}
               className="w-full aspect-square"
@@ -530,13 +530,13 @@ const QRCodeCenterPage = () => {
           </div>
 
           {scanning && (
-            <p className="text-center text-sm text-[#6B7280]">QR 코드를 스캔하세요</p>
+            <p className="text-center text-sm text-foreground/60">QR 코드를 스캔하세요</p>
           )}
 
           {scanResult && (
             <div className="p-4 bg-[#65D9AC]/10 rounded-xl border border-[#65D9AC]">
-              <p className="text-sm font-semibold text-[#1a1a2e] mb-1">스캔 결과</p>
-              <p className="text-sm text-[#6B7280] break-all">{scanResult}</p>
+              <p className="text-sm font-semibold text-foreground mb-1">스캔 결과</p>
+              <p className="text-sm text-foreground/60 break-all">{scanResult}</p>
               <button
                 onClick={() => {
                   setScanResult(null);
@@ -552,7 +552,7 @@ const QRCodeCenterPage = () => {
           {/* Gallery Selection */}
           <button
             onClick={handleGallerySelect}
-            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#F5F5F5] text-[#1a1a2e] text-sm font-semibold hover:bg-gray-200 transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-white/5 text-foreground text-sm font-semibold hover:bg-white/10 transition-colors"
           >
             <ImageIcon size={18} />
             갤러리에서 선택

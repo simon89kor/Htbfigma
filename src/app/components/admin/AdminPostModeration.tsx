@@ -254,9 +254,9 @@ const AdminPostModeration = () => {
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 bg-white rounded-xl p-4 shadow-sm">
+      <div className="flex flex-wrap items-center gap-3 bg-white/8 rounded-xl p-4 shadow-sm">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/60" />
           <Input
             placeholder="게시물 검색..."
             value={searchInput}
@@ -293,7 +293,7 @@ const AdminPostModeration = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white/8 rounded-xl shadow-sm overflow-hidden">
         {loading ? (
           <div className="p-4 space-y-3">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -301,7 +301,7 @@ const AdminPostModeration = () => {
             ))}
           </div>
         ) : posts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)]">
+          <div className="flex flex-col items-center justify-center py-20 text-foreground/60">
             <FileText size={48} className="mb-4 opacity-40" />
             <p className="text-lg">게시물이 없습니다</p>
           </div>
@@ -309,7 +309,7 @@ const AdminPostModeration = () => {
           <>
             <Table>
               <TableHeader>
-                <TableRow className="bg-[var(--bg-secondary)]">
+                <TableRow className="bg-white/5">
                   <TableHead className="w-[60px]">번호</TableHead>
                   <TableHead className="w-[100px]">작성자</TableHead>
                   <TableHead>내용</TableHead>
@@ -323,20 +323,20 @@ const AdminPostModeration = () => {
               <TableBody>
                 {posts.map((post, index) => (
                   <TableRow key={post.id}>
-                    <TableCell className="text-[var(--text-secondary)] text-xs">
+                    <TableCell className="text-foreground/60 text-xs">
                       {(page - 1) * ITEMS_PER_PAGE + index + 1}
                     </TableCell>
-                    <TableCell className="text-sm text-[var(--primary)] truncate max-w-[100px]">
+                    <TableCell className="text-sm text-foreground truncate max-w-[100px]">
                       {post.profiles?.nickname ?? '-'}
                     </TableCell>
                     <TableCell>
                       <div className="truncate max-w-[220px]">
                         {post.title && (
-                          <span className="font-medium text-[var(--primary)]">
+                          <span className="font-medium text-foreground">
                             {post.title}{' '}
                           </span>
                         )}
-                        <span className="text-sm text-[var(--text-secondary)]">
+                        <span className="text-sm text-foreground/60">
                           {post.content.substring(0, 50)}
                           {post.content.length > 50 ? '...' : ''}
                         </span>
@@ -359,7 +359,7 @@ const AdminPostModeration = () => {
                           {post.report_count}
                         </Button>
                       ) : (
-                        <span className="text-xs text-[var(--text-muted)]">0</span>
+                        <span className="text-xs text-foreground/60">0</span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -367,7 +367,7 @@ const AdminPostModeration = () => {
                         {STATUS_LABELS[post.status]}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-xs text-[var(--text-secondary)]">
+                    <TableCell className="text-xs text-foreground/60">
                       {new Date(post.created_at).toLocaleDateString('ko-KR')}
                     </TableCell>
                     <TableCell>
@@ -430,8 +430,8 @@ const AdminPostModeration = () => {
               </TableBody>
             </Table>
 
-            <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border)]">
-              <p className="text-sm text-[var(--text-secondary)]">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-white/10">
+              <p className="text-sm text-foreground/60">
                 총 {totalCount.toLocaleString()}개
               </p>
               {renderPagination()}
@@ -509,33 +509,33 @@ const AdminPostModeration = () => {
                 ))}
               </div>
             ) : reportDialog.reports.length === 0 ? (
-              <p className="text-center text-[var(--text-muted)] py-8">
+              <p className="text-center text-foreground/60 py-8">
                 신고 내역이 없습니다
               </p>
             ) : (
               reportDialog.reports.map((report) => (
                 <div
                   key={report.id}
-                  className="p-3 rounded-lg border border-[var(--border)] space-y-2"
+                  className="p-3 rounded-lg border border-white/10 space-y-2"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-[var(--primary)]">
+                      <span className="text-sm font-medium text-foreground">
                         {report.profiles?.nickname ?? '알 수 없음'}
                       </span>
                       <Badge variant="secondary" className="text-xs">
                         {REPORT_STATUS_LABELS[report.status] ?? report.status}
                       </Badge>
                     </div>
-                    <span className="text-xs text-[var(--text-muted)]">
+                    <span className="text-xs text-foreground/60">
                       {new Date(report.created_at).toLocaleDateString('ko-KR')}
                     </span>
                   </div>
-                  <p className="text-sm text-[var(--text-secondary)]">
+                  <p className="text-sm text-foreground/60">
                     <span className="font-medium">사유:</span> {report.reason || '없음'}
                   </p>
                   {report.description && (
-                    <p className="text-sm text-[var(--text-secondary)]">
+                    <p className="text-sm text-foreground/60">
                       <span className="font-medium">상세:</span> {report.description}
                     </p>
                   )}

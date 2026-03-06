@@ -110,10 +110,10 @@ const TodoDetailSheet = ({
             </DrawerTitle>
             <DrawerClose asChild>
               <button
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer border-none bg-transparent"
+                className="p-1 rounded-full hover:bg-white/5 transition-colors cursor-pointer border-none bg-transparent"
                 aria-label="닫기"
               >
-                <X className="w-5 h-5 text-gray-400" />
+                <X className="w-5 h-5 text-foreground/50" />
               </button>
             </DrawerClose>
           </div>
@@ -125,7 +125,7 @@ const TodoDetailSheet = ({
         <div className="px-5 space-y-5 overflow-y-auto flex-1 pb-2">
           {/* 시간 설정 */}
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <label className="flex items-center gap-2 text-sm font-medium text-foreground/80">
               <Clock className="w-4 h-4 text-[#6C5CE7]" />
               시간 설정
             </label>
@@ -133,14 +133,14 @@ const TodoDetailSheet = ({
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#65D9AC]/30 focus:border-[#65D9AC] transition-all"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#65D9AC]/30 focus:border-[#65D9AC] transition-all text-foreground"
               aria-label="시간 선택"
             />
           </div>
 
           {/* 반복 설정 */}
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <label className="flex items-center gap-2 text-sm font-medium text-foreground/80">
               <Repeat className="w-4 h-4 text-[#65D9AC]" />
               반복 설정
             </label>
@@ -155,7 +155,7 @@ const TodoDetailSheet = ({
                     className={`w-10 h-10 rounded-full text-sm font-medium border transition-all cursor-pointer ${
                       isActive
                         ? "bg-[#65D9AC] text-white border-transparent"
-                        : "bg-gray-50 text-gray-500 border-gray-200 hover:border-gray-400"
+                        : "bg-white/5 text-foreground/60 border-white/10 hover:border-white/30"
                     }`}
                     aria-label={`${day}요일 ${isActive ? "해제" : "선택"}`}
                     aria-pressed={isActive}
@@ -169,7 +169,7 @@ const TodoDetailSheet = ({
 
           {/* 메모 */}
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <label className="flex items-center gap-2 text-sm font-medium text-foreground/80">
               <FileText className="w-4 h-4 text-[#F59E0B]" />
               메모
             </label>
@@ -178,14 +178,14 @@ const TodoDetailSheet = ({
               onChange={(e) => setMemo(e.target.value)}
               placeholder="메모를 입력하세요..."
               rows={3}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#65D9AC]/30 focus:border-[#65D9AC] transition-all placeholder:text-gray-400"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#65D9AC]/30 focus:border-[#65D9AC] transition-all placeholder:text-foreground/40 text-foreground"
               aria-label="메모 입력"
             />
           </div>
 
           {/* 알림 */}
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <label className="flex items-center gap-2 text-sm font-medium text-foreground/80">
               <Bell className="w-4 h-4 text-[#E36185]" />
               알림
             </label>
@@ -206,8 +206,8 @@ const TodoDetailSheet = ({
                   <span
                     className={`text-sm ${
                       notification === option.value
-                        ? "text-gray-900 font-medium"
-                        : "text-gray-500"
+                        ? "text-foreground font-medium"
+                        : "text-foreground/60"
                     }`}
                   >
                     {option.label}

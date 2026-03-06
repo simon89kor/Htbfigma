@@ -117,10 +117,10 @@ const CompletionRateChart = ({ data }: { data: StatsData }) => {
   ];
 
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+    <div className="bg-white/8 rounded-xl p-5 shadow-sm border border-white/10">
       <div className="flex items-center gap-2 mb-4">
         <BarChart3 className="w-5 h-5 text-[#65D9AC]" />
-        <h3 className="text-[15px] font-semibold text-gray-900">
+        <h3 className="text-[15px] font-semibold text-foreground">
           이번 주 달성률
         </h3>
       </div>
@@ -138,18 +138,18 @@ const CompletionRateChart = ({ data }: { data: StatsData }) => {
               <RadialBar
                 dataKey="rate"
                 cornerRadius={6}
-                background={{ fill: "#F3F4F6" }}
+                background={{ fill: "rgba(255,255,255,0.05)" }}
               />
             </RadialBarChart>
           </ResponsiveContainer>
           {/* 중앙 퍼센트 텍스트 */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-3xl font-bold text-gray-900">
+            <span className="text-3xl font-bold text-foreground">
               {Math.round(data.completionRate)}%
             </span>
           </div>
         </div>
-        <p className="text-sm text-gray-500 mt-2">
+        <p className="text-sm text-foreground/60 mt-2">
           완료 {data.totalCompleted} / 전체 {data.totalTasks}
         </p>
       </div>
@@ -160,10 +160,10 @@ const CompletionRateChart = ({ data }: { data: StatsData }) => {
 /** 연속 달성일 Streak */
 const StreakSection = ({ data }: { data: StatsData }) => {
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+    <div className="bg-white/8 rounded-xl p-5 shadow-sm border border-white/10">
       <div className="flex items-center gap-2 mb-4">
         <Flame className="w-5 h-5 text-orange-500" />
-        <h3 className="text-[15px] font-semibold text-gray-900">
+        <h3 className="text-[15px] font-semibold text-foreground">
           연속 달성일
         </h3>
       </div>
@@ -172,24 +172,24 @@ const StreakSection = ({ data }: { data: StatsData }) => {
           <span className="text-4xl" role="img" aria-label="불꽃">
             🔥
           </span>
-          <span className="text-4xl font-bold text-gray-900">
+          <span className="text-4xl font-bold text-foreground">
             {data.currentStreak}일
           </span>
-          <span className="text-lg text-gray-500 ml-1">연속!</span>
+          <span className="text-lg text-foreground/60 ml-1">연속!</span>
         </div>
-        <p className="text-sm text-gray-400 mt-1">
+        <p className="text-sm text-foreground/50 mt-1">
           최장 기록: {data.longestStreak}일
         </p>
       </div>
       <div className="grid grid-cols-7 gap-2">
         {WEEKDAY_LABELS.map((day, i) => (
           <div key={day} className="flex flex-col items-center gap-1">
-            <span className="text-xs text-gray-500">{day}</span>
+            <span className="text-xs text-foreground/60">{day}</span>
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
                 data.weeklyCheckmarks[i]
                   ? "bg-[#65D9AC] text-white"
-                  : "bg-gray-100 text-gray-400"
+                  : "bg-white/5 text-foreground/50"
               }`}
               aria-label={`${day}요일 ${
                 data.weeklyCheckmarks[i] ? "달성" : "미달성"
@@ -208,14 +208,14 @@ const StreakSection = ({ data }: { data: StatsData }) => {
 const WeeklyTrendChart = ({ data }: { data: StatsData }) => {
   if (data.dailyRates.length === 0) {
     return (
-      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+      <div className="bg-white/8 rounded-xl p-5 shadow-sm border border-white/10">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="w-5 h-5 text-[#6C5CE7]" />
-          <h3 className="text-[15px] font-semibold text-gray-900">
+          <h3 className="text-[15px] font-semibold text-foreground">
             달성 추이
           </h3>
         </div>
-        <div className="flex flex-col items-center justify-center py-10 text-gray-400">
+        <div className="flex flex-col items-center justify-center py-10 text-foreground/50">
           <TrendingUp className="w-12 h-12 mb-3" />
           <p className="text-sm">아직 데이터가 없습니다</p>
         </div>
@@ -224,10 +224,10 @@ const WeeklyTrendChart = ({ data }: { data: StatsData }) => {
   }
 
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+    <div className="bg-white/8 rounded-xl p-5 shadow-sm border border-white/10">
       <div className="flex items-center gap-2 mb-4">
         <TrendingUp className="w-5 h-5 text-[#6C5CE7]" />
-        <h3 className="text-[15px] font-semibold text-gray-900">달성 추이</h3>
+        <h3 className="text-[15px] font-semibold text-foreground">달성 추이</h3>
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={data.dailyRates}>
@@ -248,7 +248,7 @@ const WeeklyTrendChart = ({ data }: { data: StatsData }) => {
             formatter={(value: number) => [`${value}%`, "달성률"]}
             contentStyle={{
               borderRadius: 8,
-              border: "1px solid #E5E7EB",
+              border: "1px solid rgba(255,255,255,0.1)",
               fontSize: 12,
             }}
           />
@@ -270,14 +270,14 @@ const WeeklyTrendChart = ({ data }: { data: StatsData }) => {
 const CategoryPieChart = ({ data }: { data: StatsData }) => {
   if (data.categoryDistribution.length === 0) {
     return (
-      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+      <div className="bg-white/8 rounded-xl p-5 shadow-sm border border-white/10">
         <div className="flex items-center gap-2 mb-4">
           <PieChartIcon className="w-5 h-5 text-[#E36185]" />
-          <h3 className="text-[15px] font-semibold text-gray-900">
+          <h3 className="text-[15px] font-semibold text-foreground">
             카테고리별 분배
           </h3>
         </div>
-        <div className="flex flex-col items-center justify-center py-10 text-gray-400">
+        <div className="flex flex-col items-center justify-center py-10 text-foreground/50">
           <PieChartIcon className="w-12 h-12 mb-3" />
           <p className="text-sm">아직 데이터가 없습니다</p>
         </div>
@@ -286,10 +286,10 @@ const CategoryPieChart = ({ data }: { data: StatsData }) => {
   }
 
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+    <div className="bg-white/8 rounded-xl p-5 shadow-sm border border-white/10">
       <div className="flex items-center gap-2 mb-4">
         <PieChartIcon className="w-5 h-5 text-[#E36185]" />
-        <h3 className="text-[15px] font-semibold text-gray-900">
+        <h3 className="text-[15px] font-semibold text-foreground">
           카테고리별 분배
         </h3>
       </div>
@@ -316,7 +316,7 @@ const CategoryPieChart = ({ data }: { data: StatsData }) => {
                 ]}
                 contentStyle={{
                   borderRadius: 8,
-                  border: "1px solid #E5E7EB",
+                  border: "1px solid rgba(255,255,255,0.1)",
                   fontSize: 12,
                 }}
               />
@@ -330,10 +330,10 @@ const CategoryPieChart = ({ data }: { data: StatsData }) => {
                 className="w-3 h-3 rounded-full shrink-0"
                 style={{ backgroundColor: cat.color }}
               />
-              <span className="text-xs text-gray-600 truncate">
+              <span className="text-xs text-foreground/80 truncate">
                 {cat.category}
               </span>
-              <span className="text-xs font-medium text-gray-900 ml-auto">
+              <span className="text-xs font-medium text-foreground ml-auto">
                 {cat.percentage}%
               </span>
             </div>
@@ -348,14 +348,14 @@ const CategoryPieChart = ({ data }: { data: StatsData }) => {
 const RoutineProgressBars = ({ data }: { data: StatsData }) => {
   if (data.routineStats.length === 0) {
     return (
-      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+      <div className="bg-white/8 rounded-xl p-5 shadow-sm border border-white/10">
         <div className="flex items-center gap-2 mb-4">
           <ListChecks className="w-5 h-5 text-[#F59E0B]" />
-          <h3 className="text-[15px] font-semibold text-gray-900">
+          <h3 className="text-[15px] font-semibold text-foreground">
             루틴별 완료율
           </h3>
         </div>
-        <div className="flex flex-col items-center justify-center py-10 text-gray-400">
+        <div className="flex flex-col items-center justify-center py-10 text-foreground/50">
           <ListChecks className="w-12 h-12 mb-3" />
           <p className="text-sm">아직 데이터가 없습니다</p>
         </div>
@@ -364,10 +364,10 @@ const RoutineProgressBars = ({ data }: { data: StatsData }) => {
   }
 
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+    <div className="bg-white/8 rounded-xl p-5 shadow-sm border border-white/10">
       <div className="flex items-center gap-2 mb-4">
         <ListChecks className="w-5 h-5 text-[#F59E0B]" />
-        <h3 className="text-[15px] font-semibold text-gray-900">
+        <h3 className="text-[15px] font-semibold text-foreground">
           루틴별 완료율
         </h3>
       </div>
@@ -375,14 +375,14 @@ const RoutineProgressBars = ({ data }: { data: StatsData }) => {
         {data.routineStats.map((routine) => (
           <div key={routine.routineId} className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-700 truncate max-w-[200px]">
+              <span className="text-sm text-foreground/80 truncate max-w-[200px]">
                 {routine.routineName}
               </span>
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-medium text-foreground">
                 {Math.round(routine.completionRate)}%
               </span>
             </div>
-            <div className="bg-gray-100 rounded-full h-3 overflow-hidden">
+            <div className="bg-white/5 rounded-full h-3 overflow-hidden">
               <div
                 className="bg-[#65D9AC] rounded-full h-3 transition-all duration-500"
                 style={{
@@ -404,7 +404,7 @@ const StatsSkeleton = () => {
       {[200, 180, 200, 200, 150].map((h, i) => (
         <div
           key={i}
-          className="bg-white rounded-xl p-5 shadow-sm border border-gray-100"
+          className="bg-white/8 rounded-xl p-5 shadow-sm border border-white/10"
         >
           <Skeleton className="h-5 w-32 mb-4" />
           <Skeleton className="w-full" style={{ height: h }} />
@@ -467,18 +467,18 @@ const ProgressStatsPage = () => {
   }, [fetchStats]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white border-b border-gray-100">
+      <div className="sticky top-0 z-10 bg-background border-b border-white/10">
         <div className="flex items-center justify-between px-4 h-14">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer border-none bg-transparent"
+            className="p-2 -ml-2 rounded-full hover:bg-white/5 transition-colors cursor-pointer border-none bg-transparent"
             aria-label="뒤로가기"
           >
-            <ChevronLeft className="w-6 h-6 text-gray-900" />
+            <ChevronLeft className="w-6 h-6 text-foreground" />
           </button>
-          <h1 className="text-[17px] font-semibold text-gray-900">통계</h1>
+          <h1 className="text-[17px] font-semibold text-foreground">통계</h1>
           <div className="w-10" />
         </div>
 
@@ -491,7 +491,7 @@ const ProgressStatsPage = () => {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer border-none ${
                 period === opt.value
                   ? "bg-[#65D9AC] text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  : "bg-white/5 text-foreground/80 hover:bg-white/10"
               }`}
               aria-pressed={period === opt.value}
             >
@@ -506,12 +506,12 @@ const ProgressStatsPage = () => {
         {loading ? (
           <StatsSkeleton />
         ) : !user ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-20 text-foreground/50">
             <BarChart3 className="w-12 h-12 mb-4" />
             <p className="text-lg">로그인이 필요합니다</p>
           </div>
         ) : error && !stats ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-20 text-foreground/50">
             <BarChart3 className="w-12 h-12 mb-4" />
             <p className="text-lg">{error}</p>
             <button

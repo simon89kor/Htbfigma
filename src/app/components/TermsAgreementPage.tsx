@@ -91,7 +91,7 @@ const TermCheckbox = ({
           large ? 'w-6 h-6' : 'w-5 h-5',
           checked
             ? 'bg-[#65D9AC] border-[#65D9AC]'
-            : 'bg-white border-[#E5E7EB]'
+            : 'bg-white/8 border-white/10'
         )}
       >
         {checked && <Check className={cn('text-white', large ? 'w-4 h-4' : 'w-3.5 h-3.5')} strokeWidth={3} />}
@@ -102,11 +102,11 @@ const TermCheckbox = ({
         onClick={() => onChange(!checked)}
         className={cn(
           'flex-1 text-left bg-transparent border-none cursor-pointer p-0',
-          large ? 'text-base font-semibold text-[#1a1a2e]' : 'text-sm text-[#6B7280]'
+          large ? 'text-base font-semibold text-foreground' : 'text-sm text-foreground/60'
         )}
       >
         {!large && (
-          <span className={cn('mr-1', required ? 'text-[#65D9AC] font-medium' : 'text-[#9CA3AF]')}>
+          <span className={cn('mr-1', required ? 'text-[#65D9AC] font-medium' : 'text-foreground/50')}>
             [{required ? '필수' : '선택'}]
           </span>
         )}
@@ -117,7 +117,7 @@ const TermCheckbox = ({
         <button
           type="button"
           onClick={onDetailClick}
-          className="shrink-0 p-1 bg-transparent border-none cursor-pointer text-[#9CA3AF] hover:text-[#6B7280]"
+          className="shrink-0 p-1 bg-transparent border-none cursor-pointer text-foreground/50 hover:text-foreground/60"
           aria-label={`${label} 상세 보기`}
         >
           <ChevronRight className="w-5 h-5" />
@@ -194,23 +194,23 @@ const TermsAgreementPage = () => {
   // Detail Bottom Sheet
   if (detailContent) {
     return (
-      <div className="fixed inset-0 flex flex-col bg-white">
+      <div className="fixed inset-0 flex flex-col bg-background">
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-[#E5E7EB]">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
           <button
             type="button"
             onClick={() => setDetailContent(null)}
-            className="p-1 bg-transparent border-none cursor-pointer text-[#1a1a2e]"
+            className="p-1 bg-transparent border-none cursor-pointer text-foreground"
             aria-label="뒤로가기"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <h1 className="text-lg font-semibold text-[#1a1a2e]">{detailContent.title}</h1>
+          <h1 className="text-lg font-semibold text-foreground">{detailContent.title}</h1>
         </div>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-5 py-4">
-          <pre className="text-sm text-[#6B7280] whitespace-pre-wrap font-[inherit] leading-relaxed m-0">
+          <pre className="text-sm text-foreground/60 whitespace-pre-wrap font-[inherit] leading-relaxed m-0">
             {detailContent.content}
           </pre>
         </div>
@@ -219,25 +219,25 @@ const TermsAgreementPage = () => {
   }
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-white">
+    <div className="fixed inset-0 flex flex-col bg-background">
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3">
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="p-1 bg-transparent border-none cursor-pointer text-[#1a1a2e]"
+          className="p-1 bg-transparent border-none cursor-pointer text-foreground"
           aria-label="뒤로가기"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <h1 className="text-lg font-semibold text-[#1a1a2e]">약관 동의</h1>
+        <h1 className="text-lg font-semibold text-foreground">약관 동의</h1>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-5 pt-4">
         {/* Title */}
         <div className="mb-6">
-          <h2 className="text-xl font-bold text-[#1a1a2e] leading-snug">
+          <h2 className="text-xl font-bold text-foreground leading-snug">
             서비스 이용을 위해
             <br />
             아래 약관에 동의해주세요
@@ -255,7 +255,7 @@ const TermsAgreementPage = () => {
         />
 
         {/* Divider */}
-        <div className="h-px bg-[#E5E7EB] my-2" />
+        <div className="h-px bg-white/10 my-2" />
 
         {/* Individual terms */}
         {TERM_ITEMS.map((item) => (
@@ -285,7 +285,7 @@ const TermsAgreementPage = () => {
             'w-full h-[52px] rounded-xl text-lg font-semibold border-none cursor-pointer transition-colors',
             requiredChecked && !isSubmitting
               ? 'bg-[#65D9AC] text-white'
-              : 'bg-[#F5F5F5] text-[#9CA3AF] cursor-not-allowed'
+              : 'bg-white/5 text-foreground/50 cursor-not-allowed'
           )}
           animate={{ opacity: requiredChecked ? 1 : 0.7 }}
           transition={{ duration: 0.2 }}

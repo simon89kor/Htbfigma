@@ -1,0 +1,114 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "color": {
+    "background": {
+      "default": { "value": "#000000", "type": "color" },
+      "overlay": { "value": "rgba(30, 30, 30, 0.50)", "type": "color" },
+      "blur": { "value": "rgba(0, 0, 0, 0.10)", "type": "color" }
+    },
+    "foreground": {
+      "default": { "value": "#ffffff", "type": "color" },
+      "secondary": { "value": "rgba(255, 255, 255, 0.70)", "type": "color" },
+      "tertiary": { "value": "rgba(255, 255, 255, 0.60)", "type": "color" },
+      "muted": { "value": "rgba(255, 255, 255, 0.20)", "type": "color" }
+    },
+    "primary": {
+      "default": { "value": "#ffffff", "type": "color" },
+      "foreground": { "value": "#1a1a2e", "type": "color" }
+    },
+    "accent": {
+      "default": { "value": "#13d680", "type": "color" },
+      "foreground": { "value": "#ffffff", "type": "color" }
+    },
+    "destructive": {
+      "default": { "value": "#f10302", "type": "color" },
+      "dark": { "value": "#571019", "type": "color" }
+    },
+    "card": {
+      "default": { "value": "rgba(255, 255, 255, 0.10)", "type": "color" },
+      "foreground": { "value": "#ffffff", "type": "color" },
+      "border": { "value": "rgba(255, 255, 255, 0.70)", "type": "color" },
+      "active": { "value": "#ffffff", "type": "color" },
+      "activeForeground": { "value": "#13d680", "type": "color" }
+    },
+    "gradient": {
+      "red": {
+        "start": { "value": "rgba(241, 3, 2, 1)", "type": "color" },
+        "25": { "value": "rgba(202, 6, 8, 1)", "type": "color" },
+        "50": { "value": "rgba(164, 10, 14, 1)", "type": "color" },
+        "75": { "value": "rgba(125, 13, 19, 1)", "type": "color" },
+        "end": { "value": "rgba(87, 16, 25, 1)", "type": "color" }
+      }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "display": { "value": "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif", "type": "fontFamily" },
+      "rounded": { "value": "'SF Pro Rounded', -apple-system, BlinkMacSystemFont, sans-serif", "type": "fontFamily" }
+    },
+    "fontWeight": {
+      "normal": { "value": 400, "type": "fontWeight" },
+      "medium": { "value": 500, "type": "fontWeight" },
+      "semibold": { "value": 600, "type": "fontWeight" }
+    },
+    "titleLg": {
+      "fontFamily": { "value": "{typography.fontFamily.rounded}", "type": "fontFamily" },
+      "fontWeight": { "value": "{typography.fontWeight.medium}", "type": "fontWeight" },
+      "fontSize": { "value": "36px", "type": "dimension" },
+      "lineHeight": { "value": "41px", "type": "dimension" },
+      "letterSpacing": { "value": "0.36px", "type": "dimension" }
+    },
+    "title": {
+      "fontFamily": { "value": "{typography.fontFamily.display}", "type": "fontFamily" },
+      "fontWeight": { "value": "{typography.fontWeight.medium}", "type": "fontWeight" },
+      "fontSize": { "value": "18px", "type": "dimension" },
+      "lineHeight": { "value": "21px", "type": "dimension" },
+      "letterSpacing": { "value": "0.18px", "type": "dimension" }
+    },
+    "body": {
+      "fontFamily": { "value": "{typography.fontFamily.display}", "type": "fontFamily" },
+      "fontWeight": { "value": "{typography.fontWeight.normal}", "type": "fontWeight" },
+      "fontSize": { "value": "16px", "type": "dimension" },
+      "lineHeight": { "value": "21px", "type": "dimension" },
+      "letterSpacing": { "value": "0.16px", "type": "dimension" }
+    },
+    "caption": {
+      "fontFamily": { "value": "{typography.fontFamily.display}", "type": "fontFamily" },
+      "fontWeight": { "value": "{typography.fontWeight.normal}", "type": "fontWeight" },
+      "fontSize": { "value": "14px", "type": "dimension" },
+      "lineHeight": { "value": "18px", "type": "dimension" },
+      "letterSpacing": { "value": "0.14px", "type": "dimension" }
+    },
+    "button": {
+      "fontFamily": { "value": "{typography.fontFamily.display}", "type": "fontFamily" },
+      "fontWeight": { "value": "{typography.fontWeight.medium}", "type": "fontWeight" },
+      "fontSize": { "value": "15px", "type": "dimension" },
+      "lineHeight": { "value": "21px", "type": "dimension" },
+      "letterSpacing": { "value": "0.15px", "type": "dimension" }
+    }
+  },
+  "spacing": {
+    "1": { "value": "4px", "type": "dimension" },
+    "2": { "value": "8px", "type": "dimension" },
+    "3": { "value": "12px", "type": "dimension" },
+    "4": { "value": "16px", "type": "dimension" },
+    "5": { "value": "20px", "type": "dimension" },
+    "6": { "value": "24px", "type": "dimension" },
+    "8": { "value": "32px", "type": "dimension" },
+    "10": { "value": "40px", "type": "dimension" }
+  },
+  "borderRadius": {
+    "xs": { "value": "6px", "type": "dimension" },
+    "sm": { "value": "10px", "type": "dimension" },
+    "md": { "value": "16px", "type": "dimension" },
+    "lg": { "value": "31px", "type": "dimension" },
+    "xl": { "value": "37px", "type": "dimension" },
+    "full": { "value": "9999px", "type": "dimension" }
+  },
+  "blur": {
+    "sm": { "value": "2px", "type": "dimension" },
+    "md": { "value": "10px", "type": "dimension" },
+    "lg": { "value": "50px", "type": "dimension" },
+    "xl": { "value": "73.882px", "type": "dimension" }
+  }
+}

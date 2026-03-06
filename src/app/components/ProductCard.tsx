@@ -23,7 +23,7 @@ export function ProductCard({ product }: ProductCardProps) {
     <Card
       shadow="sm"
       isPressable={false}
-      className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+      className="group hover:shadow-[0_8px_32px_rgba(19,214,128,0.18)] transition-all duration-300 hover:-translate-y-1 border border-white/10 hover:border-white/20"
     >
       {/* Image */}
       <Link to={`/product/${product.id}`} className="no-underline">

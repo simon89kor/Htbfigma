@@ -180,11 +180,15 @@ export function StorePage() {
       <BannerCarousel />
 
       {/* Hero Section */}
-      <div className="bg-[#1a1a2e] rounded-3xl p-8 sm:p-12 mb-10 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.06]">
-          <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-[#6C5CE7]" />
-          <div className="absolute bottom-10 right-20 w-48 h-48 rounded-full bg-[#65D9AC]" />
-          <div className="absolute top-20 right-40 w-20 h-20 rounded-full bg-[#6C5CE7]" />
+      <div className="rounded-3xl p-8 sm:p-12 mb-10 text-white relative overflow-hidden border border-white/10"
+        style={{
+          background: 'linear-gradient(135deg, rgba(19, 214, 128, 0.18) 0%, rgba(108, 92, 231, 0.22) 50%, rgba(7, 7, 26, 0.95) 100%)',
+          backdropFilter: 'blur(24px)',
+        }}>
+        <div className="absolute inset-0">
+          <div className="absolute top-6 left-6 w-48 h-48 rounded-full bg-[#13d680] opacity-[0.18] blur-[40px]" />
+          <div className="absolute bottom-6 right-10 w-64 h-64 rounded-full bg-[#6C5CE7] opacity-[0.20] blur-[50px]" />
+          <div className="absolute top-16 right-32 w-28 h-28 rounded-full bg-[#22d3ee] opacity-[0.14] blur-[30px]" />
         </div>
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-3">
@@ -210,7 +214,7 @@ export function StorePage() {
           <div className="relative flex-1">
             {searchMode ? (
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none z-10" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/50 pointer-events-none z-10" />
                 <input
                   ref={searchInputRef}
                   type="text"
@@ -221,7 +225,7 @@ export function StorePage() {
                     if (e.key === "Escape") setSearchMode(false);
                   }}
                   placeholder="루틴을 검색해보세요"
-                  className="w-full h-12 pl-10 pr-10 bg-white border-2 border-[#65D9AC] rounded-xl text-sm text-gray-900 placeholder:text-gray-400 outline-none"
+                  className="w-full h-12 pl-10 pr-10 bg-white/8 border-2 border-[#65D9AC] rounded-xl text-sm text-foreground placeholder:text-foreground/50 outline-none"
                 />
                 <button
                   type="button"
@@ -229,20 +233,20 @@ export function StorePage() {
                     setSearchMode(false);
                     setSearchInput("");
                   }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 bg-transparent border-none cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 bg-transparent border-none cursor-pointer text-foreground/50"
                   aria-label="검색 닫기"
                 >
-                  <X className="w-4 h-4 text-gray-400" />
+                  <X className="w-4 h-4 text-foreground/50" />
                 </button>
               </div>
             ) : (
               <button
                 type="button"
                 onClick={() => setSearchMode(true)}
-                className="w-full h-12 pl-10 pr-4 bg-white border border-gray-200 rounded-xl text-sm text-gray-400 text-left cursor-pointer hover:border-gray-300 transition-colors relative"
+                className="w-full h-12 pl-10 pr-4 bg-white/10 border border-white/16 rounded-xl text-sm text-foreground/50 text-left cursor-pointer hover:border-white/28 hover:bg-white/14 transition-all backdrop-blur-md relative"
                 aria-label="검색 모드 진입"
               >
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/50" />
                 루틴을 검색해보세요
               </button>
             )}
@@ -253,20 +257,20 @@ export function StorePage() {
             <div className="relative" ref={sortRef}>
               <button
                 onClick={() => setShowSortMenu(!showSortMenu)}
-                className="h-12 flex items-center gap-2 px-4 bg-white border border-gray-200 rounded-xl cursor-pointer transition-all hover:bg-gray-50"
+                className="h-12 flex items-center gap-2 px-4 bg-white/10 border border-white/16 rounded-xl cursor-pointer transition-all hover:bg-white/14 backdrop-blur-md"
               >
-                <SlidersHorizontal className="w-5 h-5 text-gray-500" />
-                <span className="text-sm text-gray-700 whitespace-nowrap">{sortLabels[sortBy]}</span>
+                <SlidersHorizontal className="w-5 h-5 text-foreground/60" />
+                <span className="text-sm text-foreground/80 whitespace-nowrap">{sortLabels[sortBy]}</span>
               </button>
               {showSortMenu && (
-                <div className="absolute right-0 top-14 bg-white border border-gray-200 rounded-xl shadow-lg z-50 min-w-[160px] py-2">
+                <div className="absolute right-0 top-14 bg-[#07071a]/90 backdrop-blur-xl border border-white/16 rounded-xl shadow-lg z-50 min-w-[160px] py-2">
                   {(Object.entries(sortLabels) as [typeof sortBy, string][]).map(([key, label]) => (
                     <button
                       key={key}
                       onClick={() => { setSortBy(key); setShowSortMenu(false); }}
                       className={cn(
                         "w-full text-left px-4 py-3 text-base cursor-pointer transition-colors border-none bg-transparent",
-                        sortBy === key ? "bg-[#65D9AC]/10 text-[#65D9AC] font-semibold" : "text-gray-700 hover:bg-gray-100"
+                        sortBy === key ? "bg-[#65D9AC]/10 text-[#65D9AC] font-semibold" : "text-foreground/80 hover:bg-white/5"
                       )}
                     >
                       {label}
@@ -280,19 +284,19 @@ export function StorePage() {
 
         {/* Search mode dropdown */}
         {searchMode && (
-          <div className="absolute left-0 right-0 top-14 bg-white border border-gray-200 rounded-xl shadow-lg z-50 p-4 max-h-[60vh] overflow-y-auto">
+          <div className="absolute left-0 right-0 top-14 bg-[#07071a]/92 backdrop-blur-xl border border-white/16 rounded-xl shadow-lg z-50 p-4 max-h-[60vh] overflow-y-auto">
             {/* Recent searches */}
             {recentSearches.length > 0 && (
               <section className="mb-5">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm font-semibold text-gray-900">최근 검색어</span>
+                    <Clock className="w-4 h-4 text-foreground/50" />
+                    <span className="text-sm font-semibold text-foreground">최근 검색어</span>
                   </div>
                   <button
                     type="button"
                     onClick={handleClearAllRecent}
-                    className="text-xs text-gray-400 bg-transparent border-none cursor-pointer p-0 hover:text-gray-600"
+                    className="text-xs text-foreground/50 bg-transparent border-none cursor-pointer p-0 hover:text-foreground/80"
                   >
                     전체삭제
                   </button>
@@ -303,7 +307,7 @@ export function StorePage() {
                       <button
                         type="button"
                         onClick={() => executeSearch(keyword)}
-                        className="px-3 py-1.5 rounded-full bg-gray-100 text-sm text-gray-700 border-none cursor-pointer hover:bg-gray-200 transition-colors"
+                        className="px-3 py-1.5 rounded-full bg-white/5 text-sm text-foreground/80 border-none cursor-pointer hover:bg-white/10 transition-colors"
                       >
                         {keyword}
                       </button>
@@ -313,10 +317,10 @@ export function StorePage() {
                           e.stopPropagation();
                           handleDeleteRecentSearch(keyword);
                         }}
-                        className="w-5 h-5 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-200"
+                        className="w-5 h-5 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/10"
                         aria-label={`${keyword} 삭제`}
                       >
-                        <X className="w-3 h-3 text-gray-400" />
+                        <X className="w-3 h-3 text-foreground/50" />
                       </button>
                     </div>
                   ))}
@@ -329,7 +333,7 @@ export function StorePage() {
               <section>
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingUp className="w-4 h-4 text-[#65D9AC]" />
-                  <span className="text-sm font-semibold text-gray-900">인기 검색어</span>
+                  <span className="text-sm font-semibold text-foreground">인기 검색어</span>
                 </div>
                 <div className="space-y-1">
                   {trendingKeywords.map((keyword, index) => (
@@ -337,15 +341,15 @@ export function StorePage() {
                       key={keyword}
                       type="button"
                       onClick={() => executeSearch(keyword)}
-                      className="w-full flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-gray-50 bg-transparent border-none cursor-pointer transition-colors text-left"
+                      className="w-full flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-white/5 bg-transparent border-none cursor-pointer transition-colors text-left"
                     >
                       <span className={cn(
                         "w-6 text-center text-sm font-bold",
-                        index < 3 ? "text-[#65D9AC]" : "text-gray-400"
+                        index < 3 ? "text-[#65D9AC]" : "text-foreground/50"
                       )}>
                         {index + 1}
                       </span>
-                      <span className="text-sm text-gray-700">{keyword}</span>
+                      <span className="text-sm text-foreground/80">{keyword}</span>
                     </button>
                   ))}
                 </div>
@@ -354,7 +358,7 @@ export function StorePage() {
 
             {/* Empty state */}
             {recentSearches.length === 0 && trendingKeywords.length === 0 && (
-              <div className="py-8 text-center text-gray-400">
+              <div className="py-8 text-center text-foreground/50">
                 <Search className="w-8 h-8 mx-auto mb-2" />
                 <p className="text-sm">검색어를 입력해보세요</p>
               </div>
@@ -382,7 +386,7 @@ export function StorePage() {
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="h-80 bg-gray-100 rounded-2xl animate-pulse" />
+            <div key={i} className="h-80 bg-white/5 rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : (
@@ -395,8 +399,8 @@ export function StorePage() {
 
           {products.length === 0 && (
             <div className="text-center py-20">
-              <p className="text-gray-500 text-lg mb-2">검색 결과가 없습니다</p>
-              <p className="text-gray-400 text-sm">다른 키워드로 검색해보세요</p>
+              <p className="text-foreground/60 text-lg mb-2">검색 결과가 없습니다</p>
+              <p className="text-foreground/50 text-sm">다른 키워드로 검색해보세요</p>
             </div>
           )}
         </>

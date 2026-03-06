@@ -40,34 +40,34 @@ const AdminHeader = () => {
   };
 
   return (
-    <header className="h-16 bg-white border-b border-[var(--border)] flex items-center justify-between px-6 shrink-0">
-      <h1 className="text-lg font-semibold text-[var(--primary)]">{getTitle()}</h1>
+    <header className="h-16 bg-black/60 backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-6 shrink-0">
+      <h1 className="text-lg font-semibold text-foreground">{getTitle()}</h1>
 
       <div className="flex items-center gap-3">
         {/* Notification Bell */}
         <Button
           variant="ghost"
           size="icon"
-          className="relative text-[var(--text-secondary)] hover:text-[var(--primary)]"
+          className="relative text-foreground/60 hover:text-foreground"
           aria-label="알림"
         >
           <Bell className="w-5 h-5" />
         </Button>
 
         {/* Admin Profile */}
-        <div className="flex items-center gap-2 pl-3 border-l border-[var(--border)]">
-          <div className="w-8 h-8 bg-[var(--primary)] rounded-full flex items-center justify-center">
-            <span className="text-white text-xs font-medium">
+        <div className="flex items-center gap-2 pl-3 border-l border-white/10">
+          <div className="w-8 h-8 bg-[#13d680]/20 border border-[#13d680]/30 rounded-full flex items-center justify-center">
+            <span className="text-[#13d680] text-xs font-medium">
               {user?.name?.[0] ?? 'A'}
             </span>
           </div>
-          <span className="text-sm font-medium text-[var(--primary)] max-w-[100px] truncate">
+          <span className="text-sm font-medium text-foreground max-w-[100px] truncate">
             {user?.name ?? '관리자'}
           </span>
           <Button
             variant="ghost"
             size="icon"
-            className="text-[var(--text-secondary)] hover:text-[var(--destructive)]"
+            className="text-foreground/60 hover:text-destructive"
             onClick={handleLogout}
             aria-label="로그아웃"
           >

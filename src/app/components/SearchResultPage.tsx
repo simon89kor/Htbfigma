@@ -158,11 +158,11 @@ export function SearchResultPage() {
           onPress={() => navigate(-1)}
           aria-label="뒤로가기"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
+          <ArrowLeft className="w-5 h-5 text-foreground/80" />
         </Button>
 
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/50 pointer-events-none" />
           <input
             ref={inputRef}
             type="text"
@@ -170,7 +170,7 @@ export function SearchResultPage() {
             onChange={(e) => handleInputChange(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit()}
             placeholder="루틴을 검색해보세요"
-            className="w-full h-12 pl-10 pr-4 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#65D9AC] transition-colors"
+            className="w-full h-12 pl-10 pr-4 bg-white/8 border border-white/10 rounded-xl text-sm text-foreground placeholder:text-foreground/50 outline-none focus:border-[#65D9AC] transition-colors"
             autoFocus
           />
         </div>
@@ -178,10 +178,10 @@ export function SearchResultPage() {
         <button
           type="button"
           onClick={() => setFilterOpen(true)}
-          className="relative h-12 w-12 flex items-center justify-center bg-white border border-gray-200 rounded-xl cursor-pointer transition-all hover:bg-gray-50 shrink-0"
+          className="relative h-12 w-12 flex items-center justify-center bg-white/8 border border-white/10 rounded-xl cursor-pointer transition-all hover:bg-white/5 shrink-0"
           aria-label="필터 열기"
         >
-          <SlidersHorizontal className="w-5 h-5 text-gray-500" />
+          <SlidersHorizontal className="w-5 h-5 text-foreground/60" />
           {activeFilterCount > 0 && (
             <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#65D9AC] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
               {activeFilterCount}
@@ -211,13 +211,13 @@ export function SearchResultPage() {
 
       {/* Result count */}
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-foreground/60">
           {query && (
             <span>
-              <span className="font-medium text-gray-900">"{query}"</span> 검색 결과{" "}
+              <span className="font-medium text-foreground">"{query}"</span> 검색 결과{" "}
             </span>
           )}
-          <span className="font-medium text-gray-900">{totalCount}</span>개
+          <span className="font-medium text-foreground">{totalCount}</span>개
         </p>
       </div>
 
@@ -239,10 +239,10 @@ export function SearchResultPage() {
 
       {/* Empty state */}
       {!loading && results.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+        <div className="flex flex-col items-center justify-center py-20 text-foreground/50">
           <Search className="w-12 h-12 mb-4" />
           <p className="text-lg mb-2">검색 결과가 없습니다</p>
-          <p className="text-sm text-gray-400">다른 키워드나 필터로 검색해보세요</p>
+          <p className="text-sm text-foreground/50">다른 키워드나 필터로 검색해보세요</p>
         </div>
       )}
 

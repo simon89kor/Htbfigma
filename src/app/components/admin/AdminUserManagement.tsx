@@ -185,9 +185,9 @@ const AdminUserManagement = () => {
   return (
     <div className="space-y-4">
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 bg-white rounded-xl p-4 shadow-sm">
+      <div className="flex flex-wrap items-center gap-3 bg-white/8 rounded-xl p-4 shadow-sm">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/60" />
           <Input
             placeholder="닉네임 또는 이메일 검색..."
             value={searchInput}
@@ -224,7 +224,7 @@ const AdminUserManagement = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white/8 rounded-xl shadow-sm overflow-hidden">
         {loading ? (
           <div className="p-4 space-y-3">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -232,7 +232,7 @@ const AdminUserManagement = () => {
             ))}
           </div>
         ) : users.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)]">
+          <div className="flex flex-col items-center justify-center py-20 text-foreground/60">
             <Users size={48} className="mb-4 opacity-40" />
             <p className="text-lg">유저가 없습니다</p>
           </div>
@@ -240,7 +240,7 @@ const AdminUserManagement = () => {
           <>
             <Table>
               <TableHeader>
-                <TableRow className="bg-[var(--bg-secondary)]">
+                <TableRow className="bg-white/5">
                   <TableHead className="w-[60px]">번호</TableHead>
                   <TableHead>닉네임</TableHead>
                   <TableHead>이메일</TableHead>
@@ -254,10 +254,10 @@ const AdminUserManagement = () => {
                 {users.map((user, index) => (
                   <TableRow
                     key={user.id}
-                    className="cursor-pointer hover:bg-[#f9fafb]"
+                    className="cursor-pointer hover:bg-white/5"
                     onClick={() => navigate(`/admin/users/${user.id}`)}
                   >
-                    <TableCell className="text-[var(--text-secondary)] text-xs">
+                    <TableCell className="text-foreground/60 text-xs">
                       {(page - 1) * ITEMS_PER_PAGE + index + 1}
                     </TableCell>
                     <TableCell>
@@ -267,12 +267,12 @@ const AdminUserManagement = () => {
                             {user.nickname?.[0] ?? '?'}
                           </span>
                         </div>
-                        <span className="font-medium text-[var(--primary)] truncate max-w-[120px]">
+                        <span className="font-medium text-foreground truncate max-w-[120px]">
                           {user.nickname || '-'}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-[var(--text-secondary)] text-sm truncate max-w-[180px]">
+                    <TableCell className="text-foreground/60 text-sm truncate max-w-[180px]">
                       {user.email || '-'}
                     </TableCell>
                     <TableCell>
@@ -285,10 +285,10 @@ const AdminUserManagement = () => {
                         {STATUS_LABELS[user.status]}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-[var(--text-secondary)] text-xs">
+                    <TableCell className="text-foreground/60 text-xs">
                       {new Date(user.created_at).toLocaleDateString('ko-KR')}
                     </TableCell>
-                    <TableCell className="text-[var(--text-secondary)] text-xs">
+                    <TableCell className="text-foreground/60 text-xs">
                       {user.last_active_date
                         ? new Date(user.last_active_date).toLocaleDateString('ko-KR')
                         : '-'}
@@ -299,8 +299,8 @@ const AdminUserManagement = () => {
             </Table>
 
             {/* Footer */}
-            <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border)]">
-              <p className="text-sm text-[var(--text-secondary)]">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-white/10">
+              <p className="text-sm text-foreground/60">
                 총 {totalCount.toLocaleString()}명
               </p>
               {renderPagination()}

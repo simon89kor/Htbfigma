@@ -195,28 +195,28 @@ const AdminPurchaseManagement = () => {
     <div className="space-y-4">
       {/* Revenue Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl p-4 shadow-sm">
-          <p className="text-sm text-[var(--text-secondary)]">페이지 내 매출 합계</p>
-          <p className="text-xl font-bold text-[var(--primary)] mt-1">
+        <div className="bg-white/8 rounded-xl p-4 shadow-sm">
+          <p className="text-sm text-foreground/60">페이지 내 매출 합계</p>
+          <p className="text-xl font-bold text-foreground mt-1">
             ₩{totalRevenue.toLocaleString()}
           </p>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm">
-          <p className="text-sm text-[var(--text-secondary)]">전체 건수</p>
-          <p className="text-xl font-bold text-[var(--primary)] mt-1">
+        <div className="bg-white/8 rounded-xl p-4 shadow-sm">
+          <p className="text-sm text-foreground/60">전체 건수</p>
+          <p className="text-xl font-bold text-foreground mt-1">
             {totalCount.toLocaleString()}건
           </p>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm">
-          <p className="text-sm text-[var(--text-secondary)]">현재 페이지</p>
-          <p className="text-xl font-bold text-[var(--primary)] mt-1">
+        <div className="bg-white/8 rounded-xl p-4 shadow-sm">
+          <p className="text-sm text-foreground/60">현재 페이지</p>
+          <p className="text-xl font-bold text-foreground mt-1">
             {purchases.length}건
           </p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 bg-white rounded-xl p-4 shadow-sm">
+      <div className="flex flex-wrap items-center gap-3 bg-white/8 rounded-xl p-4 shadow-sm">
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
           <SelectTrigger className="w-[120px]">
             <SelectValue placeholder="상태" />
@@ -237,7 +237,7 @@ const AdminPurchaseManagement = () => {
             className="w-[150px]"
             aria-label="시작일"
           />
-          <span className="text-[var(--text-secondary)]">~</span>
+          <span className="text-foreground/60">~</span>
           <Input
             type="date"
             value={dateTo}
@@ -249,7 +249,7 @@ const AdminPurchaseManagement = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white/8 rounded-xl shadow-sm overflow-hidden">
         {loading ? (
           <div className="p-4 space-y-3">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -257,7 +257,7 @@ const AdminPurchaseManagement = () => {
             ))}
           </div>
         ) : purchases.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[var(--text-muted)]">
+          <div className="flex flex-col items-center justify-center py-20 text-foreground/60">
             <CreditCard size={48} className="mb-4 opacity-40" />
             <p className="text-lg">구매 내역이 없습니다</p>
           </div>
@@ -265,7 +265,7 @@ const AdminPurchaseManagement = () => {
           <>
             <Table>
               <TableHeader>
-                <TableRow className="bg-[var(--bg-secondary)]">
+                <TableRow className="bg-white/5">
                   <TableHead className="w-[60px]">번호</TableHead>
                   <TableHead className="w-[100px]">유저</TableHead>
                   <TableHead>루틴</TableHead>
@@ -280,22 +280,22 @@ const AdminPurchaseManagement = () => {
               <TableBody>
                 {purchases.map((purchase, index) => (
                   <TableRow key={purchase.id}>
-                    <TableCell className="text-[var(--text-secondary)] text-xs">
+                    <TableCell className="text-foreground/60 text-xs">
                       {(page - 1) * ITEMS_PER_PAGE + index + 1}
                     </TableCell>
-                    <TableCell className="text-sm text-[var(--primary)] truncate max-w-[100px]">
+                    <TableCell className="text-sm text-foreground truncate max-w-[100px]">
                       {purchase.profiles?.nickname ?? '-'}
                     </TableCell>
-                    <TableCell className="font-medium text-[var(--primary)] truncate max-w-[180px]">
+                    <TableCell className="font-medium text-foreground truncate max-w-[180px]">
                       {purchase.routines?.title ?? '-'}
                     </TableCell>
-                    <TableCell className="text-sm text-[var(--text-secondary)]">
+                    <TableCell className="text-sm text-foreground/60">
                       {purchase.period_label}
                     </TableCell>
-                    <TableCell className="text-sm font-medium text-[var(--primary)]">
+                    <TableCell className="text-sm font-medium text-foreground">
                       ₩{purchase.final_amount.toLocaleString()}
                     </TableCell>
-                    <TableCell className="text-sm text-[var(--text-secondary)]">
+                    <TableCell className="text-sm text-foreground/60">
                       {PAYMENT_LABELS[purchase.payment_method] ?? purchase.payment_method}
                     </TableCell>
                     <TableCell>
@@ -303,7 +303,7 @@ const AdminPurchaseManagement = () => {
                         {STATUS_LABELS[purchase.status]}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-xs text-[var(--text-secondary)]">
+                    <TableCell className="text-xs text-foreground/60">
                       {new Date(purchase.purchased_at).toLocaleDateString('ko-KR')}
                     </TableCell>
                     <TableCell>
@@ -323,8 +323,8 @@ const AdminPurchaseManagement = () => {
               </TableBody>
             </Table>
 
-            <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border)]">
-              <p className="text-sm text-[var(--text-secondary)]">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-white/10">
+              <p className="text-sm text-foreground/60">
                 총 {totalCount.toLocaleString()}건
               </p>
               {renderPagination()}

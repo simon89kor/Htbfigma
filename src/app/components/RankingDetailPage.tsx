@@ -67,18 +67,18 @@ const RankingDetailPage = () => {
   }, [loadRankings]);
 
   return (
-    <div className="min-h-screen bg-white -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 pb-24">
+    <div className="min-h-screen bg-background -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white border-b border-[#E5E7EB]">
+      <div className="sticky top-0 z-30 bg-background border-b border-white/10">
         <div className="flex items-center px-4 py-3">
           <button
             onClick={() => navigate(-1)}
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer hover:bg-gray-100"
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-none cursor-pointer hover:bg-white/10"
             aria-label="뒤로가기"
           >
-            <ArrowLeft size={22} className="text-[#1a1a2e]" />
+            <ArrowLeft size={22} className="text-foreground" />
           </button>
-          <h1 className="flex-1 text-center text-base font-semibold text-[#1a1a2e] mr-9">
+          <h1 className="flex-1 text-center text-base font-semibold text-foreground mr-9">
             랭킹
           </h1>
         </div>
@@ -93,7 +93,7 @@ const RankingDetailPage = () => {
                 'px-4 py-2 rounded-full text-sm border-none cursor-pointer transition-colors',
                 period === tab.key
                   ? 'bg-[#65D9AC] text-white font-medium'
-                  : 'bg-gray-100 text-[#6B7280]'
+                  : 'bg-white/5 text-foreground/60'
               )}
             >
               {tab.label}
@@ -110,8 +110,8 @@ const RankingDetailPage = () => {
               className={cn(
                 'px-3 py-1.5 rounded-full text-xs whitespace-nowrap border-none cursor-pointer transition-colors',
                 category === tab.key
-                  ? 'bg-[#1a1a2e] text-white font-medium'
-                  : 'bg-gray-100 text-[#6B7280]'
+                  ? 'bg-foreground text-background font-medium'
+                  : 'bg-white/5 text-foreground/60'
               )}
             >
               {tab.label}
@@ -124,7 +124,7 @@ const RankingDetailPage = () => {
       {loading ? (
         <RankingSkeleton />
       ) : rankings.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-[#9CA3AF]">
+        <div className="flex flex-col items-center justify-center py-20 text-foreground/50">
           <Trophy size={48} className="mb-4" />
           <p className="text-lg">랭킹 데이터가 없습니다</p>
           <p className="text-sm mt-1">루틴을 완료하고 랭킹에 도전하세요</p>
@@ -138,7 +138,7 @@ const RankingDetailPage = () => {
               <div className="flex flex-col items-center mb-6">
                 <span className="text-4xl mb-2">{RANK_MEDALS[0]}</span>
                 <div
-                  className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden mb-2 border-3 border-yellow-400 cursor-pointer"
+                  className="w-16 h-16 rounded-full bg-white/10 overflow-hidden mb-2 border-3 border-yellow-400 cursor-pointer"
                   onClick={() => navigate(`/user/${rankings[0].user_id}`)}
                   role="button"
                   tabIndex={0}
@@ -151,12 +151,12 @@ const RankingDetailPage = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-lg text-gray-400">
+                    <div className="w-full h-full flex items-center justify-center text-lg text-foreground/50">
                       {rankings[0].nickname[0]}
                     </div>
                   )}
                 </div>
-                <p className="text-sm font-bold text-[#1a1a2e]">{rankings[0].nickname}</p>
+                <p className="text-sm font-bold text-foreground">{rankings[0].nickname}</p>
                 <p className="text-sm text-[#65D9AC] font-semibold">
                   달성 {Math.round(rankings[0].completion_rate)}%
                 </p>
@@ -170,8 +170,8 @@ const RankingDetailPage = () => {
                       <span className="text-2xl mb-1">{RANK_MEDALS[idx + 1]}</span>
                       <div
                         className={cn(
-                          'w-12 h-12 rounded-full bg-gray-200 overflow-hidden mb-1.5 border-2 cursor-pointer',
-                          idx === 0 ? 'border-gray-400' : 'border-amber-600'
+                          'w-12 h-12 rounded-full bg-white/10 overflow-hidden mb-1.5 border-2 cursor-pointer',
+                          idx === 0 ? 'border-white/30' : 'border-amber-600'
                         )}
                         onClick={() => navigate(`/user/${entry.user_id}`)}
                         role="button"
@@ -185,13 +185,13 @@ const RankingDetailPage = () => {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-sm text-gray-400">
+                          <div className="w-full h-full flex items-center justify-center text-sm text-foreground/50">
                             {entry.nickname[0]}
                           </div>
                         )}
                       </div>
-                      <p className="text-xs font-semibold text-[#1a1a2e]">{entry.nickname}</p>
-                      <p className="text-xs text-[#6B7280]">
+                      <p className="text-xs font-semibold text-foreground">{entry.nickname}</p>
+                      <p className="text-xs text-foreground/60">
                         달성 {Math.round(entry.completion_rate)}%
                       </p>
                     </div>
@@ -203,20 +203,20 @@ const RankingDetailPage = () => {
 
           {/* 4th and below */}
           {rankings.length > 3 && (
-            <div className="border-t border-[#E5E7EB] pt-4 space-y-1">
+            <div className="border-t border-white/10 pt-4 space-y-1">
               {rankings.slice(3).map((entry) => (
                 <div
                   key={entry.user_id}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 transition-colors cursor-pointer"
                   onClick={() => navigate(`/user/${entry.user_id}`)}
                   role="button"
                   tabIndex={0}
                   aria-label={`${entry.nickname}의 프로필 보기`}
                 >
-                  <span className="w-8 text-center text-sm font-semibold text-[#6B7280]">
+                  <span className="w-8 text-center text-sm font-semibold text-foreground/60">
                     {entry.rank}
                   </span>
-                  <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-white/10 overflow-hidden flex-shrink-0">
                     {entry.avatar_url ? (
                       <img
                         src={entry.avatar_url}
@@ -224,17 +224,17 @@ const RankingDetailPage = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">
+                      <div className="w-full h-full flex items-center justify-center text-xs text-foreground/50">
                         {entry.nickname[0]}
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#1a1a2e] truncate">
+                    <p className="text-sm font-medium text-foreground truncate">
                       {entry.nickname}
                     </p>
                   </div>
-                  <span className="text-sm text-[#6B7280]">
+                  <span className="text-sm text-foreground/60">
                     {Math.round(entry.completion_rate)}%
                   </span>
                 </div>
@@ -246,13 +246,13 @@ const RankingDetailPage = () => {
 
       {/* My rank sticky bar */}
       {myRank && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] px-4 py-3 z-40">
+        <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-white/10 px-4 py-3 z-40">
           <div className="max-w-7xl mx-auto flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-[#65D9AC]/10 flex items-center justify-center">
               <Medal size={16} className="text-[#65D9AC]" />
             </div>
             <div className="flex-1">
-              <span className="text-sm font-semibold text-[#1a1a2e]">
+              <span className="text-sm font-semibold text-foreground">
                 내 순위: {myRank.rank}위
               </span>
             </div>
@@ -286,7 +286,7 @@ const RankingSkeleton = () => (
         </div>
       ))}
     </div>
-    <div className="space-y-2 border-t border-[#E5E7EB] pt-4">
+    <div className="space-y-2 border-t border-white/10 pt-4">
       {Array.from({ length: 7 }).map((_, i) => (
         <div key={i} className="flex items-center gap-3 px-3 py-2">
           <Skeleton className="w-8 h-5" />

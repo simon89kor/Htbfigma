@@ -77,8 +77,8 @@ const SplashScreen = () => {
             }}
           >
             {/* Logo */}
-            <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-lg">
-              <CheckSquare className="w-12 h-12 text-[#1a1a2e]" />
+            <div className="w-20 h-20 bg-white/8 rounded-2xl flex items-center justify-center shadow-lg">
+              <CheckSquare className="w-12 h-12 text-foreground" />
             </div>
 
             {/* Brand Name */}
