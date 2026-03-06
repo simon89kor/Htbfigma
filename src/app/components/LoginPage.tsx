@@ -261,7 +261,7 @@ export function LoginPage() {
                 <Card shadow="none" className="bg-secondary-50 border border-secondary-100">
                   <CardBody className="gap-2 p-4">
                     <p className="text-sm text-secondary font-medium">데모 계정으로 체험하기</p>
-                    <div className="text-sm text-default-500 space-y-0.5">
+                    <div className="text-sm text-default-800 space-y-0.5">
                       <p>이메일: demo@todomarket.kr</p>
                       <p>비밀번호: demo1234</p>
                     </div>
@@ -279,7 +279,7 @@ export function LoginPage() {
                 </Card>
 
                 <div className="text-center">
-                  <span className="text-default-500 text-sm">계정이 없으신가요? </span>
+                  <span className="text-default-700 text-sm">계정이 없으신가요? </span>
                   <Link
                     to={`/register${redirectTo !== "/" ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`}
                     className="text-secondary hover:text-secondary-600 no-underline text-sm font-medium"

@@ -1,12 +1,17 @@
 
   <!DOCTYPE html>
-  <html lang="en">
+  <html lang="ko" class="light" data-theme="light">
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>HTB Project</title>
-      <script type="module" crossorigin src="/assets/index-DkmIoO6J.js"></script>
-      <link rel="stylesheet" crossorigin href="/assets/index-CzcMNSYb.css">
+      <style>
+        /* Critical CSS: prevent FOUC by hiding root until styles load */
+        #root { opacity: 0; transition: opacity 0.1s; }
+        #root.ready { opacity: 1; }
+      </style>
+      <script type="module" crossorigin src="/assets/index-ZTpn3SAG.js"></script>
+      <link rel="stylesheet" crossorigin href="/assets/index-2S5EBsQs.css">
     </head>
 
     <body>
