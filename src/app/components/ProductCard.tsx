@@ -1,6 +1,5 @@
 import { Link } from "react-router";
 import { Star, ShoppingCart, Check, Calendar } from "lucide-react";
-import { Card, CardBody, CardFooter, Button, Chip } from "@heroui/react";
 import { TodoTemplate } from "../data";
 import { useStore } from "../store-context";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -19,119 +18,118 @@ export function ProductCard({ product }: ProductCardProps) {
   const inCart = isInCart(product.id);
   const purchased = isPurchased(product.id);
 
+  const lightColors = ["#FFD24F", "#B1F1B8", "#C3DF13", "#87CEEB", "#98D8C8"];
+  const isLightColor = lightColors.includes(product.color);
+  const accentText = isLightColor ? "#1a1a2e" : "white";
+
   return (
-    <Card
-      shadow="sm"
-      isPressable={false}
-      className="group hover:shadow-[0_8px_32px_rgba(19,214,128,0.18)] transition-all duration-300 hover:-translate-y-1 border border-white/10 hover:border-white/20"
+    <div
+      className="group relative overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1.5"
+      style={{
+        height: '340px',
+        border: `1px solid ${product.color}35`,
+        boxShadow: `0 4px 20px ${product.color}18`,
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.boxShadow = `0 12px 40px ${product.color}45`;
+        (e.currentTarget as HTMLElement).style.borderColor = `${product.color}60`;
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 20px ${product.color}18`;
+        (e.currentTarget as HTMLElement).style.borderColor = `${product.color}35`;
+      }}
     >
-      {/* Image */}
-      <Link to={`/product/${product.id}`} className="no-underline">
-        <div className="relative h-48 overflow-hidden">
-          <ImageWithFallback
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-          {product.originalPrice && (
-            <Chip color="danger" size="sm" variant="solid" className="absolute top-3 left-3">
-              {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
-            </Chip>
-          )}
-          <div className="absolute top-3 right-3">
-            <Chip
-              size="sm"
-              variant="solid"
-              className="text-white"
-              style={{ backgroundColor: product.color }}
-            >
-              {product.category}
-            </Chip>
-          </div>
-          <div className="absolute bottom-3 left-3">
-            <Chip size="sm" variant="solid" className="bg-black/60 text-white backdrop-blur-sm">
-              <span className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                {formatDuration(product.durationDays)}
-              </span>
-            </Chip>
-          </div>
-        </div>
+      {/* Full-bleed background image */}
+      <Link to={`/product/${product.id}`} className="no-underline absolute inset-0 block">
+        <ImageWithFallback
+          src={product.image}
+          alt={product.name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        {/* Subtle dark gradient so top badges are readable */}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 40%, transparent 55%, rgba(0,0,0,0.15) 100%)' }} />
       </Link>
 
-      <CardBody className="px-4 pt-4 pb-2">
-        <Link to={`/product/${product.id}`} className="no-underline text-inherit">
-          <h3 className="text-default-900 mb-1 text-[15px] font-semibold">
+      {/* Top badges */}
+      <div className="absolute top-3 left-3 right-3 flex justify-between items-start pointer-events-none z-10">
+        {product.originalPrice ? (
+          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-red-500 text-white">
+            {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+          </span>
+        ) : <span />}
+        <span
+          className="text-[11px] font-bold px-2.5 py-1 rounded-full"
+          style={{ backgroundColor: product.color, color: accentText }}
+        >
+          {product.category}
+        </span>
+      </div>
+
+      {/* Bottom glass panel */}
+      <div
+        className="absolute bottom-0 left-0 right-0 z-10"
+        style={{
+          backdropFilter: 'blur(22px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(22px) saturate(160%)',
+          background: `linear-gradient(135deg, rgba(10,10,26,0.72) 0%, rgba(10,10,26,0.62) 100%)`,
+          borderTop: `1px solid ${product.color}30`,
+        }}
+      >
+        <Link to={`/product/${product.id}`} className="no-underline block px-4 pt-3 pb-1">
+          <h3 className="text-white text-[15px] font-bold mb-1 leading-tight line-clamp-1">
             {product.name}
           </h3>
-          <p className="text-default-500 text-[13px] mb-3 line-clamp-2 leading-relaxed">
-            {product.description}
-          </p>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-0.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} className={`w-3 h-3 ${i < Math.floor(product.rating) ? "fill-amber-400 text-amber-400" : "fill-white/20 text-white/20"}`} />
+              ))}
+            </div>
+            <span className="text-[11px] text-white/60">{product.rating} ({product.reviews})</span>
+            <span className="ml-auto flex items-center gap-1 text-[11px] text-white/50">
+              <Calendar className="w-3 h-3" />
+              {formatDuration(product.durationDays)}
+            </span>
+          </div>
         </Link>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mb-3">
-          {product.tags.slice(0, 3).map((tag) => (
-            <Chip key={tag} size="sm" variant="flat" color="default">
-              {tag}
-            </Chip>
-          ))}
-        </div>
+        <div className="px-4 pb-3 pt-2 flex items-center justify-between">
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-white font-bold text-[17px]">₩{product.price.toLocaleString()}</span>
+            {product.originalPrice && (
+              <span className="text-[12px] text-white/38 line-through">₩{product.originalPrice.toLocaleString()}</span>
+            )}
+          </div>
 
-        {/* Rating */}
-        <div className="flex items-center gap-1.5 mb-2">
-          <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-          <span className="text-[13px] text-default-900 font-medium">{product.rating}</span>
-          <span className="text-[12px] text-default-400">({product.reviews})</span>
-        </div>
-      </CardBody>
-
-      <CardFooter className="px-4 pb-4 pt-0 flex items-center justify-between">
-        <div className="flex items-baseline gap-2">
-          <span className="text-lg text-default-900 font-bold">
-            ₩{product.price.toLocaleString()}
-          </span>
-          {product.originalPrice && (
-            <span className="text-[13px] text-default-400 line-through">
-              ₩{product.originalPrice.toLocaleString()}
-            </span>
+          {purchased ? (
+            <Link to="/my-lists" className="no-underline">
+              <button
+                className="flex items-center gap-1 text-[12px] font-bold px-3 py-1.5 rounded-full cursor-pointer border-none"
+                style={{ backgroundColor: '#65D9AC', color: '#1a1a2e' }}
+              >
+                <Check className="w-3 h-3" /> 사용하기
+              </button>
+            </Link>
+          ) : inCart ? (
+            <Link to="/cart" className="no-underline">
+              <button
+                className="flex items-center gap-1 text-[12px] font-bold px-3 py-1.5 rounded-full cursor-pointer border-none"
+                style={{ backgroundColor: product.color, color: accentText }}
+              >
+                <Check className="w-3 h-3" /> 담김
+              </button>
+            </Link>
+          ) : (
+            <button
+              onClick={(e) => { e.preventDefault(); addToCart(product); }}
+              className="flex items-center gap-1 text-[12px] font-bold px-3 py-1.5 rounded-full cursor-pointer border-none"
+              style={{ backgroundColor: product.color, color: accentText }}
+            >
+              <ShoppingCart className="w-3 h-3" /> 담기
+            </button>
           )}
         </div>
-
-        {purchased ? (
-          <Link to="/my-lists" className="no-underline">
-            <Button
-              color="success"
-              variant="flat"
-              size="sm"
-              startContent={<Check className="w-4 h-4" />}
-            >
-              사용하기
-            </Button>
-          </Link>
-        ) : inCart ? (
-          <Link to="/cart" className="no-underline">
-            <Button
-              color="secondary"
-              variant="flat"
-              size="sm"
-              startContent={<Check className="w-4 h-4" />}
-            >
-              담김
-            </Button>
-          </Link>
-        ) : (
-          <Button
-            color="primary"
-            variant="solid"
-            size="sm"
-            startContent={<ShoppingCart className="w-4 h-4" />}
-            onPress={() => addToCart(product)}
-          >
-            담기
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }

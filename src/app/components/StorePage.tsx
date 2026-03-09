@@ -180,15 +180,16 @@ export function StorePage() {
       <BannerCarousel />
 
       {/* Hero Section */}
-      <div className="rounded-3xl p-8 sm:p-12 mb-10 text-white relative overflow-hidden border border-white/10"
+      <div className="rounded-3xl p-8 sm:p-12 mb-10 text-white relative overflow-hidden border border-white/15"
         style={{
-          background: 'linear-gradient(135deg, rgba(19, 214, 128, 0.18) 0%, rgba(108, 92, 231, 0.22) 50%, rgba(7, 7, 26, 0.95) 100%)',
+          background: 'linear-gradient(135deg, rgba(19, 214, 128, 0.32) 0%, rgba(108, 92, 231, 0.38) 55%, rgba(7, 7, 26, 0.85) 100%)',
           backdropFilter: 'blur(24px)',
         }}>
         <div className="absolute inset-0">
-          <div className="absolute top-6 left-6 w-48 h-48 rounded-full bg-[#13d680] opacity-[0.18] blur-[40px]" />
-          <div className="absolute bottom-6 right-10 w-64 h-64 rounded-full bg-[#6C5CE7] opacity-[0.20] blur-[50px]" />
-          <div className="absolute top-16 right-32 w-28 h-28 rounded-full bg-[#22d3ee] opacity-[0.14] blur-[30px]" />
+          <div className="absolute top-6 left-6 w-48 h-48 rounded-full bg-[#13d680] opacity-[0.42] blur-[40px]" />
+          <div className="absolute bottom-6 right-10 w-64 h-64 rounded-full bg-[#6C5CE7] opacity-[0.38] blur-[50px]" />
+          <div className="absolute top-16 right-32 w-28 h-28 rounded-full bg-[#22d3ee] opacity-[0.30] blur-[30px]" />
+          <div className="absolute bottom-10 left-1/3 w-32 h-32 rounded-full bg-[#fd7e14] opacity-[0.18] blur-[35px]" />
         </div>
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-3">
@@ -407,11 +408,17 @@ export function StorePage() {
       )}
 
       {/* Create Custom Routine CTA */}
-      <div className="mt-12 bg-[#1a1a2e] rounded-2xl p-8 sm:p-10 text-center">
+      <div className="mt-12 rounded-2xl p-8 sm:p-10 text-center relative overflow-hidden border border-white/12"
+        style={{ background: 'linear-gradient(135deg, rgba(19,214,128,0.20) 0%, rgba(34,211,238,0.14) 50%, rgba(108,92,231,0.18) 100%)' }}>
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-0 w-40 h-40 rounded-full bg-[#13d680] opacity-20 blur-[50px]" />
+          <div className="absolute bottom-0 right-0 w-48 h-48 rounded-full bg-[#6C5CE7] opacity-18 blur-[55px]" />
+        </div>
+        <div className="relative z-10">
         <h2 className="text-white text-xl sm:text-2xl mb-2 font-bold">
           나만의 루틴이 필요하신가요?
         </h2>
-        <p className="text-white/40 text-sm mb-6 max-w-md mx-auto leading-relaxed">
+        <p className="text-white/55 text-sm mb-6 max-w-md mx-auto leading-relaxed">
           직접 카테고리, 기한, 컬러를 설정하고 나만의 To-Do 리스트를 만들어보세요.
           캘린더 기반으로 일별 할 일을 자유롭게 작성할 수 있습니다.
         </p>
@@ -426,6 +433,7 @@ export function StorePage() {
             나만의 루틴 만들기
           </Button>
         </Link>
+        </div>
       </div>
     </div>
   );

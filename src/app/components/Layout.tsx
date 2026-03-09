@@ -38,14 +38,14 @@ import { toast } from "sonner";
 
 // Per-route ambient glow colors (Apple Invite style)
 const PAGE_GLOW_MAP: Record<string, string> = {
-  '/': 'rgba(19, 214, 128, 0.50)',
-  '/community': 'rgba(108, 92, 231, 0.50)',
-  '/reward': 'rgba(253, 180, 60, 0.45)',
-  '/profile': 'rgba(96, 165, 250, 0.45)',
-  '/my-lists': 'rgba(19, 214, 128, 0.45)',
-  '/cart': 'rgba(253, 180, 60, 0.42)',
-  '/notifications': 'rgba(96, 165, 250, 0.42)',
-  '/create-routine': 'rgba(34, 211, 238, 0.45)',
+  '/': 'rgba(19, 214, 128, 0.75)',
+  '/community': 'rgba(108, 92, 231, 0.70)',
+  '/reward': 'rgba(253, 180, 60, 0.65)',
+  '/profile': 'rgba(96, 165, 250, 0.65)',
+  '/my-lists': 'rgba(19, 214, 128, 0.65)',
+  '/cart': 'rgba(253, 180, 60, 0.62)',
+  '/notifications': 'rgba(96, 165, 250, 0.62)',
+  '/create-routine': 'rgba(34, 211, 238, 0.65)',
 };
 
 function getRouteGlow(pathname: string): string {
