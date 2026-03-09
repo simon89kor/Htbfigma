@@ -141,6 +141,18 @@
   - 00_INDEX.md 상태 업데이트 (27→38 페이지/라우트)
   - CHANGELOG.md Phase 3 변경 사항 기록
 
+## 추가 기능: 결제 시작일 선택 (2026-03-09)
+- [x] F2: Checkout Start Date — 완료 (2026-03-09)
+  - CheckoutStartDatePage.tsx 신규 생성 (캘린더 기반 시작일 선택 UI)
+  - CartPage.tsx 수정 (handleCheckout → /checkout/start-date navigate)
+  - store-context.tsx 수정 (checkout 시그니처에 startDates 파라미터 추가)
+  - routes.ts에 1개 라우트 추가 (checkout/start-date)
+  - 총 43개 페이지/라우트 (42 + 1)
+- [x] P0: 기획 동기화 — 완료 (2026-03-09)
+  - 기획서 1개 업데이트 (03_PURCHASE — PURCHASE-05 추가)
+  - CHANGELOG.md 변경 사항 기록
+  - PROGRESS.md 업데이트
+
 ## Phase 4: 잔여 기능 완성
 - [x] F3: MY Page P1 — 완료 (2026-02-27)
   - QRCodeCenterPage.tsx 신규 (18.7KB — 내 QR/스캔 2탭, 루틴 선택 QR 생성, 공유 이력)

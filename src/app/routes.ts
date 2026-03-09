@@ -9,6 +9,7 @@ import { LoginPage } from "./components/LoginPage";
 import { RegisterPage } from "./components/RegisterPage";
 import { ProfilePage } from "./components/ProfilePage";
 import { CreateRoutinePage } from "./components/CreateRoutinePage";
+import { CheckoutStartDatePage } from "./components/CheckoutStartDatePage";
 import { NotFoundPage } from "./components/NotFoundPage";
 export const router = createBrowserRouter([
   {
@@ -130,6 +131,7 @@ export const router = createBrowserRouter([
           { index: true, Component: StorePage },
           { path: "product/:id", Component: ProductDetailPage },
           { path: "cart", Component: CartPage },
+          { path: "checkout/start-date", Component: CheckoutStartDatePage },
           { path: "my-lists", Component: MyListsPage },
           { path: "create-routine", Component: CreateRoutinePage },
           { path: "login", Component: LoginPage },

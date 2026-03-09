@@ -5,6 +5,40 @@
 
 ---
 
+## [2026-03-09] 결제 플로우 확장 — 시작일 선택 기능 추가
+
+### 기획 변경
+- [기획서 03] **결제 플로우 변경**: 카트→즉시 결제 → 카트→시작일 선택→결제 (사유: 사용자가 루틴 시작일을 직접 지정할 수 있도록 UX 개선)
+- [기획서 03] **PURCHASE-05 추가**: Checkout Start Date 화면 기획 신규 추가 (구현에 맞춰 기획서 반영)
+- [기획서 03] **CartPage handleCheckout 변경**: `checkout()` 직접 호출 → `/checkout/start-date`로 navigate (사유: 시작일 선택 단계 삽입)
+- [기획서 03] **store-context checkout 시그니처 변경**: `checkout()` → `checkout(startDates?: Record<string, string>)` (사유: 시작일 데이터를 구매 시 전달하기 위해 optional 파라미터 추가)
+- [기획서 03] **전체 Flow 다이어그램 업데이트**: 카트 경유 플로우(Cart → Checkout Start Date → My Lists) 추가
+
+### 산출물 추가
+- `src/app/components/CheckoutStartDatePage.tsx` (신규) — 캘린더 기반 시작일 선택 UI
+  - 루틴별 카드 형태 (이미지, 카테고리 Chip, 기간, 시작/종료일 표시)
+  - 캘린더 토글 (펼치기/접기), 7열 그리드 달력
+  - 복수 구매 시 "모든 루틴 같은 날짜로 시작" Switch (기본 ON)
+  - 과거 날짜 선택 불가
+  - 시작일~종료일 범위 녹색 하이라이트
+  - 하단 고정 CTA "시작하기" 버튼 (로딩 상태 포함)
+  - 빈 카트/비로그인 리다이렉트 처리
+
+### 수정된 파일
+- `src/app/components/CartPage.tsx` — handleCheckout: `checkout()` 직접 호출 → `navigate("/checkout/start-date")` 변경
+- `src/app/store-context.tsx` — checkout 함수: `checkout()` → `checkout(startDates?: Record<string, string>)` 시그니처 변경. startDates 전달 시 해당 날짜를 purchase 및 user_routine의 시작일로 사용
+- `src/app/routes.ts` — `checkout/start-date` 라우트 추가 (Layout 내부, eager import)
+
+### 라우트 추가 (1개, 42 → 43)
+- `/checkout/start-date` → CheckoutStartDatePage (F2, eager import)
+
+### 문서 업데이트 (P0 Planner)
+- `doc/03_PURCHASE.md` — PURCHASE-05 섹션 추가, 전체 Flow 다이어그램 업데이트, 라우트 목록 추가, 파일 목록 업데이트
+- `doc/CHANGELOG.md` — 이번 항목 추가
+- `doc/PROGRESS.md` — 시작일 선택 기능 추가 기록
+
+---
+
 ## [2026-02-27] Phase 4 완료 — 잔여 화면 (MY Page P1 + Admin 잔여)
 
 ### 기획 변경

@@ -131,6 +131,21 @@
   --color-mint-light: rgba(19, 214, 128, 0.30);
   --color-surface: rgba(255, 255, 255, 0.10);
   --color-page-bg: #07071a;
+
+  /* ── Week Selector ── */
+  --week-selected-bg: #1a1a2e;
+  --week-selected-text: #65D9AC;
+  --week-selected-sub: rgba(255, 255, 255, 0.80);
+  --week-default-bg: rgba(255, 255, 255, 0.08);
+  --week-default-text: #f5f5f5;
+  --week-default-sub: rgba(255, 255, 255, 0.50);
+  --week-hover-bg: rgba(255, 255, 255, 0.14);
+
+  /* ── Toggle Group (주간/캘린더 등 세그먼트 토글) ── */
+  --toggle-track-bg: rgba(255, 255, 255, 0.08);
+  --toggle-active-bg: rgba(255, 255, 255, 0.18);
+  --toggle-active-text: #ffffff;
+  --toggle-inactive-text: rgba(255, 255, 255, 0.50);
 }
 
 .dark {
@@ -211,6 +226,17 @@
   --radius-lg: var(--radius-lg);
   --radius-xl: var(--radius-xl);
   --radius-full: var(--radius-full);
+  --color-week-selected-bg: var(--week-selected-bg);
+  --color-week-selected-text: var(--week-selected-text);
+  --color-week-selected-sub: var(--week-selected-sub);
+  --color-week-default-bg: var(--week-default-bg);
+  --color-week-default-text: var(--week-default-text);
+  --color-week-default-sub: var(--week-default-sub);
+  --color-week-hover-bg: var(--week-hover-bg);
+  --color-toggle-track-bg: var(--toggle-track-bg);
+  --color-toggle-active-bg: var(--toggle-active-bg);
+  --color-toggle-active-text: var(--toggle-active-text);
+  --color-toggle-inactive-text: var(--toggle-inactive-text);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);

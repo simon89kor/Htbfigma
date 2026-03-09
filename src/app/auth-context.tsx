@@ -264,6 +264,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user]);
 
+  // 인증 상태 확인 중에는 빈 화면 (로그인 페이지 깜빡임 방지)
+  if (loading) {
+    return (
+      <AuthContext.Provider
+        value={{
+          user: null,
+          isLoggedIn: false,
+          loading: true,
+          login,
+          register,
+          logout,
+          updateProfile: updateProfileHandler,
+          socialLogin,
+          updateProfileFull,
+          refreshProfile,
+        }}
+      >
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+        </div>
+      </AuthContext.Provider>
+    );
+  }
+
   return (
     <AuthContext.Provider
       value={{

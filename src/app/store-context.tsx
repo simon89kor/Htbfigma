@@ -3,8 +3,10 @@ import { useAuth } from "./auth-context";
 import { TodoTemplate } from "./data";
 import {
   getUserRoutines,
+  createUserRoutineFromPurchase,
   createCustomRoutine,
   deleteUserRoutine,
+  createTodoItemsBulk,
   createTodoItem as apiCreateTodoItem,
   toggleTodoItem as apiToggleTodoItem,
   updateTodoItem as apiUpdateTodoItem,
@@ -19,7 +21,7 @@ import {
   getUserPurchases,
   hasUserPurchasedRoutine,
 } from "@/lib/api/purchases";
-
+import { getRoutine } from "@/lib/api/routines";
 // ============================================================================
 // Types (기존 인터페이스 유지)
 // ============================================================================
@@ -83,7 +85,7 @@ interface StoreContextType {
   getCartCount: () => number;
   isInCart: (productId: string) => boolean;
   isPurchased: (productId: string) => boolean;
-  checkout: () => Promise<void>;
+  checkout: (startDates?: Record<string, string>) => Promise<void>;
   toggleTodoItem: (listId: string, itemId: string) => void;
   addTodoItem: (listId: string, text: string, day: number, time?: string) => void;
   deleteTodoItem: (listId: string, itemId: string) => void;
@@ -266,7 +268,64 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const loadUserData = async (userId: string) => {
     setLoading(true);
     try {
-      const { data: routines } = await getUserRoutines(userId, { status: 'active' });
+      let { data: routines } = await getUserRoutines(userId, { status: 'active' });
+
+      // user_routines가 비어 있으면 purchases에서 복구 시도
+      if (routines.length === 0) {
+        const { data: purchases } = await getUserPurchases(userId, { status: 'completed' });
+        for (const p of purchases) {
+          try {
+            // 이미 해당 purchase에 대한 user_routine이 있는지 확인
+            const { data: existing } = await getUserRoutines(userId);
+            const alreadyExists = existing.some(
+              (ur) => ur.purchase_id === p.id || ur.routine_id === p.routine_id
+            );
+            if (alreadyExists) continue;
+
+            const routine = await getRoutine(p.routine_id);
+            const endDate = p.end_date ?? new Date(
+              new Date(p.start_date ?? p.purchased_at).getTime() + p.period_days * 86400000
+            ).toISOString();
+
+            const userRoutine = await createUserRoutineFromPurchase({
+              userId,
+              routineId: p.routine_id,
+              purchaseId: p.id,
+              title: routine.title,
+              description: routine.description ?? '',
+              category: routine.category ?? '',
+              startDate: p.start_date ?? p.purchased_at,
+              endDate,
+              dayPlans: routine.day_plans,
+            });
+
+            // todo_items 생성
+            const dayPlans = routine.day_plans as { day: number; items: string[] }[] | null;
+            if (dayPlans && Array.isArray(dayPlans)) {
+              const todoInputs: { userRoutineId: string; userId: string; text: string; day: number; sortOrder: number }[] = [];
+              dayPlans.forEach((dp) => {
+                (dp.items ?? []).forEach((text: string, idx: number) => {
+                  todoInputs.push({
+                    userRoutineId: userRoutine.id,
+                    userId,
+                    text,
+                    day: dp.day,
+                    sortOrder: idx,
+                  });
+                });
+              });
+              if (todoInputs.length > 0) {
+                await createTodoItemsBulk(todoInputs);
+              }
+            }
+          } catch {
+            // 개별 복구 실패 시 건너뛰기
+          }
+        }
+        // 복구 후 다시 조회
+        const result = await getUserRoutines(userId, { status: 'active' });
+        routines = result.data;
+      }
 
       if (!mountedRef.current) return;
 
@@ -283,8 +342,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
       setPurchasedLists(purchased);
       setCustomLists(custom);
-    } catch {
-      // 에러 시 빈 배열 유지
+    } catch (err) {
+      console.error('[loadUserData] 루틴 로드 실패:', err);
     } finally {
       if (mountedRef.current) {
         setLoading(false);
@@ -333,16 +392,30 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   // Checkout → Supabase
   // ========================================================================
 
-  const checkout = useCallback(async () => {
-    if (!user) return;
+  const checkout = useCallback(async (startDates?: Record<string, string>) => {
+    if (!user) throw new Error('로그인이 필요합니다.');
 
     const newPurchases: PurchasedList[] = [];
+    const errors: string[] = [];
+    let skippedCount = 0;
 
     for (const item of cart) {
       try {
         // 이미 구매한 루틴인지 확인
         const alreadyPurchased = await hasUserPurchasedRoutine(user.id, item.product.id);
-        if (alreadyPurchased) continue;
+        if (alreadyPurchased) {
+          skippedCount++;
+          continue;
+        }
+        // 시작일 결정: startDates에서 가져오거나 현재 시간
+        const itemStartDate = startDates?.[item.product.id]
+          ? new Date(startDates[item.product.id])
+          : new Date();
+        // 로컬 날짜를 YYYY-MM-DDT00:00:00 형식으로 (UTC 변환 방지)
+        const y = itemStartDate.getFullYear();
+        const m = String(itemStartDate.getMonth() + 1).padStart(2, '0');
+        const d = String(itemStartDate.getDate()).padStart(2, '0');
+        const startDateISO = `${y}-${m}-${d}T00:00:00`;
 
         // 구매 생성
         const purchase = await createPurchase({
@@ -354,10 +427,46 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           discount: (item.product.originalPrice ?? item.product.price) - item.product.price,
           finalAmount: item.product.price,
           paymentMethod: 'free',
-          startDate: new Date().toISOString(),
+          startDate: startDateISO,
         });
 
-        // 투두 아이템 생성
+        // user_routines 레코드 생성
+        const endDate = new Date(itemStartDate);
+        endDate.setDate(endDate.getDate() + item.product.durationDays);
+        const ey = endDate.getFullYear();
+        const em = String(endDate.getMonth() + 1).padStart(2, '0');
+        const ed = String(endDate.getDate()).padStart(2, '0');
+        const endDateISO = `${ey}-${em}-${ed}T00:00:00`;
+        const userRoutine = await createUserRoutineFromPurchase({
+          userId: user.id,
+          routineId: item.product.id,
+          purchaseId: purchase.id,
+          title: item.product.name,
+          description: item.product.description ?? '',
+          category: item.product.category ?? '',
+          startDate: startDateISO,
+          endDate: endDateISO,
+          dayPlans: item.product.dayPlans,
+        });
+
+        // 투두 아이템 생성 (DB)
+        const todoInputs: { userRoutineId: string; userId: string; text: string; day: number; sortOrder: number }[] = [];
+        item.product.dayPlans.forEach((dayPlan) => {
+          dayPlan.items.forEach((text, idx) => {
+            todoInputs.push({
+              userRoutineId: userRoutine.id,
+              userId: user.id,
+              text,
+              day: dayPlan.day,
+              sortOrder: idx,
+            });
+          });
+        });
+        if (todoInputs.length > 0) {
+          await createTodoItemsBulk(todoInputs);
+        }
+
+        // 로컬 상태용 투두 아이템
         const todoItems: TodoItem[] = [];
         item.product.dayPlans.forEach((dayPlan) => {
           dayPlan.items.forEach((text, idx) => {
@@ -371,18 +480,26 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         });
 
         newPurchases.push({
-          id: purchase.id,
+          id: userRoutine.id,
           product: item.product,
-          purchasedAt: new Date().toISOString(),
-          startDate: new Date().toISOString(),
+          purchasedAt: startDateISO,
+          startDate: startDateISO,
           items: todoItems,
         });
-      } catch {
-        // 개별 구매 실패 시 건너뛰기
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        errors.push(`${item.product.name}: ${msg}`);
       }
     }
 
-    setPurchasedLists((prev) => [...prev, ...newPurchases]);
+    // 성공한 구매가 하나도 없고, 모두 이미 구매한 것도 아닌 경우 에러
+    if (newPurchases.length === 0 && skippedCount < cart.length) {
+      throw new Error(`구매 처리 실패: ${errors.join(', ')}`);
+    }
+
+    if (newPurchases.length > 0) {
+      setPurchasedLists((prev) => [...prev, ...newPurchases]);
+    }
     setCart([]);
 
     // 서버 데이터 새로고침

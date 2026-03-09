@@ -2,7 +2,7 @@
 
 **우선순위:** P0 (Critical)
 **상태:** EXISTS (결제 플로우 전체 구현 완료 — Phase 1)
-**관련 기존 파일:** `CartPage.tsx`, `store-context.tsx`, `ProductDetailPage.tsx`
+**관련 기존 파일:** `CartPage.tsx`, `store-context.tsx`, `ProductDetailPage.tsx`, `CheckoutStartDatePage.tsx`
 
 ---
 
@@ -34,6 +34,16 @@ ProductDetail → [구매하기] → Period Selection (Bottom Sheet)
                             Purchase Complete
                                     ↓
                          [일정 선택하기] → BOARD
+
+--- 카트 경유 플로우 (2026-03-09 추가) ---
+
+Store → [장바구니 추가] → Cart (/cart)
+                            ↓ [결제하기]
+                     Checkout Start Date (/checkout/start-date)
+                            ↓ (각 루틴 시작일 선택, 기본=오늘)
+                     checkout(startDates)
+                            ↓
+                     My Lists (/my-lists)
 ```
 
 ---
@@ -337,15 +347,141 @@ interface Purchase {
 
 ---
 
+---
+
+### PURCHASE-05: Checkout Start Date (시작일 선택)
+
+**경로:** `/checkout/start-date`
+**컴포넌트:** `CheckoutStartDatePage.tsx`
+**상태:** EXISTS (2026-03-09 추가)
+
+> 기존 결제 플로우(/cart → checkout() → /my-lists)에서 시작일 선택 단계를 삽입.
+> /cart → /checkout/start-date → checkout(startDates) → /my-lists
+
+#### 설계 방식: Plan C (기본값 오늘 + 개별 조정)
+- 시작일 기본값은 **오늘**으로 자동 설정
+- 사용자가 원하면 캘린더를 열어 개별 루틴의 시작일을 조정
+- 복수 구매 시 "모든 루틴 같은 날짜로 시작" 스위치 제공 (기본 ON)
+
+#### UI 구성
+```
+┌─────────────────────────┐
+│  ← 시작일 선택            │
+│  ━━━━━━━━━━━━━━━━━━━━━ │  ← Progress bar (100%)
+│                         │
+│  구매한 루틴의 시작일을     │
+│  선택해주세요.             │
+│  시작일부터 Day 1이       │
+│  시작됩니다.              │
+│                         │
+│  ┌─────────────────────┐│  ← (복수 구매 시만 표시)
+│  │ 📅 모든 루틴 같은     ││
+│  │    날짜로 시작  [ON]  ││
+│  └─────────────────────┘│
+│                         │
+│  ┌─────────────────────┐│  ← 루틴 카드 (반복)
+│  │ [이미지] 루틴명       ││
+│  │         카테고리 28일  ││
+│  │ ─────────────────── ││
+│  │ 시작일  2026년 3월 9일 ││  ← 녹색 강조
+│  │ 종료일  2026년 4월 5일 ││
+│  │                  📅  ││  ← 캘린더 아이콘 (토글)
+│  │ ┌─────────────────┐ ││  ← (캘린더 펼침 시)
+│  │ │  < 2026년 3월 >  │ ││
+│  │ │ 일 월 화 수 목 금 토│ ││
+│  │ │ ... ⬤9 10 11 ... │ ││  ← 시작일 녹색, 범위 연녹색
+│  │ └─────────────────┘ ││
+│  └─────────────────────┘│
+│                         │
+│  ┌─────────────────────┐│  ← 하단 고정 CTA
+│  │  N개 루틴  [시작하기]  ││
+│  │  ₩금액               ││
+│  └─────────────────────┘│
+└─────────────────────────┘
+```
+
+#### 상태 관리
+```typescript
+// 각 루틴별 시작일 (기본값: 오늘)
+startDates: Record<string, Date>
+
+// "모든 루틴 같은 날짜로 시작" 토글
+sameDate: boolean  // 기본 true
+
+// 현재 캘린더를 열고 있는 루틴 ID
+activeRoutineId: string | null
+```
+
+#### 인터랙션
+| 동작 | 결과 |
+|------|------|
+| 캘린더 영역 탭 | 해당 루틴의 캘린더 토글 (펼침/접기) |
+| 날짜 선택 | 시작일 변경 + 종료일 자동 계산 (시작일 + durationDays - 1) |
+| 과거 날짜 탭 | 선택 불가 (disabled, 연한 회색) |
+| sameDate ON 상태에서 날짜 선택 | 모든 루틴에 같은 날짜 적용 |
+| sameDate ON → OFF | 각 루틴 개별 조정 가능 |
+| sameDate OFF → ON | 첫 번째 루틴의 날짜를 전체에 적용 |
+| "시작하기" 버튼 탭 | checkout(dateMap) 호출 → 성공 시 /my-lists로 이동 |
+| 카트가 비어있을 때 진입 | /cart로 리다이렉트 |
+| 비로그인 상태로 진입 | /login?redirect=/cart로 리다이렉트 |
+
+#### 캘린더 시각화
+| 요소 | 스타일 |
+|------|--------|
+| 시작일 | `bg-success text-white font-bold` (녹색 원) |
+| 종료일 | `bg-success/60 text-white` (연녹색 원) |
+| 시작~종료 범위 | `bg-success/15` (연녹색 배경) |
+| 오늘 표시 | 하단 작은 녹색 점 (시작일이 아닌 경우) |
+| 과거 날짜 | `text-default-300 cursor-not-allowed` |
+
+#### CartPage 변경 사항
+```typescript
+// 변경 전: checkout() 직접 호출
+const handleCheckout = () => {
+  checkout();
+  navigate('/my-lists');
+};
+
+// 변경 후: /checkout/start-date로 이동
+const handleCheckout = () => {
+  if (!isLoggedIn) { /* 로그인 리다이렉트 */ }
+  navigate("/checkout/start-date");
+};
+```
+
+#### store-context 변경 사항
+```typescript
+// checkout 시그니처 변경
+checkout: (startDates?: Record<string, string>) => Promise<void>;
+
+// startDates가 전달되면 해당 날짜를, 없으면 현재 시간을 시작일로 사용
+const itemStartDate = startDates?.[item.product.id]
+  ? new Date(startDates[item.product.id])
+  : new Date();
+```
+
+#### 디자인 스펙
+| 요소 | 스펙 |
+|------|------|
+| 루틴 카드 | HeroUI Card shadow="sm", 이미지 64x64 rounded-xl |
+| 날짜 표시 영역 | bg-default-50 rounded-xl p-3 |
+| 캘린더 | Card border border-default-200, 7열 그리드, 셀 높이 36px |
+| 하단 CTA 바 | fixed bottom-0, bg-background border-t shadow-lg |
+| CTA 버튼 | HeroUI Button color="primary" size="lg", ShoppingBag 아이콘 |
+| sameDate 스위치 | HeroUI Switch color="success" size="sm" |
+
+---
+
 ## 5. 라우트 추가
 
 ```typescript
 // routes.ts 에 추가
 { path: '/payment', element: <PaymentMethodPage /> },
 { path: '/purchase-complete', element: <PurchaseCompletePage /> },
+{ path: 'checkout/start-date', Component: CheckoutStartDatePage },
 ```
 
-## 6. 파일 목록 (Phase 1 완료 상태)
+## 6. 파일 목록 (현재 상태)
 
 | 파일 | 설명 | 상태 |
 |------|------|------|
@@ -353,3 +489,6 @@ interface Purchase {
 | `src/app/components/PaymentMethodPage.tsx` | 결제 수단 선택 | EXISTS |
 | `src/app/components/PurchaseCompletePage.tsx` | 구매 완료 | EXISTS |
 | `src/app/components/ProductDetailPage.tsx` | 구매하기 버튼 + PeriodSheet 연결 | MODIFIED |
+| `src/app/components/CheckoutStartDatePage.tsx` | 시작일 선택 (캘린더 UI) | EXISTS |
+| `src/app/components/CartPage.tsx` | handleCheckout → /checkout/start-date 이동으로 변경 | MODIFIED |
+| `src/app/store-context.tsx` | checkout(startDates?) 시그니처 변경 | MODIFIED |

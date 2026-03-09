@@ -7,7 +7,7 @@ import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { toast } from "sonner";
 
 export function CartPage() {
-  const { cart, removeFromCart, getCartTotal, checkout } = useStore();
+  const { cart, removeFromCart, getCartTotal } = useStore();
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const total = getCartTotal();
@@ -18,9 +18,7 @@ export function CartPage() {
       navigate("/login?redirect=/cart");
       return;
     }
-    checkout();
-    toast.success("구매가 완료되었습니다! 🎉", { description: "내 리스트에서 바로 사용해보세요." });
-    navigate("/my-lists");
+    navigate("/checkout/start-date");
   };
 
   if (cart.length === 0) {

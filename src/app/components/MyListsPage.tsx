@@ -145,18 +145,11 @@ export function MyListsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-default-900 text-2xl font-bold tracking-tight">TODAY</h1>
-        <div className="flex items-center gap-2">
-          <Link to="/create-routine" className="no-underline">
-            <Button isIconOnly variant="bordered" size="sm" radius="lg">
-              <CalendarDays className="w-5 h-5 text-secondary" />
-            </Button>
-          </Link>
-          <Link to="/create-routine" className="no-underline">
-            <Button isIconOnly color="primary" size="sm" radius="lg">
-              <Plus className="w-5 h-5 text-success stroke-[3]" />
-            </Button>
-          </Link>
-        </div>
+        <Link to="/create-routine" className="no-underline">
+          <Button isIconOnly color="primary" size="sm" radius="lg">
+            <Plus className="w-5 h-5 text-success stroke-[3]" />
+          </Button>
+        </Link>
       </div>
 
       {/* Week selector */}
@@ -191,12 +184,12 @@ export function MyListsPage() {
                 <button
                   key={date.toISOString()}
                   onClick={() => setSelectedDate(new Date(date))}
-                  className={`flex-1 flex flex-col items-center justify-center h-[48px] rounded-xl transition-all cursor-pointer border ${
-                    isSelected ? "bg-primary border-primary text-white" : "bg-white border-default-200 hover:border-default-400"
+                  className={`flex-1 flex flex-col items-center justify-center h-[48px] rounded-xl transition-all cursor-pointer border-none ${
+                    isSelected ? "bg-week-selected-bg" : "bg-week-default-bg hover:bg-week-hover-bg"
                   }`}
                 >
-                  <span className={`text-[15px] font-bold leading-[18px] ${isSelected ? "text-white" : "text-default-300"}`}>{date.getDate()}</span>
-                  <span className={`text-[8px] leading-[10px] mt-[2px] ${isSelected ? "text-white/50" : "text-default-200"}`}>{DAY_LABELS[date.getDay()]}</span>
+                  <span className={`text-[15px] font-bold leading-[18px] ${isSelected ? "text-week-selected-text" : "text-week-default-text"}`}>{date.getDate()}</span>
+                  <span className={`text-[8px] leading-[10px] mt-[2px] ${isSelected ? "text-week-selected-sub" : "text-week-default-sub"}`}>{DAY_LABELS[date.getDay()]}</span>
                   {isToday && !isSelected && <div className="w-1 h-1 rounded-full bg-secondary mt-[1px]" />}
                 </button>
               );
@@ -251,24 +244,22 @@ export function MyListsPage() {
           <Tab key="custom" title={<span>나만의 루틴 {customLists.length > 0 && <span className="text-xs ml-1 opacity-70">{customLists.length}</span>}</span>} />
         </Tabs>
 
-        <div className="flex bg-default-100 rounded-xl p-1 gap-0.5 shrink-0">
+        <div className="flex bg-toggle-track-bg rounded-xl p-1 gap-0.5 shrink-0">
           <Button
             size="sm"
-            variant={viewMode === "weekly" ? "solid" : "light"}
-            color={viewMode === "weekly" ? "default" : "default"}
+            variant="light"
             onPress={() => setViewMode("weekly")}
             startContent={<Calendar className="w-3.5 h-3.5" />}
-            className={`text-xs ${viewMode === "weekly" ? "bg-white shadow-sm" : ""}`}
+            className={`text-xs ${viewMode === "weekly" ? "bg-toggle-active-bg text-toggle-active-text shadow-sm" : "text-toggle-inactive-text"}`}
           >
             <span className="hidden sm:inline">주간</span>
           </Button>
           <Button
             size="sm"
-            variant={viewMode === "calendar" ? "solid" : "light"}
-            color={viewMode === "calendar" ? "default" : "default"}
+            variant="light"
             onPress={() => setViewMode("calendar")}
             startContent={<CalendarDays className="w-3.5 h-3.5" />}
-            className={`text-xs ${viewMode === "calendar" ? "bg-white shadow-sm" : ""}`}
+            className={`text-xs ${viewMode === "calendar" ? "bg-toggle-active-bg text-toggle-active-text shadow-sm" : "text-toggle-inactive-text"}`}
           >
             <span className="hidden sm:inline">캘린더</span>
           </Button>
@@ -316,7 +307,6 @@ export function MyListsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {purchasedLists.map((plist) => (
                   <div key={plist.id}>
-                    <RoutineProgressBar items={plist.items} />
                     <TodoListUsable list={plist} isExpanded={expandedCards.has(plist.id)} onToggleExpand={() => handleToggleCard(plist.id)} selectedDate={selectedDate} />
                   </div>
                 ))}
@@ -338,7 +328,6 @@ export function MyListsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {customLists.map((clist) => (
                   <div key={clist.id} className="relative group/card">
-                    <RoutineProgressBar items={clist.items} />
                     <TodoListUsable customList={clist} isExpanded={expandedCards.has(clist.id)} onToggleExpand={() => handleToggleCard(clist.id)} selectedDate={selectedDate} />
                     <Button
                       isIconOnly
@@ -379,28 +368,4 @@ export function MyListsPage() {
 // Routine Progress Bar (per-routine inline progress)
 // ============================================================================
 
-interface RoutineProgressBarProps {
-  items: { completed: boolean }[];
-}
 
-function RoutineProgressBar({ items }: RoutineProgressBarProps) {
-  if (items.length === 0) return null;
-
-  const total = items.length;
-  const completed = items.filter((i) => i.completed).length;
-  const percent = Math.round((completed / total) * 100);
-
-  return (
-    <div className="flex items-center gap-2 mb-1.5 px-1">
-      <div className="flex-1 h-1.5 bg-default-100 rounded-full overflow-hidden">
-        <div
-          className="h-full bg-[#65D9AC] rounded-full transition-all duration-300"
-          style={{ width: `${percent}%` }}
-        />
-      </div>
-      <span className="text-[10px] font-medium text-default-400 shrink-0">
-        {completed}/{total}
-      </span>
-    </div>
-  );
-}
